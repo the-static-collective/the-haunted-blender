@@ -23,6 +23,9 @@ This is a standalone project, not an extension of the retired `toaster-lab` repo
 python -m haunted_blender init ~/HauntedBlender
 python -m haunted_blender scan ~/HauntedBlender /path/to/your/photo/archive
 python -m haunted_blender stats ~/HauntedBlender
+python -m haunted_blender find ~/HauntedBlender --query sunset --kind image
+python -m haunted_blender inspect ~/HauntedBlender <asset_id>
+python -m haunted_blender verify ~/HauntedBlender
 python -m haunted_blender new-film ~/HauntedBlender "The Unopened Letter"
 python -m haunted_blender new-scene ~/HauntedBlender <project_id> "The kitchen"
 python -m haunted_blender add-shot ~/HauntedBlender <project_id> <scene_id> <asset_id> --seconds 4
@@ -38,6 +41,8 @@ python -m haunted_blender derivative ~/HauntedBlender <raw_asset_id> /path/to/ed
 ```
 
 This command indexes the derivative in the original location and explicitly associates it with the RAW source. **Do not upload private photographs into a public source repository.** A photograph's appearance in a proposed story does not establish the subject's identity, consent, or rights.
+
+`find` matches literal filenames, `inspect` shows source and derivative links, and `verify` checks every source digest without re-indexing. Its `--limit` bounds only the reported examples. Associate RAW derivatives before `freeze`; changing the chosen frame requires a new snapshot. XMP presence is checked, not its rendering fidelity.
 
 ## Architectural starting points
 

@@ -121,6 +121,20 @@ def validate(film: dict) -> None:
 def freeze(root: Path, film_id: str) -> Path:
     film = load(root, film_id)
     validate(film)
+    from .catalog import connect, digest_file, source_for_render
+    con = connect(root)
+    try:
+        bindings = {}
+        for scene in film["scenes"]:
+            for shot in scene["shots"]:
+                source = source_for_render(con, shot["source_asset_id"])
+                path = Path(source["path"])
+                if not path.is_file() or digest_file(path) != source["sha256"]:
+                    raise ValueError(f"Source missing or changed since cataloging: {path}")
+                bindings[shot["id"]] = {"frame_asset_id": source["id"], "sha256": source["sha256"]}
+        film["asset_bindings"] = bindings
+    finally:
+        con.close()
     contents = stable_bytes(film)
     sha = hashlib.sha256(contents).hexdigest()
     folder = root.expanduser().resolve() / "snapshots" / film_id
@@ -140,6 +154,10 @@ def load_snapshot(root: Path, path: Path) -> tuple[dict, str]:
         raise ValueError("Render only frozen snapshots inside the local project vault")
     film = json.loads(path.read_text(encoding="utf-8"))
     validate(film)
+    if not isinstance(film.get("asset_bindings"), dict) or set(film["asset_bindings"]) != {
+        shot["id"] for scene in film["scenes"] for shot in scene["shots"]
+    }:
+        raise ValueError("Snapshot needs a binding for every shot")
     sha = hashlib.sha256(stable_bytes(film)).hexdigest()
     if path.name != sha + ".json" or path.parent.name != film["id"]:
         raise ValueError("Snapshot hash or project identity mismatch")

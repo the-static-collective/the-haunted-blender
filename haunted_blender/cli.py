@@ -21,6 +21,13 @@ def main() -> None:
     scan = action("scan", "folder")
     scan.add_argument("--note", help="Optional informational tag; no upload", default="")
     action("stats")
+    search = action("find")
+    search.add_argument("--query", default="")
+    search.add_argument("--kind", choices=("raw", "image", "audio", "video"))
+    search.add_argument("--limit", type=int, default=50)
+    action("inspect", "asset_id")
+    check = action("verify")
+    check.add_argument("--limit", type=int, default=50)
     action("derivative", "raw_id", "image_path")
     action("new-film", "title")
     action("new-scene", "film_id", "title")
@@ -39,6 +46,12 @@ def main() -> None:
         result = catalog.scan(root, Path(a.folder))
     elif a.command == "stats":
         result = catalog.stats(root)
+    elif a.command == "find":
+        result = catalog.find(root, a.query, a.kind, a.limit)
+    elif a.command == "inspect":
+        result = catalog.inspect(root, a.asset_id)
+    elif a.command == "verify":
+        result = catalog.verify(root, a.limit)
     elif a.command == "derivative":
         result = {"image_asset_id": catalog.derivative(root, a.raw_id, Path(a.image_path))}
     elif a.command == "new-film":

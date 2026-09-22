@@ -24,6 +24,10 @@ def plan(root: Path, snapshot: Path) -> dict:
         for scene in film["scenes"]:
             for shot in scene["shots"]:
                 source = source_for_render(con, shot["source_asset_id"])
+                binding = film["asset_bindings"][shot["id"]]
+                if (source["id"] != binding["frame_asset_id"] or
+                        source["sha256"] != binding["sha256"]):
+                    raise ValueError("Frame selection changed since freeze; freeze the film again")
                 path = Path(source["path"])
                 if not path.is_file():
                     raise FileNotFoundError(f"Missing source: {path}")

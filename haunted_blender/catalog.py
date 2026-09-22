@@ -90,22 +90,25 @@ def index_file(con: sqlite3.Connection, path: Path) -> tuple[str, bool]:
     if ext not in SUPPORTED:
         raise ValueError(f"Unsupported extension: {ext}")
     info = path.stat()
-    item = con.execute("SELECT id, size_bytes, mtime_ns FROM assets WHERE path=?", (str(path),)).fetchone()
-    if item and item["size_bytes"] == info.st_size and item["mtime_ns"] == info.st_mtime_ns:
-        return item["id"], False
-    sha = digest_file(path)
-    asset_id = "asset-" + hashlib.sha256(str(path).encode("utf-8")).hexdigest()[:24]
     sidecar = path.with_suffix(".xmp")
     if not sidecar.is_file():
         candidate = path.with_suffix(".XMP")
         sidecar = candidate if candidate.is_file() else None
+    sidecar_path = str(sidecar) if sidecar else None
+    item = con.execute("SELECT id, size_bytes, mtime_ns, sidecar_path FROM assets WHERE path=?", (str(path),)).fetchone()
+    if item and item["size_bytes"] == info.st_size and item["mtime_ns"] == info.st_mtime_ns:
+        if item["sidecar_path"] != sidecar_path:
+            con.execute("UPDATE assets SET sidecar_path=? WHERE id=?", (sidecar_path, item["id"]))
+        return item["id"], False
+    sha = digest_file(path)
+    asset_id = "asset-" + hashlib.sha256(str(path).encode("utf-8")).hexdigest()[:24]
     con.execute("""
       INSERT INTO assets (id, path, kind, extension, size_bytes, mtime_ns, sha256, sidecar_path)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(path) DO UPDATE SET size_bytes=excluded.size_bytes,
           mtime_ns=excluded.mtime_ns, sha256=excluded.sha256,
           sidecar_path=excluded.sidecar_path, indexed_at=CURRENT_TIMESTAMP
-    """, (asset_id, str(path), SUPPORTED[ext], ext, info.st_size, info.st_mtime_ns, sha, str(sidecar) if sidecar else None))
+    """, (asset_id, str(path), SUPPORTED[ext], ext, info.st_size, info.st_mtime_ns, sha, sidecar_path))
     return asset_id, True
 
 
@@ -166,5 +169,73 @@ def stats(root: Path) -> dict:
     try:
         rows = con.execute("SELECT kind, COUNT(*) as count, SUM(size_bytes) as bytes FROM assets GROUP BY kind ORDER BY kind").fetchall()
         return {r["kind"]: {"files": r["count"], "bytes": r["bytes"]} for r in rows}
+    finally:
+        con.close()
+
+
+def find(root: Path, query: str = "", kind: str | None = None, limit: int = 50) -> list[dict]:
+    """Literal filename search; no inferred identities, rights or image content."""
+    if kind is not None and kind not in set(SUPPORTED.values()):
+        raise ValueError("Unknown asset kind")
+    if not 1 <= limit <= 500:
+        raise ValueError("Limit must be 1–500")
+    con = connect(root)
+    try:
+        rows = con.execute("""SELECT a.id,a.path,a.kind,a.rights,a.sidecar_path,
+          d.image_id AS derivative_id FROM assets a
+          LEFT JOIN derivatives d ON d.raw_id=a.id
+          WHERE (? IS NULL OR a.kind=?) ORDER BY a.path""", (kind, kind))
+        result = []
+        for row in rows:
+            if query.casefold() not in Path(row["path"]).name.casefold():
+                continue
+            result.append({**dict(row), "renderable":
+                (row["kind"] == "image" and Path(row["path"]).suffix.lower() in DISPLAYABLE)
+                or bool(row["derivative_id"])})
+            if len(result) == limit:
+                break
+        return result
+    finally:
+        con.close()
+
+
+def inspect(root: Path, asset_id: str) -> dict:
+    con = connect(root)
+    try:
+        row = con.execute("""SELECT a.*,d.image_id AS derivative_id,
+          i.path AS derivative_path FROM assets a
+          LEFT JOIN derivatives d ON d.raw_id=a.id
+          LEFT JOIN assets i ON i.id=d.image_id WHERE a.id=?""", (asset_id,)).fetchone()
+        if row is None:
+            raise ValueError(f"Unknown asset: {asset_id}")
+        return dict(row)
+    finally:
+        con.close()
+
+
+def verify(root: Path, limit: int = 50) -> dict:
+    """Check all cataloged source bytes without changing source or catalog."""
+    if not 1 <= limit <= 500:
+        raise ValueError("Limit must be 1–500")
+    con = connect(root)
+    result = {"checked": 0, "ok": 0, "missing": 0, "changed": 0,
+              "unreadable": 0, "missing_sidecars": 0, "examples": []}
+    try:
+        for row in con.execute("SELECT id,path,sha256,sidecar_path FROM assets ORDER BY path"):
+            result["checked"] += 1
+            path = Path(row["path"])
+            try:
+                if path.is_symlink() or not path.is_file():
+                    status = "missing"
+                else:
+                    status = "ok" if digest_file(path) == row["sha256"] else "changed"
+            except OSError:
+                status = "unreadable"
+            result[status] += 1
+            if status != "ok" and len(result["examples"]) < limit:
+                result["examples"].append({"id": row["id"], "path": row["path"], "status": status})
+            if row["sidecar_path"] and not Path(row["sidecar_path"]).is_file():
+                result["missing_sidecars"] += 1
+        return result
     finally:
         con.close()
