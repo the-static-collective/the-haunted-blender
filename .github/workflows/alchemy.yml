@@ -1,0 +1,32 @@
+name: Alchemical compiler FFmpeg proof
+
+on:
+  pull_request:
+    paths:
+      - 'haunted_blender/alchemy.py'
+      - 'haunted_blender/alchemy_cli.py'
+      - 'tests/test_alchemy.py'
+      - '.github/workflows/alchemy.yml'
+  push:
+    branches:
+      - experimental/alchemical-compiler-v0.1
+
+jobs:
+  alchemy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install local FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Compile both layers
+        run: python -m compileall -q haunted_blender
+      - name: Run first-layer and alchemy contract tests with FFmpeg available
+        run: python -m unittest discover -s tests -v
+      - name: Alchemy CLI smoke
+        run: python -m haunted_blender.alchemy_cli --help
