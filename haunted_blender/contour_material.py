@@ -255,6 +255,10 @@ def plan(root: Path, snapshot: Path) -> dict:
     receipts = _geometry(s, d)
     src_area, dst_area = _area(s), _area(d)
     plate = bundle["clean_plate"]
+    # A byte-identical subject-bearing frame cannot be accepted as a distinct clean plate.
+    # A different photograph remains an artist assertion; this guard does not detect all ghosts.
+    if plate is not None and plate["frame"]["sha256"] in (parent["source"]["sha256"], parent["target"]["sha256"]):
+        raise ValueError("Clean plate duplicates a bound subject-bearing source/target frame")
     return {
         "schema": "haunted-blender/contour-plan/v1",
         "snapshot_sha256": sha, "parent_snapshot_sha256": recipe["parent_sha256"],
