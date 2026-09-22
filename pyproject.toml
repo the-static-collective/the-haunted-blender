@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "haunted-blender"
+version = "0.0.1"
+description = "Local-first archival cinematic studio: experimental nuclear scaffold"
+requires-python = ">=3.10"
+
+[project.scripts]
+haunted-blender = "haunted_blender.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["haunted_blender*"]
