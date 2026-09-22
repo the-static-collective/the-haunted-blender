@@ -1,0 +1,9 @@
+{
+  "id": "opened",
+  "subject": "letter",
+  "predicate": "state",
+  "value": "open",
+  "basis": "filmmaker_established",
+  "since_beat": 2,
+  "supersedes": "sealed"
+}
