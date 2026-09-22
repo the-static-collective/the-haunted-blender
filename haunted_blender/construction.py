@@ -85,10 +85,12 @@ def _fact_scopes(root, source):
         "filmmaker_established_fact_ids": sorted(x["id"] for x in world["facts"]),
         "fictional_facts_sha256": _digest(world["facts"]),
         "fictional_observer_knowledge_sha256": _digest(world["knowledge"]),
-        "photographic_source_digest_set": sorted({
-            (x["requested_asset_id"], x["frame_asset_id"], x["frame_sha256"])
-            for x in source["shots"]
-        }),
+        "photographic_source_digest_set": [
+            list(row) for row in sorted({
+                (x["requested_asset_id"], x["frame_asset_id"], x["frame_sha256"])
+                for x in source["shots"]
+            })
+        ],
         "source_alchemy_sha256": source["alchemy_snapshot_sha256"],
         "claim_boundary": "fictional assertions are not facts about photographed people",
     }
