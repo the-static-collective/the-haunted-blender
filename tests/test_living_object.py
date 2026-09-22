@@ -138,7 +138,7 @@ class LivingObjectTests(unittest.TestCase):
         different = n4.freeze(self.root,alt["id"])
         bad = self.layers()
         bad[1]["snapshot"]=str(different)
-        with self.assertRaisesRegex(ValueError,"same exact frozen scene and background"):
+        with self.assertRaisesRegex(ValueError,"share one exact frozen scene and background"):
             living_object.create(self.root,bad)
         recipe=self.make()
         snap=living_object.freeze(self.root,recipe["id"])
