@@ -1,0 +1,12 @@
+[
+  {
+    "constructor": "editorial.reverse/v0",
+    "params": {}
+  },
+  {
+    "constructor": "editorial.hold-first/v0",
+    "params": {
+      "duration_ms": 2600
+    }
+  }
+]
