@@ -1,0 +1,39 @@
+name: N2 correspondence geometry proof
+
+on:
+  pull_request:
+    paths:
+      - 'haunted_blender/correspondence.py'
+      - 'haunted_blender/correspondence_cli.py'
+      - 'tests/test_correspondence.py'
+      - '.github/workflows/correspondence.yml'
+  push:
+    branches:
+      - experimental/correspondence-engine-v0.1
+
+jobs:
+  geometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install optional geometry dependencies
+        run: |
+          python -m pip install Pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Compile all layers
+        run: python -m compileall -q haunted_blender
+      - name: Run complete regression suite including real video renders
+        run: python -m unittest discover -s tests -v
+      - name: Geometry CLI smoke
+        run: python -m haunted_blender.correspondence_cli --help
+      - name: Existing command doors
+        run: |
+          python -m haunted_blender --help
+          python -m haunted_blender.alchemy_cli --help
