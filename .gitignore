@@ -1,0 +1,25 @@
+# Haunted Blender repository bootstrap
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+*.mp4
+*.mov
+*.CR2
+*.cr2
+*.CR3
+*.cr3
+*.xmp
+*.tif
+*.tiff
+*.jpg
+*.jpeg
+*.png
+*.wav
+*.mp3
+*.db
+*.sqlite*
