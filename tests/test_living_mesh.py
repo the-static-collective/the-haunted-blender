@@ -132,7 +132,7 @@ class LivingMeshTests(unittest.TestCase):
     def test_landmark_conflicts_are_not_silently_ignored(self):
         vertices = living_mesh.grid()
         # Move an interior control near the inherited upper-left landmark.
-        vertices[6] = [.47, .40]
+        vertices[6] = [.32, .26]
         recipe = living_mesh.create(self.root, self.n2_snapshot, vertices,
                                      max_landmark_error_px=.25)
         frozen = living_mesh.freeze(self.root, recipe["id"])
