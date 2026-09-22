@@ -120,7 +120,6 @@ class CorrespondenceTests(unittest.TestCase):
         snap.write_text(json.dumps(bundle), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "snapshot hash"):
             correspondence.plan(self.root, snap)
-        snap = correspondence.freeze(self.root, recipe["id"]) if False else None
         fresh = self.make()
         fresh_snap = correspondence.freeze(self.root, fresh["id"])
         (self.photos / "moon.png").write_bytes(b"altered image")
@@ -149,8 +148,16 @@ class CorrespondenceTests(unittest.TestCase):
         mid = subprocess.run(command, check=True, capture_output=True).stdout
         frame = Image.open(BytesIO(mid)).convert("RGB")
         self.assertEqual(frame.size, (correspondence.WIDTH, correspondence.HEIGHT))
-        # First point travels from x=.25 to x=.30, y=.30 to .25 in a full-canvas 16:9 fixture.
-        px, py = round(0.275 * (correspondence.WIDTH - 1)), round(0.275 * (correspondence.HEIGHT - 1))
+        # Determine actual letterbox offsets: Pillow.thumbnail never upscales small fixtures.
+        # Inspect the predicted artist-authored feature location, not an assumed full-frame coordinate.
+        source_image, source_anchors, _ = correspondence._image_with_points(
+            str(self.photos / "cup.png"), self.points(), "from")
+        target_image, target_anchors, _ = correspondence._image_with_points(
+            str(self.photos / "water.png"), self.points(), "to")
+        source_image.close()
+        target_image.close()
+        px = round((source_anchors[0][0] + target_anchors[0][0]) / 2)
+        py = round((source_anchors[0][1] + target_anchors[0][1]) / 2)
         neighborhood = [frame.getpixel((x, y))
                         for x in range(px - 4, px + 5)
                         for y in range(py - 4, py + 5)]
