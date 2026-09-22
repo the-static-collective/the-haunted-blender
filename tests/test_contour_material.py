@@ -117,6 +117,10 @@ class ContourMaterialTests(unittest.TestCase):
             self.new(clean_plate_asset_id=self.asset["clean"])
         with self.assertRaisesRegex(ValueError, "Unknown clean-plate asset"):
             self.new(background_mode="clean-plate", clean_plate_asset_id="asset-" + "0" * 24)
+        # A source photograph must never be accepted as its own clean plate.
+        same = self.new(background_mode="clean-plate", clean_plate_asset_id=self.asset["source"])
+        with self.assertRaisesRegex(ValueError, "Clean plate duplicates"):
+            contour_material.plan(self.root, contour_material.freeze(self.root, same["id"]))
         recipe = self.new(background_mode="clean-plate", clean_plate_asset_id=self.asset["clean"])
         snapshot = contour_material.freeze(self.root, recipe["id"])
         plan = contour_material.plan(self.root, snapshot)
