@@ -318,6 +318,10 @@ def render(root: Path, snapshot: Path, out: Path) -> dict:
             proc.wait()
             raise
         finally:
+            if proc.stdin is not None and not proc.stdin.closed:
+                proc.stdin.close()
+            if proc.stderr is not None:
+                proc.stderr.close()
             from_image.close()
             to_image.close()
         # Parent snapshot and all original/derivative hashes are rechecked before publishing.
