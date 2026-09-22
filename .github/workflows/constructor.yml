@@ -20,6 +20,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install real FFmpeg to exercise rendered-output proof
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - name: Assert FFmpeg installed
+        run: ffmpeg -version | head -n 1
       - name: Compile all Python modules
         run: python -m compileall -q haunted_blender
       - name: Execute all N0 through Counterfactual and Constructor contract tests
