@@ -16,6 +16,8 @@ A local-first filmmaking studio that turns the media people already own—photog
 
 See [charter](docs/CHARTER.md), [architecture](docs/ARCHITECTURE.md), [roadmap and release gate](docs/ROADMAP.md), and [rights / privacy boundary](docs/SAFETY_AND_RIGHTS.md).
 
+An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) freezes a synthetic approved still and prompt, then admits a completed video as a separately reviewable candidate for that scene beat. It does not yet replace a shot in the rendered film.
+
 ## Sister-project boundary
 
 [Haunted Toaster](https://github.com/the-static-collective/the-haunted-toaster) is music/score-first and owns its accepted visual-score, resolved timeline, render and receipt authority. Haunted Blender is story/scene-first and owns its own film project authority. Exchange through explicit versioned adapters only. The old Toaster Lab is a read-only historical experiment, not a deployment target.
