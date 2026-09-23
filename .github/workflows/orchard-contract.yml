@@ -1,0 +1,36 @@
+name: Orchard 001 contract
+on:
+  pull_request:
+    paths:
+      - 'CHRONOBODY.md'
+      - 'orchard/**'
+      - 'tests/test_orchard_chronobody.py'
+      - '.github/workflows/orchard-contract.yml'
+  push:
+    branches:
+      - experimental/orchard-chronobody-001
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate orchard registry and contract boundaries
+        run: python -m unittest discover -s tests -p 'test_orchard_chronobody.py' -v
+      - name: Prove candidate without invoking any organ
+        run: python -m orchard.chronobody --want derived_memory_take --have frozen_scene_world camera_score accepted_moving_take authored_memory_regions
+      - name: Prove missing source stays held
+        shell: bash
+        run: |
+          set +e
+          python -m orchard.chronobody --want derived_memory_take --have frozen_scene_world camera_score authored_memory_regions > /tmp/orchard-held.json
+          status=$?
+          set -e
+          test "$status" -eq 1
+          python -c 'import json; x=json.load(open("/tmp/orchard-held.json")); assert x["status"] == "HELD" and x["missing"] == ["accepted_moving_take"]'
