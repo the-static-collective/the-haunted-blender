@@ -117,7 +117,7 @@ def build(compiled, frame_count):
                 history["was_present"] = True
             elif residue:
                 _require(history["last_seen_frame"] is not None,
-                         "Strength cannot precede on-timeline visual encounter")
+                         "Memory residue has no on-timeline visual capture")
                 history["was_present"] = False
                 age = index - history["last_seen_frame"]
                 derived = _strength(history, age)
