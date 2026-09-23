@@ -8,6 +8,9 @@ version = "0.0.1"
 description = "Local-first archival cinematic studio: experimental nuclear scaffold"
 requires-python = ">=3.10"
 
+[project.optional-dependencies]
+dream = ["Pillow>=9"]
+
 [project.scripts]
 haunted-blender = "haunted_blender.cli:main"
 
