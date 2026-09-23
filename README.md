@@ -32,6 +32,8 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 [Memory Strength 001](docs/MEMORY_STRENGTH_001.md) replaces one universal ghost weight with a content-addressed encounter-history schedule: dwell, authored camera focus, repeated encounters and recency determine how strongly each valid residue affects the image, with no future-frame leakage and no claim to psychological measurement.
 
+[Memory Competition 001](docs/MEMORY_COMPETITION_001.md) gives two separately seen, overlapping memory residues one finite opacity budget. The local renderer composites both against the same present frame, producing a separate private MP4 and source-linked receipt without treating either ghost as a present event.
+
 ## Sister-project boundary
 
 [Haunted Toaster](https://github.com/the-static-collective/the-haunted-toaster) is music/score-first and owns its accepted visual-score, resolved timeline, render and receipt authority. Haunted Blender is story/scene-first and owns its own film project authority. Exchange through explicit versioned adapters only. The old Toaster Lab is a read-only historical experiment, not a deployment target.
