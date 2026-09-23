@@ -51,6 +51,26 @@ jobs:
             --memory-checkout ../pinned/memory \
             --receipt-out "$RUNNER_TEMP/orchard/crossing-receipt.json"
           python -B -c 'import json,os; from pathlib import Path; x=json.loads((Path(os.environ["RUNNER_TEMP"])/"orchard"/"crossing-receipt.json").read_text()); assert x["status"]=="SCOPED_PROOF" and x["world_unchanged"] and x["synthetic_frame_outputs"]["different"] and len(x["hostile_refusals"])==4'
+      - name: Verify reproducibility against permanent checked-in receipt
+        run: |
+          python -B - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          generated = Path(os.environ["RUNNER_TEMP"]) / "orchard" / "crossing-receipt.json"
+          committed = Path("orchard-method/evidence/ORCHARD-002-synthetic-receipt.json")
+          live = json.loads(generated.read_text(encoding="utf-8"))
+          baseline = json.loads(committed.read_text(encoding="utf-8"))
+          assert live == baseline, "Pinned crossing no longer reproduces the checked-in receipt"
+          unsigned = dict(live)
+          claimed = unsigned.pop("receipt_sha256")
+          canonical = json.dumps(unsigned, sort_keys=True, ensure_ascii=False,
+                                 separators=(",", ":")).encode("utf-8")
+          assert hashlib.sha256(canonical).hexdigest() == claimed, "Receipt digest mismatch"
+          print("PASS: replay equals committed receipt; content digest matches")
+          PY
       - name: Reject mismatched source pin (wrong checkouts)
         env:
           PYTHONDONTWRITEBYTECODE: '1'
