@@ -24,6 +24,8 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 [Door Feedback 001](docs/DOOR_FEEDBACK_001.md) makes an independently accepted moving take leave a recursive, drifting motion trace in a private MP4. It documents a separate live Hydra patch sketch; the MP4 is rendered locally without Hydra.
 
+[Door Dance 001](docs/DOOR_DANCE_001.md) turns that accepted door into a small, repeatable performance: open partway, pause, close a little, pause and open again. Its private MP4 has an exact source-frame edit map and a separate receipt.
+
 ## Sister-project boundary
 
 [Haunted Toaster](https://github.com/the-static-collective/the-haunted-toaster) is music/score-first and owns its accepted visual-score, resolved timeline, render and receipt authority. Haunted Blender is story/scene-first and owns its own film project authority. Exchange through explicit versioned adapters only. The old Toaster Lab is a read-only historical experiment, not a deployment target.
