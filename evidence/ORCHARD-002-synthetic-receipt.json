@@ -1,0 +1,66 @@
+{
+  "camera_projections": {
+    "hallway": [
+      "977a47a2fc6944dfe8065ee92e9828a485cd7bdd1b07776f1425d3687b09ef64",
+      "60ef5adb2ed1d1480b2206ead3471135c3a46c4d3944484223d6bf1aa43203ff"
+    ],
+    "threshold": [
+      "b60d16592b4ca5a6301ef2e48f10a4a0b7ac08ea9411def8b9781edd9ee04e11",
+      "7862287d8142e35a4a01b059ebe7f9b88416c373759e894a7270b0c47a875eb4"
+    ]
+  },
+  "experiment": "observer_projection_to_synthetic_pixel_memory",
+  "frozen_world_sha256": "1b1b559c66f7eea8ee854324176e98dca8fb9576f4f45cb96e866e4a1d67a0f0",
+  "hallway_memory_stats": {
+    "captured_frames": 0,
+    "last_strength_percent": 0,
+    "max_residue_age": 0,
+    "residue_frames": 0
+  },
+  "hostile_refusals": [
+    "cross_observer_receipt",
+    "altered_world_receipt",
+    "tampered_projection",
+    "memory_without_on_timeline_capture"
+  ],
+  "nonclaims": [
+    "Only actual pinned source functions were executed on fabricated RGB frames",
+    "No accepted moving take, video render, photoreal door geometry, or scene integration was tested",
+    "Camera-local projection and drawn test pixels are authored fixtures, not a physical optical simulation",
+    "Same-world projection does not imply shared camera history or audience knowledge",
+    "A scoped test receipt is not creative acceptance, canon, publication rights, or a branch promotion"
+  ],
+  "receipt_sha256": "7fbec62289c107149dc78cbe3c616cf9dce65b5bc7a2bc38a57c7b60ee24d2a4",
+  "schema": "haunted-blender/orchard-crossing-receipt/v0",
+  "source_identity": {
+    "memory_blob": "833cc9c2a4d770bee566c2bbfa63fe9e0864e92a",
+    "memory_commit": "6aca64fdeeb458653e20558c4b23fa89ec622ba7",
+    "observer_blob": "38447bf4c9e68be8b655ed32da16a14d0012689b",
+    "observer_commit": "9beec9cce02f9c595386fc39fd7fb79a890434da",
+    "source_mode": "one_stacked_checkout_verified_against_two_exact_commits"
+  },
+  "status": "SCOPED_PROOF",
+  "synthetic_frame_inputs": {
+    "hallway_sha256": "65b095f8650bf6f8d9be6e7529fe0808bfd6068dad62aa31b2e02031e5e587d6",
+    "threshold_sha256": "fcbab110e1970b85ab4842e313e344e26db1a6913d368f8fb65c062e09634423"
+  },
+  "synthetic_frame_outputs": {
+    "different": true,
+    "hallway_sha256": "65b095f8650bf6f8d9be6e7529fe0808bfd6068dad62aa31b2e02031e5e587d6",
+    "threshold_sha256": "f43b8ac3f5687144eb384f412d2b3047ed908eb5c8e0c192864976f6101b1eda"
+  },
+  "threshold_memory_stats": {
+    "captured_frames": 2,
+    "last_strength_percent": 56,
+    "max_residue_age": 2,
+    "residue_frames": 2
+  },
+  "unverified_gates": [
+    "PRODUCTION_ADAPTER_API",
+    "ACCEPTED_MOVING_TAKE",
+    "REAL_VIDEO_RENDER_AND_OUTPUT_RECEIPT",
+    "PIXEL_VISIBILITY_ACTUAL_CAMERA_CAPTURE",
+    "SOURCE_MEDIA_RIGHTS_AND_SCENE_APPROVAL"
+  ],
+  "world_unchanged": true
+}
