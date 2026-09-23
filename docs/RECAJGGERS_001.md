@@ -4,7 +4,7 @@ The first executable experiment is [Time Slice 001](TIME_SLICE_001.md). These ar
 
 | Candidate | Open tool / small emulation | First bounded test | Boundary to keep |
 | --- | --- | --- | --- |
-| Video feedback | [Hydra](https://github.com/hydra-synth/hydra) or a small local frame feedback filter | Let each opening of the door leave a receding image of earlier openings | A visual echo is not an event witness. Hydra is AGPL; assess obligations before embedding. |
+| Video feedback | [Hydra](https://github.com/hydra-synth/hydra) or a small local frame feedback filter | [Door Feedback 001](DOOR_FEEDBACK_001.md) makes an accepted clip leave a receding trace; separately sketch a live Hydra patch | A visual echo is not an event witness. Hydra is AGPL; assess obligations before embedding. |
 | False depth / 2.5D | [Depth Anything V2](https://github.com/DepthAnything/Depth-Anything-V2) + Blender planes | Cut door/frame/background from one still, assign *estimated* depth, move a camera slightly | Store the depth estimate as a derived material, not measured geometry. Small and larger model weights have different licenses. |
 | Image material mutations | [G’MIC](https://gmic.eu/) CLI | Render contour and displacement masks of a source frame as separate assets | A transformed texture cannot inherit the source's creative role or rights. |
 | Word choreography | [Manim](https://github.com/ManimCommunity/manim) or [Revideo](https://github.com/midrender/revideo) | Reveal an exact, source-linked phrase through the doorway at authored frame times | Keep the textual witness, exact characters, display decisions and audience-knowledge proposal distinct. |

@@ -22,6 +22,8 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 [Time Slice 001](docs/TIME_SLICE_001.md) makes a private, source-linked image whose horizontal strips come from successive moments of one accepted moving take. [Recajggers 001](docs/RECAJGGERS_001.md) records the remaining video, 3D, image and text experiments for later evaluation.
 
+[Door Feedback 001](docs/DOOR_FEEDBACK_001.md) makes an independently accepted moving take leave a recursive, drifting motion trace in a private MP4. It documents a separate live Hydra patch sketch; the MP4 is rendered locally without Hydra.
+
 ## Sister-project boundary
 
 [Haunted Toaster](https://github.com/the-static-collective/the-haunted-toaster) is music/score-first and owns its accepted visual-score, resolved timeline, render and receipt authority. Haunted Blender is story/scene-first and owns its own film project authority. Exchange through explicit versioned adapters only. The old Toaster Lab is a read-only historical experiment, not a deployment target.
