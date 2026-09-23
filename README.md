@@ -16,7 +16,7 @@ A local-first filmmaking studio that turns the media people already own—photog
 
 See [charter](docs/CHARTER.md), [architecture](docs/ARCHITECTURE.md), [roadmap and release gate](docs/ROADMAP.md), and [rights / privacy boundary](docs/SAFETY_AND_RIGHTS.md).
 
-An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) freezes a synthetic approved still and prompt, then admits a completed video as a separately reviewable candidate for that scene beat. It does not yet replace a shot in the rendered film.
+An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) freezes a synthetic approved still and prompt, then admits a completed video as a separately reviewable candidate for that scene beat. A separate [Take Cut adapter](docs/TAKE_CUT_001.md) can place one explicitly accepted candidate into a silent private cut while other accepted beats remain static.
 
 ## Sister-project boundary
 
