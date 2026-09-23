@@ -1,0 +1,92 @@
+name: Orchard 002 pinned observer memory crossing
+on:
+  pull_request:
+    paths:
+      - 'orchard/observer_memory_probe.py'
+      - 'docs/ORCHARD-002.md'
+      - '.github/workflows/orchard-pinned-crossing.yml'
+  push:
+    branches:
+      - experimental/orchard-observer-memory-002
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-synthetic-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Orchard experiment only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: orchard-method
+      - name: Checkout exact Observer Vision organ
+        uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/the-haunted-blender
+          ref: 9beec9cce02f9c595386fc39fd7fb79a890434da
+          persist-credentials: false
+          path: pinned/observer
+      - name: Checkout exact stacked Memory Feedback organ (full ancestry for merge-base)
+        uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/the-haunted-blender
+          ref: 6aca64fdeeb458653e20558c4b23fa89ec622ba7
+          fetch-depth: 0
+          persist-credentials: false
+          path: pinned/memory
+      - name: Install deterministic Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Exercise both source organs on one synthetic world
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          mkdir -p "$RUNNER_TEMP/orchard"
+          cd orchard-method
+          python -B -m orchard.observer_memory_probe \
+            --observer-checkout ../pinned/observer \
+            --memory-checkout ../pinned/memory \
+            --receipt-out "$RUNNER_TEMP/orchard/crossing-receipt.json"
+          python -B -c 'import json,os; from pathlib import Path; x=json.loads((Path(os.environ["RUNNER_TEMP"])/"orchard"/"crossing-receipt.json").read_text()); assert x["status"]=="SCOPED_PROOF" and x["world_unchanged"] and x["synthetic_frame_outputs"]["different"] and len(x["hostile_refusals"])==4'
+      - name: Verify reproducibility against permanent checked-in receipt
+        run: |
+          python -B - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          generated = Path(os.environ["RUNNER_TEMP"]) / "orchard" / "crossing-receipt.json"
+          committed = Path("orchard-method/evidence/ORCHARD-002-synthetic-receipt.json")
+          live = json.loads(generated.read_text(encoding="utf-8"))
+          baseline = json.loads(committed.read_text(encoding="utf-8"))
+          assert live == baseline, "Pinned crossing no longer reproduces the checked-in receipt"
+          unsigned = dict(live)
+          claimed = unsigned.pop("receipt_sha256")
+          canonical = json.dumps(unsigned, sort_keys=True, ensure_ascii=False,
+                                 separators=(",", ":")).encode("utf-8")
+          assert hashlib.sha256(canonical).hexdigest() == claimed, "Receipt digest mismatch"
+          print("PASS: replay equals committed receipt; content digest matches")
+          PY
+      - name: Reject mismatched source pin (wrong checkouts)
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          cd orchard-method
+          set +e
+          python -B -m orchard.observer_memory_probe \
+            --observer-checkout ../pinned/memory \
+            --memory-checkout ../pinned/observer > "$RUNNER_TEMP/orchard/wrong-pin.json"
+          status=$?
+          set -e
+          test "$status" -eq 2
+          python -B -c 'import json,os; from pathlib import Path; x=json.loads((Path(os.environ["RUNNER_TEMP"])/"orchard"/"wrong-pin.json").read_text()); assert x["status"]=="REFUSE" and "mismatch" in x["reason"]'
+      - name: Attach bounded proof receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: orchard-002-synthetic-receipt
+          path: ${{ runner.temp }}/orchard/crossing-receipt.json
+          if-no-files-found: error
