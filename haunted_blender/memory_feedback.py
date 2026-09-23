@@ -265,12 +265,12 @@ def _memory_frames(frames, compiled, strength_schedule=None):
     return bytes(output), stats
 
 
-def render(root, artifact_snapshot, acceptance_snapshot, timeline, regions, out):
+def render(root, artifact_snapshot, acceptance_snapshot, timeline, regions, out, *, competition=False):
     root = Path(root).expanduser().resolve()
     out = Path(out).expanduser().resolve()
-    vault = root / "renders" / "memory-feedback"
+    vault = root / "renders" / ("memory-competition" if competition else "memory-feedback")
     _require(out.parent == vault and out.suffix.lower() == ".mp4",
-             "Output must be an MP4 in the private renders/memory-feedback vault")
+             "Output must be an MP4 in the selected private memory render vault")
     receipt_path = out.with_suffix(".mp4.receipt.json")
     _require(not out.exists() and not receipt_path.exists(),
              "Refusing to overwrite output or receipt")
@@ -293,7 +293,13 @@ def render(root, artifact_snapshot, acceptance_snapshot, timeline, regions, out)
     _require(2 <= count <= MAX_FRAMES, "Expected 2–120 sampled frames")
     compiled = _compile_timeline(count, timeline, regions)
     strength_schedule = memory_strength.build(compiled, count)
-    output_frames, stats = _memory_frames(decoded.stdout, compiled, strength_schedule)
+    if competition:
+        from . import memory_competition
+        output_frames, stats, competition_receipt = memory_competition._memory_frames(
+            decoded.stdout, compiled, strength_schedule)
+    else:
+        output_frames, stats = _memory_frames(decoded.stdout, compiled, strength_schedule)
+        competition_receipt = None
 
     _require(catalog.digest_file(video) == witness["video_sha256"],
              "Accepted take changed during memory synthesis")
@@ -325,7 +331,9 @@ def render(root, artifact_snapshot, acceptance_snapshot, timeline, regions, out)
                 "residue_fact_ids": segment["residue_fact_ids"],
             })
         receipt = {
-            "schema": SCHEMA, "adapter": ADAPTER, "status": "scoped_complete",
+            "schema": (memory_competition.SCHEMA if competition else SCHEMA),
+            "adapter": (memory_competition.ADAPTER if competition else ADAPTER),
+            "status": "scoped_complete",
             "artifact_sha256": artifact_sha, "artifact_id": artifact["id"],
             "beat": witness["beat"], "request_sha256": request_sha,
             "acceptance_sha256": catalog.digest_file(Path(acceptance_snapshot)),
@@ -345,6 +353,7 @@ def render(root, artifact_snapshot, acceptance_snapshot, timeline, regions, out)
             "memory_regions": compiled["regions"],
             "residue_fact_ids": compiled["residue_fact_ids"],
             "memory_statistics": stats,
+            "memory_competition": competition_receipt,
             "strength_schedule_sha256": strength_schedule["schedule_sha256"],
             "strength_formula": strength_schedule["formula"],
             "memory_strength_summary": strength_schedule["facts"],
