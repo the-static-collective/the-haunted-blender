@@ -26,6 +26,8 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 [Door Dance 001](docs/DOOR_DANCE_001.md) turns that accepted door into a small, repeatable performance: open partway, pause, close a little, pause and open again. Its private MP4 has an exact source-frame edit map and a separate receipt.
 
+[Observer-Local Vision 001](docs/OBSERVER_LOCAL_VISION_001.md) makes the camera an explicit I/eye over authored SceneWorld facts. Door openness changes what that observer can presently see; a content-addressed receipt carries prior visibility forward as memory residue without rewriting occurrence.
+
 ## Sister-project boundary
 
 [Haunted Toaster](https://github.com/the-static-collective/the-haunted-toaster) is music/score-first and owns its accepted visual-score, resolved timeline, render and receipt authority. Haunted Blender is story/scene-first and owns its own film project authority. Exchange through explicit versioned adapters only. The old Toaster Lab is a read-only historical experiment, not a deployment target.
