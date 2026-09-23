@@ -99,13 +99,12 @@ def validate(recipe: dict) -> None:
         members = source + target
         if any(not isinstance(p, str) or p not in seen_parts for p in members) or len(set(members)) != len(members):
             raise ValueError("Event references unknown or repeated part")
-    # Every noninitial part must have a unique producer. An existing identity
-    # cannot be born again, including a recycled split parent after a join.
+    # Producers and consumers are collected independently of JSON array order.\n    # An existing identity cannot be born again; a consumed identity is not recycled.\n    # Frame ordering, not list ordering, defines the event history.
     producer, consumer = {}, {}
     for event in events:
         for name in event["to"]:
-            if name in producer or name in consumer:
-                raise ValueError("Part has duplicate or contradictory lifecycle: " + name)
+            if name in producer:
+                raise ValueError("Part has duplicate producing event: " + name)
             producer[name] = event
         for name in event["from"]:
             if name in consumer:
