@@ -1,7 +1,10 @@
 """The finite image does not grant two memories unlimited visual authority."""
 import unittest
+import json
+import shutil
+from pathlib import Path
 
-from haunted_blender import memory_competition, memory_feedback, memory_strength
+from haunted_blender import catalog, memory_competition, memory_feedback, memory_strength
 from haunted_blender import observer_local
 
 WORLD = {
@@ -108,6 +111,43 @@ class CompetitionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "overlapping authored regions"):
             memory_competition._memory_frames(frames, other)
 
+
+
+
+@unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "FFmpeg required")
+class AcceptedCompetitionVideoTests(unittest.TestCase):
+    def setUp(self):
+        from test_memory_feedback import AcceptedMemoryFeedbackTests
+        AcceptedMemoryFeedbackTests.setUp(self)
+        self.out = self.root / "renders" / "memory-competition" / "two-memories.mp4"
+
+    def test_real_video_receipt_and_accepted_source_remain_separate(self):
+        a = observer_local.project(WORLD, 0, EYE, {"door-A": 1.0, "door-B": 0.0})
+        b = observer_local.project(WORLD, 0, EYE, {"door-A": 0.0, "door-B": 1.0},
+                                   a["memory_receipt"])
+        both = observer_local.project(WORLD, 0, EYE, {"door-A": 0.0, "door-B": 0.0},
+                                      b["memory_receipt"])
+        timeline = [
+            {"start_frame": 0, "end_frame_exclusive": 4, "projection": a},
+            {"start_frame": 4, "end_frame_exclusive": 8, "projection": b},
+            {"start_frame": 8, "end_frame_exclusive": 12, "projection": both},
+        ]
+        result = memory_feedback.render(
+            self.root, self.artifact["snapshot"], self.acceptance["acceptance"],
+            timeline, REGIONS, self.out, competition=True)
+        receipt = json.loads(Path(result["receipt"]).read_text())
+        competition = receipt["memory_competition"]
+        self.assertEqual(receipt["schema"], memory_competition.SCHEMA)
+        self.assertEqual(receipt["output_sha256"], catalog.digest_file(self.out))
+        self.assertEqual(receipt["source_video_sha256"], self.source_sha)
+        self.assertEqual(competition["memory_fact_ids"], ["fact-A", "fact-B"])
+        self.assertGreater(competition["overlap_pixel_count"], 0)
+        self.assertFalse(receipt["distribution_authorized"])
+        self.assertEqual(catalog.digest_file(self.source), self.source_sha)
+        with self.assertRaisesRegex(ValueError, "overwrite"):
+            memory_feedback.render(
+                self.root, self.artifact["snapshot"], self.acceptance["acceptance"],
+                timeline, REGIONS, self.out, competition=True)
 
 if __name__ == "__main__":
     unittest.main()
