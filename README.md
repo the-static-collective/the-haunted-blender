@@ -18,6 +18,8 @@ See [charter](docs/CHARTER.md), [architecture](docs/ARCHITECTURE.md), [roadmap a
 
 An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) freezes a synthetic approved still and prompt, then admits a completed video as a separately reviewable candidate for that scene beat. A separate [Take Cut adapter](docs/TAKE_CUT_001.md) can place one explicitly accepted candidate into a silent private cut while other accepted beats remain static.
 
+[Creative Use 001](docs/CREATIVE_USE_001.md) verifies that the same video bytes can enter two separately accepted scene placements with distinct use identities, without assigning either use authority over the source clip or the other scene.
+
 ## Sister-project boundary
 
 [Haunted Toaster](https://github.com/the-static-collective/the-haunted-toaster) is music/score-first and owns its accepted visual-score, resolved timeline, render and receipt authority. Haunted Blender is story/scene-first and owns its own film project authority. Exchange through explicit versioned adapters only. The old Toaster Lab is a read-only historical experiment, not a deployment target.
