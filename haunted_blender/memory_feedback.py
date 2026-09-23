@@ -13,13 +13,11 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from . import catalog, observer_local, project, take_cut
+from . import catalog, memory_strength, observer_local, project, take_cut
 
-SCHEMA = "haunted-blender/memory-feedback-receipt/v0"
-ADAPTER = "observer-local-memory-feedback/v0"
+SCHEMA = "haunted-blender/memory-feedback-receipt/v1"
+ADAPTER = "observer-local-memory-feedback/v1"
 WIDTH, HEIGHT, FPS, MAX_FRAMES = 320, 180, 12, 120
-RESIDUE_START_PERCENT = 64
-DECAY_PERCENT = 88
 SHIFT_X_PER_FRAME = 1
 MAX_SHIFT_X = 8
 
@@ -173,14 +171,12 @@ def _capture(source, box):
     return bytes(captured)
 
 
-def _overlay(frame, remembered, box, age):
+def _overlay(frame, remembered, box, age, strength):
     x0, y0, x1, y1 = box
-    width = x1 - x0
-    strength = RESIDUE_START_PERCENT
-    for _ in range(max(0, age - 1)):
-        strength = strength * DECAY_PERCENT // 100
+    _require(type(strength) is int and 0 <= strength <= 100,
+             "Memory strength must be an integer percentage")
     if strength <= 0:
-        return strength
+        return 0
     shift = min(MAX_SHIFT_X, age * SHIFT_X_PER_FRAME)
     cursor = 0
     for y in range(y0, y1):
@@ -205,7 +201,7 @@ def _overlay(frame, remembered, box, age):
     return strength
 
 
-def _memory_frames(frames, compiled):
+def _memory_frames(frames, compiled, strength_schedule=None):
     frame_bytes = WIDTH * HEIGHT * 3
     _require(len(frames) % frame_bytes == 0, "Frame buffer is incomplete")
     count = len(frames) // frame_bytes
@@ -213,11 +209,20 @@ def _memory_frames(frames, compiled):
     _require(compiled["segments"][-1]["end_frame_exclusive"] == count,
              "Compiled timeline does not match frame buffer")
 
+    if strength_schedule is None:
+        strength_schedule = memory_strength.build(compiled, count)
+    memory_strength.validate(strength_schedule)
+    _require(strength_schedule["frame_count"] == count
+             and strength_schedule["observer_id"] == compiled["observer_id"]
+             and strength_schedule["world_sha256"] == compiled["world_sha256"],
+             "Memory strength schedule does not match observer timeline")
+
     output = bytearray(len(frames))
     memories = {}
     stats = {
         fid: {"captured_frames": 0, "residue_frames": 0,
-              "max_residue_age": 0, "last_strength_percent": 0}
+              "max_residue_age": 0, "first_strength_percent": None,
+              "peak_strength_percent": 0, "last_strength_percent": 0}
         for fid in compiled["regions"]
     }
     segment_index = 0
@@ -242,11 +247,20 @@ def _memory_frames(frames, compiled):
                 _require(fact_id in memories,
                          "Memory residue has no on-timeline visual capture")
                 memories[fact_id]["age"] += 1
-                strength = _overlay(frame, memories[fact_id]["pixels"],
-                                    region["pixels"], memories[fact_id]["age"])
+                derived = strength_schedule["frames"][index]["strengths"].get(fact_id)
+                _require(isinstance(derived, dict)
+                         and type(derived.get("strength_percent")) is int,
+                         "Memory residue lacks a derived strength")
+                strength = _overlay(
+                    frame, memories[fact_id]["pixels"], region["pixels"],
+                    memories[fact_id]["age"], derived["strength_percent"])
                 stats[fact_id]["residue_frames"] += 1
                 stats[fact_id]["max_residue_age"] = max(
                     stats[fact_id]["max_residue_age"], memories[fact_id]["age"])
+                if stats[fact_id]["first_strength_percent"] is None:
+                    stats[fact_id]["first_strength_percent"] = strength
+                stats[fact_id]["peak_strength_percent"] = max(
+                    stats[fact_id]["peak_strength_percent"], strength)
                 stats[fact_id]["last_strength_percent"] = strength
     return bytes(output), stats
 
@@ -278,7 +292,8 @@ def render(root, artifact_snapshot, acceptance_snapshot, timeline, regions, out)
     count = len(decoded.stdout) // frame_bytes
     _require(2 <= count <= MAX_FRAMES, "Expected 2–120 sampled frames")
     compiled = _compile_timeline(count, timeline, regions)
-    output_frames, stats = _memory_frames(decoded.stdout, compiled)
+    strength_schedule = memory_strength.build(compiled, count)
+    output_frames, stats = _memory_frames(decoded.stdout, compiled, strength_schedule)
 
     _require(catalog.digest_file(video) == witness["video_sha256"],
              "Accepted take changed during memory synthesis")
@@ -330,10 +345,12 @@ def render(root, artifact_snapshot, acceptance_snapshot, timeline, regions, out)
             "memory_regions": compiled["regions"],
             "residue_fact_ids": compiled["residue_fact_ids"],
             "memory_statistics": stats,
+            "strength_schedule_sha256": strength_schedule["schedule_sha256"],
+            "strength_formula": strength_schedule["formula"],
+            "memory_strength_summary": strength_schedule["facts"],
             "visual_policy": {
                 "capture": "last source pixels while fact is present_to_eye",
-                "residue_start_percent": RESIDUE_START_PERCENT,
-                "decay_percent_per_residue_frame": DECAY_PERCENT,
+                "strength": "derived from prior dwell, authored focus, repetition and recency",
                 "shift_x_per_frame": SHIFT_X_PER_FRAME,
                 "max_shift_x": MAX_SHIFT_X,
             },
@@ -343,6 +360,7 @@ def render(root, artifact_snapshot, acceptance_snapshot, timeline, regions, out)
                 "A memory receipt contains fact history, not pixels",
                 "Residual pixels were captured only while the fact was present_to_eye in this timeline",
                 "The afterimage is observer-conditioned cinematic presentation, not evidence of current presence",
+                "Memory strength is a deterministic cinematic weight, not a psychological measurement",
                 "Authored regions are filmmaker spatial assertions, not inferred tracking or identity",
                 "The output is a derived proposal with no inherited publication or scene authority",
             ],

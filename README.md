@@ -30,6 +30,8 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 [Memory Feedback 001](docs/MEMORY_FEEDBACK_001.md) lets those memory residues affect a private derived render. Pixels are captured only while a fact is actually present to the camera/I-eye; after occlusion, the last seen pixels can persist as a decaying displaced afterimage without being promoted to current evidence.
 
+[Memory Strength 001](docs/MEMORY_STRENGTH_001.md) replaces one universal ghost weight with a content-addressed encounter-history schedule: dwell, authored camera focus, repeated encounters and recency determine how strongly each valid residue affects the image, with no future-frame leakage and no claim to psychological measurement.
+
 ## Sister-project boundary
 
 [Haunted Toaster](https://github.com/the-static-collective/the-haunted-toaster) is music/score-first and owns its accepted visual-score, resolved timeline, render and receipt authority. Haunted Blender is story/scene-first and owns its own film project authority. Exchange through explicit versioned adapters only. The old Toaster Lab is a read-only historical experiment, not a deployment target.
