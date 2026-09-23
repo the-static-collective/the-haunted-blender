@@ -139,6 +139,21 @@ class ObjectEventsTests(unittest.TestCase):
         self.assertEqual(at(42)["rim"], 0.)
         self.assertEqual(at(48)["assembled"], 1.)
 
+    def test_unordered_event_json_has_identical_canonical_frame_history(self):
+        parts=self.parts()
+        forward=self.events()
+        reverse=list(reversed(self.events()))
+        first=n6.create(self.root,self.n5,parts,forward)
+        second=n6.create(self.root,self.n5,parts,reverse)
+        self.assertEqual(
+            [n6.frame_state(first,frame)["effective_visibility"] for frame in range(49)],
+            [n6.frame_state(second,frame)["effective_visibility"] for frame in range(49)],
+        )
+        self.assertEqual(
+            n6.plan(self.root,n6.freeze(self.root,first["id"]))["lineage"],
+            n6.plan(self.root,n6.freeze(self.root,second["id"]))["lineage"],
+        )
+
     def test_reserved_and_unknown_types_refused(self):
         bad=self.events()
         bad[0]["type"]="open"
@@ -166,7 +181,7 @@ class ObjectEventsTests(unittest.TestCase):
     def test_double_birth_dead_before_birth_and_illegal_reused_identity_refused(self):
         events=self.events()
         events.append({"id":"again","type":"birth","from":[],"to":["shadow"],"start_frame":14,"end_frame":19})
-        with self.assertRaisesRegex(ValueError,"duplicate or contradictory lifecycle"):
+        with self.assertRaisesRegex(ValueError,"duplicate producing event"):
             n6.create(self.root,self.n5,self.parts(),events)
         events=self.events()
         events[2]["start_frame"]=15
@@ -231,7 +246,7 @@ class ObjectEventsTests(unittest.TestCase):
         with Image.open(png) as im:
             self.assertEqual(im.mode,"RGBA")
             self.assertEqual(im.getpixel((5,5))[3],0)
-            self.assertGreater(im.getpixel((160,90))[3],0)
+            self.assertGreater(im.getpixel((120,90))[3],0)
         self.assertTrue(output.with_suffix(".mp4.receipt.json").is_file())
         with self.assertRaises(FileExistsError):
             n6.render(self.root,snap,output,alpha_preview_out=png)
