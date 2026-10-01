@@ -1,0 +1,43 @@
+name: reLATTE Video Window 001
+
+on:
+  push:
+    branches:
+      - experimental/relatte-video-window-001
+    paths:
+      - 'haunted_blender/video_resolver.py'
+      - 'haunted_blender/accepted_video_server.py'
+      - 'tests/test_video_resolver.py'
+      - 'docs/RELATTE_VIDEO_WINDOW_001.md'
+      - '.github/workflows/relatte-video-window-001.yml'
+  pull_request:
+    paths:
+      - 'haunted_blender/video_resolver.py'
+      - 'haunted_blender/accepted_video_server.py'
+      - 'tests/test_video_resolver.py'
+      - 'docs/RELATTE_VIDEO_WINDOW_001.md'
+      - '.github/workflows/relatte-video-window-001.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  accepted-video-resolver:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Run accepted-video resolver contract
+        run: |
+          python -m unittest tests.test_video_resolver -v
+          python -m py_compile haunted_blender/video_resolver.py
+          python -m py_compile haunted_blender/accepted_video_server.py
