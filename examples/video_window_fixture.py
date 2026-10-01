@@ -42,7 +42,11 @@ def story():
             {"id": "closed", "subject": "door", "predicate": "state",
              "value": "closed", "since_beat": 0, "basis": by},
         ],
-        "beats": [{"id": "beat-0", "index": 0}],
+        "beats": [
+            {"id": "arrival", "index": 0},
+            {"id": "motion", "index": 1},
+            {"id": "return", "index": 2},
+        ],
         "knowledge": [
             {"id": "audience-sees", "observer": "audience",
              "fact_id": "closed", "since_beat": 0, "basis": by},
@@ -63,21 +67,29 @@ def main():
 
     source_dir = root / "fixture-source"
     source_dir.mkdir(parents=True, exist_ok=True)
-    image = source_dir / "door.png"
-    png(image, (80, 120, 180))
+    for name, rgb in (
+        ("source", (80, 120, 180)),
+        ("bridge", (180, 100, 80)),
+        ("target", (120, 180, 100)),
+    ):
+        png(source_dir / (name + ".png"), rgb)
     catalog.scan(root, source_dir)
 
     con = catalog.connect(root)
     try:
-        asset_id = con.execute("SELECT id FROM assets WHERE path=?", (str(image),)).fetchone()["id"]
+        ids = {
+            Path(row["path"]).stem: row["id"]
+            for row in con.execute("SELECT path,id FROM assets")
+        }
     finally:
         con.close()
 
     recipe = alchemy.create(
         root,
-        asset_id,
-        asset_id,
-        relation="identity-echo",
+        ids["source"],
+        ids["target"],
+        bridge=ids["bridge"],
+        relation="triadic-bridge",
         statement="Synthetic Video Window fixture",
     )
     alchemy_snapshot = alchemy.freeze(root, recipe["id"])
@@ -88,14 +100,18 @@ def main():
         root,
         world_snapshot,
         alchemy_snapshot,
-        [{"beat": 0, "role": "source", "candidate": "wide"}],
+        [
+            {"beat": 0, "role": "source", "candidate": "wide"},
+            {"beat": 1, "role": "bridge", "candidate": "wide"},
+            {"beat": 2, "role": "target", "candidate": "wide"},
+        ],
         filmmaker_approval=True,
     )
 
     request = creative_take.request(
         root,
         accepted["snapshot"],
-        0,
+        1,
         "Synthetic moving test pattern; no people.",
         synthetic_source=True,
         disclose_to_provider=True,
