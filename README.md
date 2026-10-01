@@ -39,3 +39,41 @@ python -m haunted_blender new-film ~/HauntedBlender "The Unopened Letter"
 Next use the returned film ID with `new-scene`, then the scene ID and asset ID with `add-shot`, followed by `freeze`, `plan`, and `render --out .../film.mp4`. Use `derivative ROOT RAW_ASSET_ID /path/to/edited.jpg` before rendering a CR2-sourced shot.
 
 **Do not commit personal photographs, SQLite libraries, generated projects, render outputs, subject identifiers or EXIF location data to this public repository.** The user-facing application should remain unreleased until its complete-film gate is satisfied.
+
+
+## reLATTE Video Window 001
+
+The experimental [Video Window resolver](docs/RELATTE_VIDEO_WINDOW_001.md) exposes only **filmmaker-accepted private takes** by exact SHA-256 address.
+
+```text
+sha256:<video digest>
+→ accepted-take witness
+→ request + Scene Artifact lineage
+→ admission receipt
+→ current MP4 byte re-verification
+→ playable video-stream probe
+→ read-only loopback stream
+```
+
+Candidate clips that were merely admitted but not explicitly accepted do not resolve.
+
+```text
+ADDRESS != ACCEPTANCE
+CANDIDATE != FILMMAKER ACCEPTED TAKE
+ACCEPTANCE != PUBLICATION AUTHORIZATION
+PLAYABLE != RELEASED
+```
+
+For local ROroomOM integration:
+
+```bash
+python -m haunted_blender.accepted_video_server ~/HauntedBlender \
+  --port 13704 \
+  --room-origin http://127.0.0.1:13702
+```
+
+A synthetic private fixture can be built with:
+
+```bash
+PYTHONPATH=. python examples/video_window_fixture.py /tmp/video-window-fixture
+```
