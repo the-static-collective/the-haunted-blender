@@ -1,0 +1,42 @@
+name: N6 object-events lineage and video proof
+
+on:
+  pull_request:
+    paths:
+      - 'haunted_blender/object_events.py'
+      - 'haunted_blender/object_events_cli.py'
+      - 'tests/test_object_events.py'
+      - '.github/workflows/object_events.yml'
+  push:
+    branches:
+      - experimental/object-events-v0.1
+
+jobs:
+  object-events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install local rendering dependencies
+        run: |
+          python -m pip install Pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Compile all N0-N6 modules
+        run: python -m compileall -q haunted_blender
+      - name: Run all regression, event legality and decoded-video tests
+        run: python -m unittest discover -s tests -v
+      - name: Exercise existing command doors and new event interface
+        run: |
+          python -m haunted_blender --help
+          python -m haunted_blender.alchemy_cli --help
+          python -m haunted_blender.correspondence_cli --help
+          python -m haunted_blender.living_mesh_cli --help
+          python -m haunted_blender.contour_cli --help
+          python -m haunted_blender.living_object_cli --help
+          python -m haunted_blender.object_events_cli --help

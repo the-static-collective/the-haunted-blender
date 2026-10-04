@@ -1,0 +1,39 @@
+name: N3 living-mesh math and video proof
+
+on:
+  pull_request:
+    paths:
+      - 'haunted_blender/living_mesh.py'
+      - 'haunted_blender/living_mesh_cli.py'
+      - 'tests/test_living_mesh.py'
+      - '.github/workflows/living_mesh.yml'
+  push:
+    branches:
+      - experimental/living-mesh-v0.1
+
+jobs:
+  living-mesh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install local optional rendering dependencies
+        run: |
+          python -m pip install Pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Compile N0 through N3
+        run: python -m compileall -q haunted_blender
+      - name: Run all contract tests and actual frame renders
+        run: python -m unittest discover -s tests -v
+      - name: Smoke all command doors
+        run: |
+          python -m haunted_blender --help
+          python -m haunted_blender.alchemy_cli --help
+          python -m haunted_blender.correspondence_cli --help
+          python -m haunted_blender.living_mesh_cli --help

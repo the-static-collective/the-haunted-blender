@@ -1,0 +1,40 @@
+name: N4 contour/material isolated-video proof
+
+on:
+  pull_request:
+    paths:
+      - 'haunted_blender/contour_material.py'
+      - 'haunted_blender/contour_cli.py'
+      - 'tests/test_contour_material.py'
+      - '.github/workflows/contour_material.yml'
+  push:
+    branches:
+      - experimental/contour-material-v0.1
+
+jobs:
+  contour:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install optional local rendering dependencies
+        run: |
+          python -m pip install Pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Compile N0 through N4
+        run: python -m compileall -q haunted_blender
+      - name: Run all contract tests including decoded video frames
+        run: python -m unittest discover -s tests -v
+      - name: Smoke existing and new CLI doors
+        run: |
+          python -m haunted_blender --help
+          python -m haunted_blender.alchemy_cli --help
+          python -m haunted_blender.correspondence_cli --help
+          python -m haunted_blender.living_mesh_cli --help
+          python -m haunted_blender.contour_cli --help
