@@ -1,0 +1,28 @@
+name: Counterfactual Director experimental slice
+on:
+  push:
+    branches:
+      - experimental/counterfactual-director-001
+  pull_request:
+    paths:
+      - 'haunted_blender/counterfactual*.py'
+      - 'tests/test_counterfactual.py'
+      - 'docs/COUNTERFACTUAL_DIRECTOR_001.md'
+      - '.github/workflows/counterfactual.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax check
+        run: python -m compileall -q haunted_blender
+      - name: Stacked contract and real FFmpeg tests
+        run: python -m unittest discover -s tests -v
+      - name: Command interface
+        run: python -m haunted_blender.counterfactual_cli --help

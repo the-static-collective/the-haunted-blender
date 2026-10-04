@@ -1,0 +1,17 @@
+[
+  {
+    "beat": 0,
+    "role": "source",
+    "candidate": "wide"
+  },
+  {
+    "beat": 1,
+    "role": "bridge",
+    "candidate": "wide"
+  },
+  {
+    "beat": 2,
+    "role": "target",
+    "candidate": "wide"
+  }
+]

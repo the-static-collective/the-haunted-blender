@@ -1,0 +1,170 @@
+"""Local, source-preserving archive catalog. No cloud calls or source mutations."""
+from __future__ import annotations
+
+import hashlib
+import os
+import sqlite3
+from pathlib import Path
+from typing import Iterable
+
+SUPPORTED = {
+    ".cr2": "raw", ".cr3": "raw", ".dng": "raw",
+    ".jpg": "image", ".jpeg": "image", ".png": "image",
+    ".tif": "image", ".tiff": "image", ".webp": "image",
+    ".mov": "video", ".mp4": "video", ".mkv": "video",
+    ".wav": "audio", ".mp3": "audio", ".flac": "audio",
+}
+DISPLAYABLE = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".webp"}
+
+
+def digest_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def connect(root: Path) -> sqlite3.Connection:
+    root = root.expanduser().resolve()
+    db = root / ".haunted-blender" / "library.sqlite3"
+    if not db.is_file():
+        raise FileNotFoundError(f"Initialize the Haunted Blender library first: {root}")
+    con = sqlite3.connect(str(db))
+    con.row_factory = sqlite3.Row
+    con.execute("PRAGMA foreign_keys = ON")
+    return con
+
+
+def init(root: Path) -> Path:
+    root = root.expanduser().resolve()
+    for name in (".haunted-blender", "projects", "snapshots", "renders"):
+        (root / name).mkdir(parents=True, exist_ok=True)
+    db = root / ".haunted-blender" / "library.sqlite3"
+    con = sqlite3.connect(str(db))
+    try:
+        con.executescript("""
+        PRAGMA foreign_keys = ON;
+        CREATE TABLE IF NOT EXISTS assets (
+          id TEXT PRIMARY KEY, path TEXT NOT NULL UNIQUE, kind TEXT NOT NULL,
+          extension TEXT NOT NULL, size_bytes INTEGER NOT NULL, mtime_ns INTEGER NOT NULL,
+          sha256 TEXT NOT NULL, sidecar_path TEXT, rights TEXT NOT NULL DEFAULT 'unassessed',
+          indexed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS asset_digest_idx ON assets(sha256);
+        CREATE INDEX IF NOT EXISTS asset_kind_idx ON assets(kind);
+        CREATE TABLE IF NOT EXISTS derivatives (
+          raw_id TEXT PRIMARY KEY REFERENCES assets(id),
+          image_id TEXT NOT NULL REFERENCES assets(id),
+          associated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        """)
+        con.commit()
+    finally:
+        con.close()
+    return root
+
+
+def _scan_paths(folder: Path) -> Iterable[Path]:
+    for base, dirs, files in os.walk(folder, followlinks=False):
+        dirs[:] = sorted(d for d in dirs if not (Path(base) / d).is_symlink() and d not in {".git", ".haunted-blender"})
+        for name in sorted(files):
+            p = Path(base) / name
+            if not p.is_symlink() and p.suffix.lower() in SUPPORTED:
+                yield p
+
+
+def index_file(con: sqlite3.Connection, path: Path) -> tuple[str, bool]:
+    """Returns (path-record asset id, whether a path was re-hashed).
+
+    Identical files at distinct paths have one content digest but separate source
+    records. This preserves provenance, context and distinct rights.
+    """
+    supplied = path.expanduser()
+    if supplied.is_symlink():
+        raise ValueError("Symlinks cannot be indexed as source files")
+    path = supplied.resolve(strict=True)
+    if not path.is_file():
+        raise ValueError("Only regular, non-symlink files may be indexed")
+    ext = path.suffix.lower()
+    if ext not in SUPPORTED:
+        raise ValueError(f"Unsupported extension: {ext}")
+    info = path.stat()
+    item = con.execute("SELECT id, size_bytes, mtime_ns FROM assets WHERE path=?", (str(path),)).fetchone()
+    if item and item["size_bytes"] == info.st_size and item["mtime_ns"] == info.st_mtime_ns:
+        return item["id"], False
+    sha = digest_file(path)
+    asset_id = "asset-" + hashlib.sha256(str(path).encode("utf-8")).hexdigest()[:24]
+    sidecar = path.with_suffix(".xmp")
+    if not sidecar.is_file():
+        candidate = path.with_suffix(".XMP")
+        sidecar = candidate if candidate.is_file() else None
+    con.execute("""
+      INSERT INTO assets (id, path, kind, extension, size_bytes, mtime_ns, sha256, sidecar_path)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(path) DO UPDATE SET size_bytes=excluded.size_bytes,
+          mtime_ns=excluded.mtime_ns, sha256=excluded.sha256,
+          sidecar_path=excluded.sidecar_path, indexed_at=CURRENT_TIMESTAMP
+    """, (asset_id, str(path), SUPPORTED[ext], ext, info.st_size, info.st_mtime_ns, sha, str(sidecar) if sidecar else None))
+    return asset_id, True
+
+
+def scan(root: Path, folder: Path) -> dict:
+    folder = folder.expanduser().resolve(strict=True)
+    if not folder.is_dir():
+        raise NotADirectoryError(folder)
+    con = connect(root)
+    counts = {"seen": 0, "indexed_or_changed": 0, "unchanged": 0, "errors": 0}
+    try:
+        for path in _scan_paths(folder):
+            counts["seen"] += 1
+            try:
+                _, changed = index_file(con, path)
+                counts["indexed_or_changed" if changed else "unchanged"] += 1
+                con.commit()  # resumable even on interruption
+            except (OSError, ValueError, sqlite3.Error):
+                counts["errors"] += 1
+        return counts
+    finally:
+        con.close()
+
+
+def derivative(root: Path, raw_id: str, image_path: Path) -> str:
+    con = connect(root)
+    try:
+        raw = con.execute("SELECT kind FROM assets WHERE id=?", (raw_id,)).fetchone()
+        if raw is None or raw["kind"] != "raw":
+            raise ValueError("Source asset must be a cataloged RAW image")
+        if image_path.suffix.lower() not in DISPLAYABLE:
+            raise ValueError("Derivative must be JPEG, PNG, TIFF or WebP")
+        image_id, _ = index_file(con, image_path)
+        con.execute("INSERT INTO derivatives(raw_id,image_id) VALUES (?,?) "
+                    "ON CONFLICT(raw_id) DO UPDATE SET image_id=excluded.image_id, associated_at=CURRENT_TIMESTAMP",
+                    (raw_id, image_id))
+        con.commit()
+        return image_id
+    finally:
+        con.close()
+
+
+def source_for_render(con: sqlite3.Connection, asset_id: str) -> sqlite3.Row:
+    row = con.execute("SELECT * FROM assets WHERE id=?", (asset_id,)).fetchone()
+    if row is None:
+        raise ValueError(f"Unknown asset: {asset_id}")
+    if row["kind"] == "raw":
+        derived = con.execute("SELECT a.* FROM derivatives d JOIN assets a ON a.id=d.image_id WHERE d.raw_id=?", (asset_id,)).fetchone()
+        if derived is None:
+            raise ValueError(f"RAW asset {asset_id} has no renderable derivative; associate an edited export")
+        return derived
+    if row["kind"] != "image" or row["extension"] not in DISPLAYABLE:
+        raise ValueError(f"Asset {asset_id} is not a renderable still image")
+    return row
+
+
+def stats(root: Path) -> dict:
+    con = connect(root)
+    try:
+        rows = con.execute("SELECT kind, COUNT(*) as count, SUM(size_bytes) as bytes FROM assets GROUP BY kind ORDER BY kind").fetchall()
+        return {r["kind"]: {"files": r["count"], "bytes": r["bytes"]} for r in rows}
+    finally:
+        con.close()

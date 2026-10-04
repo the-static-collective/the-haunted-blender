@@ -1,0 +1,29 @@
+name: Scene Weave experimental contracts
+on:
+  push:
+    branches:
+      - experimental/scene-weave-001
+  pull_request:
+    paths:
+      - 'haunted_blender/scene_weave*.py'
+      - 'tests/test_scene_weave.py'
+      - 'docs/SCENE_WEAVE_001.md'
+      - 'examples/scene-weave-*'
+      - '.github/workflows/scene-weave.yml'
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile all modules
+        run: python -m compileall -q haunted_blender
+      - name: Existing N0/N1 and new Scene Weave tests
+        run: python -m unittest discover -s tests -v
+      - name: Scene Weave command door
+        run: python -m haunted_blender.scene_weave_cli --help

@@ -1,0 +1,111 @@
+{
+  "title": "The Unopened Letter — fictional scene seed",
+  "entities": [
+    {
+      "id": "mother",
+      "kind": "character",
+      "name": "Mother",
+      "basis": "filmmaker_established"
+    },
+    {
+      "id": "daughter",
+      "kind": "character",
+      "name": "Daughter",
+      "basis": "filmmaker_established"
+    },
+    {
+      "id": "letter",
+      "kind": "prop",
+      "name": "A sealed letter",
+      "basis": "filmmaker_established"
+    },
+    {
+      "id": "kitchen",
+      "kind": "location",
+      "name": "Kitchen",
+      "basis": "filmmaker_established"
+    }
+  ],
+  "facts": [
+    {
+      "id": "sealed",
+      "subject": "letter",
+      "predicate": "state",
+      "value": "sealed",
+      "since_beat": 0,
+      "basis": "filmmaker_established"
+    },
+    {
+      "id": "sender",
+      "subject": "letter",
+      "predicate": "sender",
+      "value": "the mother",
+      "since_beat": 0,
+      "basis": "filmmaker_established"
+    }
+  ],
+  "beats": [
+    {
+      "id": "arrival",
+      "index": 0
+    },
+    {
+      "id": "decision",
+      "index": 1
+    },
+    {
+      "id": "aftermath",
+      "index": 2
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "mother-knows",
+      "observer": "mother",
+      "fact_id": "sender",
+      "since_beat": 0,
+      "basis": "filmmaker_established"
+    },
+    {
+      "id": "audience-sees",
+      "observer": "audience",
+      "fact_id": "sealed",
+      "since_beat": 0,
+      "basis": "filmmaker_established"
+    },
+    {
+      "id": "daughter-sees",
+      "observer": "daughter",
+      "fact_id": "sealed",
+      "since_beat": 1,
+      "basis": "filmmaker_established"
+    }
+  ],
+  "relations": [
+    {
+      "id": "letter-in-room",
+      "from": "letter",
+      "to": "kitchen",
+      "basis": "filmmaker_established",
+      "kind": "located-in"
+    }
+  ],
+  "affordances": [
+    {
+      "id": "open-letter",
+      "actor": "daughter",
+      "object": "letter",
+      "requires_fact_ids": [
+        "sealed"
+      ],
+      "status": "proposed"
+    }
+  ],
+  "questions": [
+    {
+      "id": "who",
+      "text": "When will she discover the sender?",
+      "status": "open"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+name: Scene Artifact experimental bridge
+on:
+  push:
+    branches:
+      - experimental/scene-artifact-001
+  pull_request:
+    paths:
+      - 'haunted_blender/scene_artifact*.py'
+      - 'tests/test_scene_artifact.py'
+      - 'docs/SCENE_ARTIFACT_001.md'
+      - '.github/workflows/scene-artifact.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Syntax check
+        run: python -m compileall -q haunted_blender
+      - name: Full stacked test suite (N0, Alchemy, Weave, Artifact)
+        run: python -m unittest discover -s tests -v
+      - name: Artifact command interface
+        run: python -m haunted_blender.scene_artifact_cli --help

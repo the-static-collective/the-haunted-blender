@@ -1,0 +1,30 @@
+name: Memory Competition video proof
+
+on:
+  pull_request:
+    paths:
+      - "haunted_blender/memory_competition.py"
+      - "haunted_blender/memory_competition_cli.py"
+      - "haunted_blender/memory_feedback.py"
+      - "haunted_blender/memory_strength.py"
+      - "tests/test_memory_competition.py"
+      - ".github/workflows/memory-competition.yml"
+
+jobs:
+  video-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version
+      - name: Memory competition unit and actual-video tests
+        run: python -m unittest discover -s tests -p test_memory_competition.py -v

@@ -1,0 +1,32 @@
+name: ART I FACT constructor contracts
+on:
+  push:
+    branches:
+      - experimental/art-i-fact-constructor-001
+  pull_request:
+    paths:
+      - 'haunted_blender/construction*.py'
+      - 'tests/test_construction.py'
+      - 'docs/CONSTRUCTOR_001.md'
+      - '.github/workflows/constructor.yml'
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install real FFmpeg to exercise rendered-output proof
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - name: Assert FFmpeg installed
+        run: ffmpeg -version | head -n 1
+      - name: Compile all Python modules
+        run: python -m compileall -q haunted_blender
+      - name: Execute all N0 through Counterfactual and Constructor contract tests
+        run: python -m unittest discover -s tests -v
+      - name: Verify constructor command door
+        run: python -m haunted_blender.construction_cli --help

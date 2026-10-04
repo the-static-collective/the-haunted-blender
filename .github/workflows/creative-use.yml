@@ -1,0 +1,26 @@
+name: Creative use lineage proof
+on:
+  push:
+    branches:
+      - experimental/creative-use-001
+  pull_request:
+    paths:
+      - 'haunted_blender/creative_use*.py'
+      - 'tests/test_creative_use.py'
+      - 'docs/CREATIVE_USE_001.md'
+      - '.github/workflows/creative-use.yml'
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - run: python -m compileall -q haunted_blender
+      - run: python -m unittest discover -s tests -v
+      - run: python -m haunted_blender.creative_use_cli --help
