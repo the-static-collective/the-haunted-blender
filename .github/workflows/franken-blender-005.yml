@@ -35,6 +35,7 @@ jobs:
         env:
           HAUNTED_BLENDER_GHOT_OUTPUT_DIR: ${{ github.workspace }}/output/ghot-compost-breeder-005
         run: |
+          mkdir -p output
           cat > /tmp/compost-request.json <<'JSON'
           {
             "schema": "ghot.compost-breeder-request/v0",
