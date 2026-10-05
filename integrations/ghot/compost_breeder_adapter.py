@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -204,7 +205,8 @@ def inline_artifact(name: str, value: Any) -> dict[str, str]:
 def build_result(request: dict[str, Any]) -> dict[str, Any]:
     normalized = validate_request(request)
     request_hash = digest(normalized)
-    out = ROOT / "output" / "ghot-compost-breeder" / request_hash[:24]
+    output_root = Path(os.environ.get("HAUNTED_BLENDER_GHOT_OUTPUT_DIR", str(ROOT / "output" / "ghot-compost-breeder"))).expanduser().resolve()
+    out = output_root / request_hash[:24]
     result_path = out / "adapter-result.json"
 
     if result_path.is_file():
