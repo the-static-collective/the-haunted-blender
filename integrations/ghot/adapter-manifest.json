@@ -1,0 +1,23 @@
+{
+  "schema": "ghot.external-adapter-manifest/v0",
+  "adapter_id": "haunted-blender.compost-breeder",
+  "capabilities": [
+    {
+      "capability": "creative.blender.dreambreed.sixup",
+      "protocol": "stdin-json/stdout-json-v0",
+      "command": "python3",
+      "args": [
+        "compost_breeder_adapter.py"
+      ],
+      "timeout_seconds": 60,
+      "limits": {
+        "network": false,
+        "arbitrary_shell": false,
+        "writes_only_requested_output_dir": true,
+        "selection": false,
+        "keep": false,
+        "publication": false
+      }
+    }
+  ]
+}

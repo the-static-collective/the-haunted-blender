@@ -1,0 +1,81 @@
+name: franken-blender-005-ghot-compost
+
+on:
+  push:
+    branches:
+      - integration/franken-blender-005-ghot-compost-adapter
+  pull_request:
+    branches:
+      - integration/franken-blender-004-cutout-compiler
+
+jobs:
+  ghot-compost-adapter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Pillow
+        run: python -m pip install --upgrade pip "Pillow>=9"
+
+      - name: Compile
+        run: python -m compileall -q haunted_blender integrations/ghot examples
+
+      - name: Full inherited suite plus 005
+        run: python -m unittest discover -s tests -v
+
+      - name: Build durable live adapter witness
+        env:
+          HAUNTED_BLENDER_GHOT_OUTPUT_DIR: ${{ github.workspace }}/output/ghot-compost-breeder-005
+        run: |
+          mkdir -p output
+          cat > /tmp/compost-request.json <<'JSON'
+          {
+            "schema": "ghot.compost-breeder-request/v0",
+            "authority": "proposal-request-only",
+            "parentHistoryRef": {
+              "schema": "static-collective/rendered-history-capsule/v0",
+              "capsuleHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "generation": 1,
+              "renderedMediaSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "parentCapsuleHashes": [],
+              "authority": "provenance-only"
+            },
+            "relationId": "relation:history-compost:live-adapter-witness",
+            "sourceReceiptIds": ["receipt:render:g1"],
+            "requestedEffect": "GROW_SIX_UNBORN_FILM_PREVIEWS",
+            "donorContractRefs": {},
+            "laws": []
+          }
+          JSON
+          python3 integrations/ghot/compost_breeder_adapter.py \
+            < /tmp/compost-request.json \
+            > output/ghot-compost-breeder-005-result.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result=json.loads(Path("output/ghot-compost-breeder-005-result.json").read_text())
+          assert result["schema"]=="haunted-blender/ghot-compost-breeder-result/v1"
+          assert result["ecology"]["disposition"] is None
+          assert len(result["ecology"]["proposals"])==6
+          assert len(result["sixup"]["previews"])==6
+          assert Path(result["sixup"]["contactSheetVideo"]).is_file()
+          print(result["sixup"]["contactSheetVideo"])
+          print(result["sixup"]["contactSheetSha256"])
+          PY
+
+      - name: Upload live six-up adapter witness
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreambreeder-005-ghot-live-sixup
+          path: |
+            output/ghot-compost-breeder-005-result.json
+            output/ghot-compost-breeder-005
+          if-no-files-found: error
