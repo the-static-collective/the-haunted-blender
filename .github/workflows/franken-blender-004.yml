@@ -28,7 +28,7 @@ jobs:
       - name: Six-up command door
         run: python -m haunted_blender.dream_cutout_cli --help
       - name: Render durable six-up witness
-        run: python examples/dream_cutout_004_demo.py
+        run: python -m examples.dream_cutout_004_demo
       - name: Upload six-up witness
         uses: actions/upload-artifact@v4
         with:
