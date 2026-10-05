@@ -18,7 +18,7 @@ from pathlib import Path
 from .cutout_stage import render_cutout
 from .dream_cutout_compiler import compile_proposal
 from .dreambreeder import DESCENDANT_SCHEMA, ECOLOGY_SCHEMA
-from . import catalog, video_resolver
+from . import accepted_video, catalog
 
 TIMING_SCHEMA = "haunted-blender/track-timing/v1"
 SCENE_SCHEMA = "haunted-blender/kept-scene/v1"
@@ -319,7 +319,7 @@ def awaken_kept_scene(
     if window is None:
         raise ValueError("Unknown awakening window.")
 
-    descriptor, accepted_path = video_resolver.resolve_accepted_video_for_serve(root, accepted_video_address)
+    descriptor, accepted_path = accepted_video.resolve_accepted_video_for_serve(root, accepted_video_address)
     duration = float(window["duration"])
     if float(descriptor["durationSeconds"]) < duration:
         raise ValueError("Accepted moving take is shorter than the awakening window.")
