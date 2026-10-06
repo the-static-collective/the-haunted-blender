@@ -320,25 +320,48 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
                 for row in prescription["beats"]
             ))
 
-    def test_registered_owned_drive_batch_freezes_eight_reusable_pixel_sources(self):
-        batch_path = (
-            Path(__file__).resolve().parents[1]
-            / "examples"
-            / "manga_atlas"
-            / "static-collective-owned-manga-batch-001.json"
+    def test_registered_owned_drive_collection_and_exact_snapshot_cover_fourteen_pages(self):
+        root = Path(__file__).resolve().parents[1]
+        collection = json.loads(
+            (
+                root
+                / "specimens"
+                / "008m"
+                / "static-collective-owned-page-collection-001.json"
+            ).read_text(encoding="utf-8")
         )
-        batch = json.loads(batch_path.read_text(encoding="utf-8"))
+        batch = json.loads(
+            (
+                root
+                / "specimens"
+                / "008m"
+                / "static-collective-owned-page-batch-snapshot-001.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(
+            collection["schema"],
+            "haunted-blender/page-source-collection/v1",
+        )
+        self.assertEqual(collection["sourceClass"], "owned")
+        self.assertTrue(collection["futureMembersInherit"])
+        self.assertEqual(collection["memberCount"], 14)
+        self.assertEqual(len(collection["memberSnapshot"]), 14)
+        self.assertTrue(collection["rights"]["pixelReuse"])
+        self.assertTrue(collection["rights"]["derivativeReuse"])
+        self.assertTrue(collection["rights"]["publicationReuse"])
+
         self.assertEqual(batch["schema"], "haunted-blender/page-source-batch/v1")
         self.assertEqual(batch["sourceClass"], "owned")
-        self.assertTrue(batch["rights"]["pixelReuse"])
-        self.assertTrue(batch["rights"]["derivativeReuse"])
-        self.assertTrue(batch["rights"]["publicationReuse"])
-        self.assertEqual(len(batch["items"]), 8)
+        self.assertEqual(batch["pageCount"], 14)
+        self.assertEqual(len(batch["entries"]), 14)
         self.assertEqual(
-            len({row["sha256"] for row in batch["items"]}),
-            8,
+            len({row["sha256"] for row in batch["entries"]}),
+            14,
         )
-        self.assertTrue(all(len(row["sha256"]) == 64 for row in batch["items"]))
+        self.assertTrue(
+            all(len(row["sha256"]) == 64 for row in batch["entries"])
+        )
         self.assertIn("INGEST ORDER != STORY ORDER", batch["laws"])
 
     def test_owned_batch_runs_exact_bytes_through_reports_harvest_and_combined_drawer(self):
