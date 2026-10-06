@@ -25,7 +25,7 @@ GROWING DRIVE COLLECTION
 membership / rights authority
 
 EXACT PAGE SNAPSHOT
-  14 current PNGs
+  15 current PNGs
   exact SHA-256 + dimensions
           ↓
 byte custody
@@ -43,7 +43,7 @@ Current exact-byte snapshot:
 specimens/008m/static-collective-owned-page-batch-snapshot-001.json
 ```
 
-The current snapshot contains **14 PNG pages**. Their actual downloaded bytes were SHA-256 frozen independently before being registered.
+The current snapshot contains **15 PNG pages**. Their actual downloaded bytes were SHA-256 frozen independently before being registered; the newest current member is sequence index 14.
 
 A later page added to the declared collection may inherit the collection's ownership/reuse policy, but it still receives its own fresh SHA-256 when ingested.
 
@@ -115,7 +115,7 @@ The Static Collective manga folder is now modeled as a rights-bearing collection
 haunted-blender/page-source-collection/v1
 ```
 
-The current privacy-safe repository snapshot contains **14 PNG members**:
+The current privacy-safe repository snapshot contains **15 PNG members**:
 
 ```text
 specimens/008m/static-collective-owned-page-collection-001.json
@@ -308,12 +308,12 @@ OWNERSHIP DOES NOT TRANSFER BETWEEN SOURCES
 
 ## Registered owned collection snapshot
 
-The earlier eight-page state is superseded by the current **14-page owned collection + exact-byte snapshot**.
+The earlier eight-page state is superseded by the current **15-page owned collection + exact-byte snapshot**.
 
 ```text
 GROWING COLLECTION POLICY
         +
-CURRENT 14-PAGE SHA SNAPSHOT
+CURRENT 15-PAGE SHA SNAPSHOT
         ↓
 OWNED PAGE HARVEST AUTHORITY
 ```
@@ -322,7 +322,7 @@ New pages can join the collection without rewriting old byte history. A subseque
 
 ## Multi-page sequence grammar
 
-The new eight-page Drive batch adds something the first two specimens did not provide strongly enough: **continuity across pages**.
+The growing fifteen-page Drive collection adds something the first two specimens did not provide strongly enough: **continuity across pages**.
 
 008m therefore accepts explicit page annotations:
 
