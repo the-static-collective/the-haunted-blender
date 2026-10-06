@@ -341,6 +341,112 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
         self.assertTrue(all(len(row["sha256"]) == 64 for row in batch["items"]))
         self.assertIn("INGEST ORDER != STORY ORDER", batch["laws"])
 
+    def test_owned_batch_runs_exact_bytes_through_reports_harvest_and_combined_drawer(self):
+        import hashlib
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source_dir = root / "source"
+            source_dir.mkdir()
+            entries = []
+            for index, mode in enumerate(("grid", "irregular", "grid")):
+                path = source_dir / f"page-{index:02d}.png"
+                self.make_page(path, mode=mode)
+                digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                with self.Image.open(path) as image:
+                    width, height = image.size
+                entries.append({
+                    "filename": path.name,
+                    "sha256": digest,
+                    "width": width,
+                    "height": height,
+                    "byteLength": path.stat().st_size,
+                    "sequenceIndex": index,
+                    "pageRole": None,
+                    "motifs": [],
+                    "grammarFamilies": [
+                        "cozy-ensemble",
+                        "panel-rhythm",
+                        "sequence-rhythm",
+                    ],
+                    "label": f"Owned Page {index + 1}",
+                })
+
+            batch = manga_atlas.owned_batch_manifest(
+                entries,
+                label="Synthetic Owned Batch",
+                rights_note="Synthetic fixture is fully owned for test reuse.",
+                continuity_group="fixture-room",
+                grammar_families=[
+                    "cozy-ensemble",
+                    "panel-rhythm",
+                    "sequence-rhythm",
+                ],
+            )
+            result = manga_atlas.run_owned_batch(
+                batch,
+                source_dir,
+                root / "run",
+            )
+            self.assertEqual(result["pageCount"], 3)
+            self.assertEqual(result["providerCredits"], 0)
+            self.assertEqual(result["usdMicros"], 0)
+            self.assertGreater(result["artifactCount"], 3)
+            self.assertTrue((root / "run" / "parts-drawer.combined.json").is_file())
+            self.assertTrue((root / "run" / "manga-anime-atlas.json").is_file())
+            self.assertTrue((root / "run" / "page-sequence-grammar.json").is_file())
+
+            combined = json.loads(
+                (root / "run" / "parts-drawer.combined.json").read_text()
+            )
+            self.assertEqual(combined["sourceCount"], 3)
+            self.assertEqual(combined["ownedBatchId"], batch["id"])
+            self.assertTrue(all(
+                row["ownedBatchId"] == batch["id"]
+                for row in combined["artifacts"]
+            ))
+            self.assertTrue(all(
+                len(row["sourceSha256"]) == 64
+                for row in combined["artifacts"]
+            ))
+
+    def test_owned_batch_refuses_bytes_that_no_longer_match_frozen_hash(self):
+        import hashlib
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source_dir = root / "source"
+            source_dir.mkdir()
+            path = source_dir / "page.png"
+            self.make_page(path)
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.Image.open(path) as image:
+                width, height = image.size
+
+            batch = manga_atlas.owned_batch_manifest(
+                [{
+                    "filename": path.name,
+                    "sha256": digest,
+                    "width": width,
+                    "height": height,
+                    "sequenceIndex": 0,
+                }],
+                label="Frozen Bytes",
+                rights_note="Synthetic fixture.",
+                grammar_families=["panel-rhythm"],
+            )
+
+            image = self.Image.open(path).convert("RGB")
+            image.putpixel((0, 0), (1, 2, 3))
+            image.save(path)
+
+            with self.assertRaisesRegex(ValueError, "SHA mismatch"):
+                manga_atlas.run_owned_batch(
+                    batch,
+                    source_dir,
+                    root / "run",
+                )
+
     def test_reference_manifest_cannot_self_grant_reuse_rights(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
