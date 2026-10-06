@@ -190,6 +190,123 @@ def _trim_white(gray, box: tuple[int, int, int, int], *, threshold: int = 248) -
     return x1, y1, x2, y2
 
 
+def _longest_dark_run(values: list[bool]) -> int:
+    best = 0
+    current = 0
+    for value in values:
+        if value:
+            current += 1
+            best = max(best, current)
+        else:
+            current = 0
+    return best
+
+
+def _line_runs(
+    values: list[float],
+    *,
+    threshold: float,
+    bridge: int = 5,
+) -> list[tuple[int, int, float]]:
+    indexes = [i for i, value in enumerate(values) if value >= threshold]
+    if not indexes:
+        return []
+    result = []
+    start = previous = indexes[0]
+    peak = values[start]
+    for index in indexes[1:]:
+        if index - previous <= bridge + 1:
+            previous = index
+            peak = max(peak, values[index])
+        else:
+            result.append((start, previous + 1, peak))
+            start = previous = index
+            peak = values[index]
+    result.append((start, previous + 1, peak))
+    return result
+
+
+def _border_split_panels(
+    gray,
+    *,
+    max_panels: int,
+    min_panel_size: int,
+    dark_threshold: int = 55,
+    line_ratio: float = 0.40,
+) -> list[tuple[int, int, int, int]]:
+    """Fallback splitter for dark-bordered / low-gutter comic layouts.
+
+    A candidate separator must contain a long *continuous* dark run rather than
+    merely many dark pixels. This strongly prefers panel borders over text.
+    """
+    px = gray.load()
+    width, height = gray.size
+    leaves: list[tuple[int, int, int, int]] = []
+
+    def split(box: tuple[int, int, int, int], depth: int = 0) -> None:
+        x1, y1, x2, y2 = box
+        w, h = x2 - x1, y2 - y1
+        if (
+            depth >= 8
+            or len(leaves) >= max_panels
+            or w < min_panel_size * 2
+            or h < min_panel_size
+        ):
+            leaves.append(box)
+            return
+
+        row_strength = []
+        for y in range(y1, y2):
+            values = [px[x, y] < dark_threshold for x in range(x1, x2)]
+            row_strength.append(_longest_dark_run(values) / max(1, w))
+
+        col_strength = []
+        for x in range(x1, x2):
+            values = [px[x, y] < dark_threshold for y in range(y1, y2)]
+            col_strength.append(_longest_dark_run(values) / max(1, h))
+
+        candidates = []
+        for start, end, peak in _line_runs(row_strength, threshold=line_ratio):
+            a, b = y1 + start, y1 + end
+            if a - y1 >= min_panel_size and y2 - b >= min_panel_size:
+                candidates.append(("horizontal", a, b, peak * max(1, end - start)))
+
+        for start, end, peak in _line_runs(col_strength, threshold=line_ratio):
+            a, b = x1 + start, x1 + end
+            if a - x1 >= min_panel_size and x2 - b >= min_panel_size:
+                candidates.append(("vertical", a, b, peak * max(1, end - start)))
+
+        if not candidates:
+            leaves.append(box)
+            return
+
+        candidates.sort(key=lambda row: row[3], reverse=True)
+        axis, start, end, _score = candidates[0]
+        if axis == "horizontal":
+            children = ((x1, y1, x2, start), (x1, end, x2, y2))
+        else:
+            children = ((x1, y1, start, y2), (end, y1, x2, y2))
+
+        accepted = False
+        for child in children:
+            cx1, cy1, cx2, cy2 = child
+            if cx2 - cx1 >= min_panel_size and cy2 - cy1 >= min_panel_size:
+                split(child, depth + 1)
+                accepted = True
+        if not accepted:
+            leaves.append(box)
+
+    split((0, 0, width, height))
+    unique = []
+    seen = set()
+    for box in leaves:
+        if box not in seen:
+            seen.add(box)
+            unique.append(box)
+    unique.sort(key=lambda box: (box[1], box[0]))
+    return unique[:max_panels]
+
+
 def segment_panels(
     source_path: str | Path,
     *,
@@ -256,6 +373,18 @@ def segment_panels(
             unique.append(key)
 
     unique.sort(key=lambda b: (b[1], b[0]))
+
+    # The founding 008m specimens use heavy black borders and overlapping
+    # manga composition. If whitespace XY-cut finds no useful subdivision,
+    # fall back to continuous-border splitting rather than pretending the
+    # entire page is one panel.
+    if len(unique) <= 1:
+        unique = _border_split_panels(
+            gray,
+            max_panels=max_panels,
+            min_panel_size=min_panel_size,
+        )
+
     page_area = max(1, width * height)
     result = []
     for i, (x1, y1, x2, y2) in enumerate(unique[:max_panels], start=1):
@@ -343,6 +472,7 @@ def analyze_page(manifest: dict) -> dict:
         ),
         "laws": [
             "PANEL MAP IS GEOMETRY, NOT SEMANTIC UNDERSTANDING",
+            "WHITE GUTTER AND DARK BORDER DETECTION ARE BOTH HEURISTICS",
             "PANEL != FINAL FRAME",
             "PANEL RHYTHM != SHOT PLAN",
         ],
