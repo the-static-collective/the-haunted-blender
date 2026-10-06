@@ -26,6 +26,31 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog="haunted-blender-manga-atlas")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    collection = sub.add_parser("collection")
+    collection.add_argument("output_json")
+    collection.add_argument("--label", required=True)
+    collection.add_argument("--collection-id", required=True)
+    collection.add_argument("--collection-url", default="")
+    collection.add_argument("--class", dest="source_class", required=True, choices=sorted(manga_atlas.SOURCE_CLASSES))
+    collection.add_argument("--rights-note", required=True)
+    collection.add_argument("--pixel-reuse", action="store_true")
+    collection.add_argument("--derivative-reuse", action="store_true")
+    collection.add_argument("--publication-reuse", action="store_true")
+    collection.add_argument("--future-members-inherit", action="store_true")
+    collection.add_argument("--member", action="append", default=[])
+
+    source_from_collection = sub.add_parser("source-from-collection")
+    source_from_collection.add_argument("source_image")
+    source_from_collection.add_argument("collection_json")
+    source_from_collection.add_argument("external_id")
+    source_from_collection.add_argument("output_json")
+    source_from_collection.add_argument("--label", default="")
+    source_from_collection.add_argument("--family", action="append", default=[])
+    source_from_collection.add_argument("--page-role", choices=sorted(manga_atlas.PAGE_ROLES))
+    source_from_collection.add_argument("--continuity-group")
+    source_from_collection.add_argument("--motif", action="append", default=[])
+    source_from_collection.add_argument("--sequence-index", type=int)
+
     batch_run = sub.add_parser("batch-run")
     batch_run.add_argument("batch_manifest_json")
     batch_run.add_argument("source_dir")
@@ -76,7 +101,41 @@ def main(argv=None):
 
     args = parser.parse_args(argv)
 
-    if args.command == "batch-run":
+    if args.command == "collection":
+        members = []
+        for raw in args.member:
+            if "=" in raw:
+                external_id, title = raw.split("=", 1)
+            else:
+                external_id, title = raw, raw
+            members.append({"externalId": external_id, "title": title})
+        result = manga_atlas.collection_manifest(
+            label=args.label,
+            collection_id=args.collection_id,
+            collection_url=args.collection_url,
+            source_class=args.source_class,
+            pixel_reuse=args.pixel_reuse,
+            derivative_reuse=args.derivative_reuse,
+            publication_reuse=args.publication_reuse,
+            rights_note=args.rights_note,
+            member_snapshot=members,
+            future_members_inherit=args.future_members_inherit,
+        )
+        _write(Path(args.output_json).expanduser().resolve(), result)
+    elif args.command == "source-from-collection":
+        result = manga_atlas.source_from_collection(
+            args.source_image,
+            _read(args.collection_json),
+            external_id=args.external_id,
+            label=args.label,
+            grammar_families=args.family,
+            page_role=args.page_role,
+            continuity_group=args.continuity_group,
+            motifs=args.motif,
+            sequence_index=args.sequence_index,
+        )
+        _write(Path(args.output_json).expanduser().resolve(), result)
+    elif args.command == "batch-run":
         result = manga_atlas.run_owned_batch(
             _read(args.batch_manifest_json),
             args.source_dir,
