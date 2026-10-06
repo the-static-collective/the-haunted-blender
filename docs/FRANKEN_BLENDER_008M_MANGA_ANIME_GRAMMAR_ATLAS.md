@@ -448,10 +448,11 @@ python -m haunted_blender.manga_atlas_cli source-from-collection \
   ./new-page.png \
   ./owned-collection.json \
   new-page.png \
-  ./new-page.source.json
+  ./new-page.source.json \
+  --observed-membership
 ```
 
-The second command hashes the real page bytes before harvest authority is exercised.
+The second command hashes the real page bytes before harvest authority is exercised. For a page not already present in the frozen member snapshot, `--observed-membership` records that the caller actually observed it inside the declared growing collection; future-member inheritance alone is not enough.
 
 Create an owned page source:
 
