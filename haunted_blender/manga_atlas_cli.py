@@ -26,6 +26,11 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog="haunted-blender-manga-atlas")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    batch_run = sub.add_parser("batch-run")
+    batch_run.add_argument("batch_manifest_json")
+    batch_run.add_argument("source_dir")
+    batch_run.add_argument("output_dir")
+
     source = sub.add_parser("source")
     source.add_argument("source_image")
     source.add_argument("output_json")
@@ -71,7 +76,13 @@ def main(argv=None):
 
     args = parser.parse_args(argv)
 
-    if args.command == "source":
+    if args.command == "batch-run":
+        result = manga_atlas.run_owned_batch(
+            _read(args.batch_manifest_json),
+            args.source_dir,
+            args.output_dir,
+        )
+    elif args.command == "source":
         result = manga_atlas.source_manifest(
             args.source_image,
             source_class=args.source_class,
