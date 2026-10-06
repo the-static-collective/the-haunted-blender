@@ -693,3 +693,62 @@ def director_prescription(report: dict) -> dict:
         ],
     }
     return {**body, "id": "page-director-prescription:" + _hash(body)[:24]}
+
+
+def page_harvest_to_parts_drawer(
+    harvest: dict,
+    output_path: str | Path,
+) -> dict:
+    """Bridge an authorized 008m page harvest into the existing 008h drawer."""
+    from . import parts_harvester
+
+    if harvest.get("schema") != "haunted-blender/page-harvest/v1":
+        raise ValueError("Expected page harvest")
+    if not (harvest.get("rights") or {}).get("pixelReuse"):
+        raise PermissionError("Page harvest lacks pixel reuse authority")
+
+    kind_map = {
+        "panel": "still",
+        "region-candidate": "crop",
+        "edge-mask": "mask",
+    }
+    artifacts = []
+    by_kind: dict[str, int] = {}
+    for row in harvest.get("assets") or []:
+        drawer_kind = kind_map.get(row.get("kind"))
+        if drawer_kind is None:
+            continue
+        mapped = {
+            "kind": drawer_kind,
+            "path": row["path"],
+            "sha256": row["sha256"],
+            "sourceSha256": row["sourceSha256"],
+            "harvestId": harvest["id"],
+            "pagePanelId": row.get("panelId"),
+            "pageAssetKind": row.get("kind"),
+            "recipe": row.get("recipe"),
+        }
+        artifacts.append(mapped)
+        by_kind[drawer_kind] = by_kind.get(drawer_kind, 0) + 1
+
+    body = {
+        "schema": parts_harvester.DRAWER_SCHEMA,
+        "sourceCount": 1,
+        "harvestIds": [harvest["id"]],
+        "artifactCount": len(artifacts),
+        "byKind": by_kind,
+        "artifacts": artifacts,
+        "laws": [
+            "PAGE HARVEST MAY ENTER PARTS DRAWER ONLY WHEN PIXEL REUSE IS AUTHORIZED",
+            "PANEL BECOMES STILL-CANDIDATE NOT FINAL SHOT",
+            "REGION CANDIDATE BECOMES CROP-CANDIDATE NOT CHARACTER IDENTITY",
+            "PAGE PROVENANCE SURVIVES DRAWER BRIDGE",
+        ],
+    }
+    result = {**body, "id": "parts-drawer:" + _hash(body)[:24]}
+    path = Path(output_path).expanduser().resolve()
+    if path.exists():
+        raise FileExistsError("Page parts drawer never overwrites")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return result
