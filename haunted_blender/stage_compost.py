@@ -10,7 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from . import parts_harvester
+from . import moving_insert_stage, parts_harvester
 
 SCHEMA = "haunted-blender/parts-stage-dressing/v1"
 
@@ -209,6 +209,15 @@ def apply_to_performance(performance: dict, dressing: dict) -> dict:
         "witnesses": dressing["witnesses"],
         "movingInserts": dressing["movingInserts"],
     }
+    canvas = result["cutoutPlan"]["canvas"]
+    if dressing.get("movingInserts"):
+        result["movingInsertPlan"] = moving_insert_stage.plan_from_dressing(
+            dressing,
+            width=int(canvas["width"]),
+            height=int(canvas["height"]),
+            fps=int(canvas["fps"]),
+            duration_seconds=float(canvas["duration"]),
+        )
     body = {k: v for k, v in result.items() if k != "id"}
     result["id"] = "puppet-performance:" + _sha(body)[:24]
     return result
