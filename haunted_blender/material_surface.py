@@ -316,6 +316,9 @@ def materialize_asset(
         "outputPath": str(output),
         "outputSha256": _file_sha(output),
         "cost": {"externalGenerations": 0, "providerCredits": 0, "usdMicros": 0},
+        "externalGenerations": 0,
+        "providerCredits": 0,
+        "usdMicros": 0,
         "laws": [
             "MATERIALIZED ASSET != ORIGINAL SOURCE",
             "SURFACE TREATMENT IS DETERMINISTIC",
