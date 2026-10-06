@@ -555,6 +555,75 @@ python -m haunted_blender.manga_atlas_cli sequence-director \
   ./sequence.director.json
 ```
 
+## One-command owned batch run
+
+The exact-byte 15-page snapshot can be processed as one deterministic batch after the PNGs are present in one local directory with their original filenames:
+
+```bash
+python -m haunted_blender.manga_atlas_cli batch-run \
+  ./specimens/008m/static-collective-owned-page-batch-snapshot-001.json \
+  ./downloaded-static-manga-pages \
+  ./film/static-manga-batch
+```
+
+Before any harvest, every file must match its frozen SHA-256 and dimensions.
+
+The run then performs, for all 15 pages:
+
+```text
+exact byte verification
+      ↓
+page source manifest
+      ↓
+panel / quarry geometry report
+      ↓
+authorized pixel harvest
+      ↓
+per-page 008h Parts Drawer
+      ↓
+cross-page Manga / Anime Atlas
+      ↓
+page sequence grammar
+      ↓
+ONE COMBINED PARTS DRAWER
+```
+
+Important outputs:
+
+```text
+page-000/ ... page-014/
+manga-anime-atlas.json
+page-sequence-grammar.json
+parts-drawer.combined.json
+batch-run.json
+```
+
+The combined drawer retains the owned batch id and each original page SHA on its derived artifacts.
+
+```text
+BATCH RUN REQUIRES EXACT SOURCE HASH MATCH
+FREE DETERMINISTIC HARVEST PRECEDES OPTIONAL PAID CUTOUT REFINEMENT
+```
+
+## Optional Creative Claw refinement seam
+
+Creative Claw is useful **after** the free deterministic quarry, not before it.
+
+A selected owned crop can later be promoted from rectangular candidate to a transparent actor/prop/FX asset with background-removal or image-edit tooling. The deterministic harvest remains the source witness, so a refined cutout should retain:
+
+```text
+original page SHA
+page harvest id
+candidate crop SHA
+refinement adapter
+refined transparent PNG SHA
+```
+
+```text
+FREE QUARRY FIRST
+PAID REFINEMENT ONLY ON KEEPERS
+```
+
 ## Intended next composition
 
 008m now directly bridges authorized owned-page pixels into the existing parts ecology:
