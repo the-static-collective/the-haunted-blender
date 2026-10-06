@@ -32,6 +32,7 @@ ADAPTER_CONFIG_SCHEMA = "haunted-blender/provider-adapters/v1"
 ADAPTER_CALL_SCHEMA = "haunted-blender/provider-adapter-call/v1"
 ADAPTER_RESULT_SCHEMA = "haunted-blender/provider-adapter-result/v1"
 APPROVAL_SCHEMA = "haunted-blender/provider-spend-approval/v1"
+SUBMIT_INTENT_SCHEMA = "haunted-blender/provider-submit-intent/v1"
 DECLINE_SCHEMA = "haunted-blender/provider-candidate-decline/v1"
 
 
@@ -219,7 +220,7 @@ def _driver_meta(root: Path, section_id: str) -> dict:
     project_body, section = _project_section(root, section_id)
     value = section.get("providerDriver")
     if not isinstance(value, dict):
-        value = {"receipts": {}, "spendApprovals": {}, "declines": []}
+        value = {"receipts": {}, "spendApprovals": {}, "submitGuards": {}, "declines": []}
         section["providerDriver"] = value
         cockpit._save(root, project_body)
     return value
@@ -229,7 +230,7 @@ def _set_meta(root: Path, section_id: str, mutate) -> dict:
     project_body, section = _project_section(root, section_id)
     meta = section.get("providerDriver")
     if not isinstance(meta, dict):
-        meta = {"receipts": {}, "spendApprovals": {}, "declines": []}
+        meta = {"receipts": {}, "spendApprovals": {}, "submitGuards": {}, "declines": []}
         section["providerDriver"] = meta
     mutate(meta)
     cockpit._save(root, project_body)
@@ -303,6 +304,86 @@ def _base_payload(root: Path, section_id: str, current: dict) -> dict:
         "planSha256": current["planSha256"],
         "routeSha256": current["routeSha256"],
     }
+
+
+
+def _submit_guard(root: Path, section_id: str, attempt_number: int) -> dict | None:
+    meta = _driver_meta(root, section_id)
+    value = (meta.get("submitGuards") or {}).get(str(int(attempt_number)))
+    return copy.deepcopy(value) if isinstance(value, dict) else None
+
+
+def _write_submit_intent(root: Path, section_id: str, current: dict) -> dict:
+    attempt = current["attempt"]
+    existing = _submit_guard(root, section_id, attempt["attempt"])
+    if existing is not None:
+        return existing
+    witness = {
+        "schema": SUBMIT_INTENT_SCHEMA,
+        "planSha256": current["planSha256"],
+        "stateSha256BeforeSubmit": current["stateSha256"],
+        "attempt": attempt["attempt"],
+        "providerId": attempt["providerId"],
+        "offerId": attempt["offerId"],
+        "quoteReceiptSha256": attempt.get("quoteReceiptSha256"),
+        "quotedUsdMicros": attempt.get("quotedUsdMicros"),
+        "status": "submit-intent-unresolved",
+        "laws": [
+            "INTENT BEFORE NETWORK SUBMIT",
+            "UNRESOLVED INTENT => DO NOT RESUBMIT",
+            "AMBIGUOUS SUBMISSION => RECONCILE EXISTING JOB",
+        ],
+    }
+    digest = _sha(witness)
+    folder = root / "snapshots" / "provider-submit-intents"
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / f"{digest}.json"
+    if not path.exists():
+        path.write_text(json.dumps(witness, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+    guard = {
+        "intentPath": str(path.relative_to(root)),
+        "intentSha256": digest,
+        "resolved": False,
+        "submitReceiptSha256": None,
+        "reconciled": False,
+    }
+
+    def mutate(meta):
+        meta.setdefault("submitGuards", {})[str(attempt["attempt"])] = copy.deepcopy(guard)
+
+    _set_meta(root, section_id, mutate)
+    return guard
+
+
+def _resolve_submit_guard(
+    root: Path,
+    section_id: str,
+    attempt_number: int,
+    *,
+    submit_receipt_sha256: str,
+    reconciled: bool,
+) -> None:
+    def mutate(meta):
+        guards = meta.setdefault("submitGuards", {})
+        guard = guards.get(str(int(attempt_number)))
+        if not isinstance(guard, dict):
+            raise ValueError("Submit guard disappeared before receipt resolution")
+        guard["resolved"] = True
+        guard["submitReceiptSha256"] = submit_receipt_sha256
+        guard["reconciled"] = bool(reconciled)
+
+    _set_meta(root, section_id, mutate)
+
+
+def _unresolved_submit_guard(root: Path, section_id: str, current: dict) -> dict | None:
+    attempt = current.get("attempt")
+    if not attempt:
+        return None
+    guard = _submit_guard(root, section_id, attempt["attempt"])
+    if guard and guard.get("resolved") is not True:
+        return guard
+    return None
 
 
 def _approval_needed(attempt: dict | None) -> bool:
@@ -484,6 +565,15 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                     "trace": trace,
                     "view": provider_view(root, section_id),
                 }
+            unresolved = _unresolved_submit_guard(root, section_id, current)
+            if unresolved is not None:
+                return {
+                    "status": "reconcile_required",
+                    "reason": "submit intent exists without a durable provider submit receipt",
+                    "trace": trace,
+                    "view": provider_view(root, section_id),
+                }
+            _write_submit_intent(root, section_id, current)
             raw = _invoke(root, provider_id, "SUBMIT", payload)
             receipt = {
                 "schema": motion_executor.SUBMIT_SCHEMA,
@@ -492,11 +582,20 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 "vendorRequestId": str(raw.get("vendorRequestId") or ""),
                 "submittedParameterSha256": str(raw.get("submittedParameterSha256") or ""),
             }
-            _store_receipt(root, section_id, attempt["attempt"], "submit", receipt)
+            receipt_sha, _ = _store_receipt(
+                root, section_id, attempt["attempt"], "submit", receipt
+            )
             result = motion_executor.record_submit(
                 root, current["planPath"], current["statePath"], receipt
             )
             _record_transition(root, section_id, result)
+            _resolve_submit_guard(
+                root,
+                section_id,
+                attempt["attempt"],
+                submit_receipt_sha256=receipt_sha,
+                reconciled=False,
+            )
             continue
 
         if action == "STATUS":
@@ -575,6 +674,62 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
         raise ValueError(f"Unsupported 007 action: {action}")
 
     return {"status": "step_limit", "trace": trace, "view": provider_view(root, section_id)}
+
+
+
+def reconcile_submission(
+    root,
+    section_id: str,
+    *,
+    vendor_request_id: str,
+    submitted_parameter_sha256: str,
+    observed_at: str,
+) -> dict:
+    root = _root(root)
+    current = _current(root, section_id)
+    if current["next"].get("action") != "SUBMIT":
+        raise ValueError("Reconciliation is only valid while the frozen state still awaits SUBMIT")
+    attempt = current["attempt"]
+    guard = _unresolved_submit_guard(root, section_id, current)
+    if guard is None:
+        raise ValueError("No unresolved submit intent exists")
+    if _approval_needed(attempt) and _approval_for(root, section_id, current) is None:
+        raise ValueError("Paid reconciliation still requires the exact-quote approval witness")
+    vendor_request_id = str(vendor_request_id or "").strip()
+    submitted_parameter_sha256 = str(submitted_parameter_sha256 or "").strip()
+    observed_at = str(observed_at or "").strip()
+    if not vendor_request_id:
+        raise ValueError("vendor_request_id is required")
+    if not re.fullmatch(r"[a-f0-9]{64}", submitted_parameter_sha256):
+        raise ValueError("submitted_parameter_sha256 must be lowercase SHA-256")
+    if not observed_at:
+        raise ValueError("observed_at is required")
+    receipt = {
+        "schema": motion_executor.SUBMIT_SCHEMA,
+        "offerId": attempt["offerId"],
+        "observedAt": observed_at,
+        "vendorRequestId": vendor_request_id,
+        "submittedParameterSha256": submitted_parameter_sha256,
+    }
+    receipt_sha, _ = _store_receipt(
+        root, section_id, attempt["attempt"], "submit-reconciled", receipt
+    )
+    result = motion_executor.record_submit(
+        root, current["planPath"], current["statePath"], receipt
+    )
+    _record_transition(root, section_id, result)
+    _resolve_submit_guard(
+        root,
+        section_id,
+        attempt["attempt"],
+        submit_receipt_sha256=receipt_sha,
+        reconciled=True,
+    )
+    return {
+        "status": "reconciled_existing_submission",
+        "vendorRequestId": vendor_request_id,
+        "view": provider_view(root, section_id),
+    }
 
 
 def decline_current_candidate(root, section_id: str, *, reason: str = "") -> dict:
@@ -714,6 +869,7 @@ def provider_view(root, section_id: str) -> dict:
 
     attempt = current["attempt"]
     next_action = current["next"].get("action")
+    unresolved_guard = _unresolved_submit_guard(root, section_id, current) if next_action == "SUBMIT" else None
     quote = None
     approval = None
     if attempt:
@@ -739,12 +895,15 @@ def provider_view(root, section_id: str) -> dict:
         "sectionId": section_id,
         "configured": _config_path(root).is_file(),
         "ready": True,
-        "nextAction": next_action,
-        "status": current["state"].get("status"),
+        "nextAction": "RECONCILE_SUBMISSION" if unresolved_guard else next_action,
+        "executorNextAction": next_action,
+        "status": "reconcile_required" if unresolved_guard else current["state"].get("status"),
         "currentAttempt": current["state"].get("currentAttempt"),
         "attemptCount": len(current["state"].get("attempts") or []),
         "attempt": copy.deepcopy(attempt),
-        "approvalRequired": next_action == "SUBMIT" and _approval_needed(attempt) and approval is None,
+        "approvalRequired": next_action == "SUBMIT" and not unresolved_guard and _approval_needed(attempt) and approval is None,
+        "reconcileRequired": unresolved_guard is not None,
+        "submitGuard": unresolved_guard,
         "approval": approval,
         "quote": quote,
         "candidates": candidates,
