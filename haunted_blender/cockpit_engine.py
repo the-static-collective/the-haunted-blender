@@ -19,7 +19,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from . import cockpit, cockpit_media, dreambreeder, motion_executor, motion_organ, scene_growth
+from . import cockpit, cockpit_media, dreambreeder, motion_executor, motion_organ, plugin_orchard, scene_growth
 from .dream_cutout_compiler import KIT_SCHEMA, render_sixup
 
 CONFIG_SCHEMA = "haunted-blender/cockpit-engine-config/v1"
@@ -447,11 +447,20 @@ def awaken(root, section_id: str) -> dict:
         remote_disclosure_approved=True,
     )
 
-    offers_config = config.get("motionOffersPath")
-    if not offers_config:
-        raise ValueError("Automatic AWAKEN needs motionOffersPath in cockpit.engine.json")
-    offers_snapshot = json.loads(_safe_path(root, offers_config).read_text(encoding="utf-8"))
-    offers = motion_organ.freeze_offers(root, offers_snapshot)
+    orchard_offers = plugin_orchard.latest_offers_path(root)
+    if orchard_offers is not None:
+        motion_organ.load_offers(root, orchard_offers)
+        offers = {"offers": str(orchard_offers)}
+        offers_source = "plugin-orchard"
+    else:
+        offers_config = config.get("motionOffersPath")
+        if not offers_config:
+            raise ValueError(
+                "Automatic AWAKEN needs a plugin-orchard snapshot or motionOffersPath in cockpit.engine.json"
+            )
+        offers_snapshot = json.loads(_safe_path(root, offers_config).read_text(encoding="utf-8"))
+        offers = motion_organ.freeze_offers(root, offers_snapshot)
+        offers_source = "engine-config"
     route = motion_organ.route_request(root, request["request"], offers["offers"])
     plan = motion_executor.build_plan(
         root,
@@ -468,6 +477,7 @@ def awaken(root, section_id: str) -> dict:
     state = _engine_state(section)
     state["motionRequestPath"] = str(Path(request["request"]).resolve().relative_to(root))
     state["motionOffersPath"] = str(Path(offers["offers"]).resolve().relative_to(root))
+    state["motionOffersSource"] = offers_source
     state["motionRoutePath"] = str(Path(route["route"]).resolve().relative_to(root))
     state["motionPlanPath"] = str(Path(plan["plan"]).resolve().relative_to(root))
     state["motionStatePath"] = str(Path(plan["state"]).resolve().relative_to(root))
