@@ -1,0 +1,64 @@
+name: mangalize-005
+on:
+  push:
+    branches: [integration/mangalize-005-presentation-ground]
+  pull_request:
+    branches: [integration/mangalize-004-pixel-execution]
+permissions:
+  contents: read
+jobs:
+  presentation-projection:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: Install pinned raster and inherited test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install Pillow==12.1.1
+      - name: Require the exact selected-ground implementation witness
+        run: |
+          python - <<'PY'
+          from haunted_blender import mangalize as m, manga_presentation as g
+          ground = m.read('specimens/mangalize-005/prepared/black/ground.json')
+          assert g.witness() == ground['implementation'], (g.witness(), ground['implementation'])
+          PY
+      - name: Syntax and complete inherited plus new suite
+        run: |
+          python -m compileall -q haunted_blender
+          node --check haunted_blender/web/cockpit.js
+          python -m unittest discover -s tests -v
+      - uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/the-haunted-blender
+          ref: 49e9400d3753a6a308317eef8bd5b1fb93cc5322
+          path: .mangalize-005-ci/parent
+      - name: Prove all 001 through 004 history and implementations remain exact
+        run: python specimens/mangalize-005/check_parent.py .mangalize-005-ci/parent
+      - uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/lemonPRESS
+          ref: 88978ff88f9b07a72040976b426b04afc2abd835
+          path: .mangalize-005-ci/lemonpress
+      - name: Verify exact foreign page ancestry
+        run: python specimens/mangalize-001/check_pin.py .mangalize-005-ci/lemonpress
+      - name: Independently replay numeric founding comparison; no projection
+        run: |
+          python specimens/mangalize-005/prepare.py /tmp/mangalize-005-candidates
+          diff -r specimens/mangalize-005/prepared /tmp/mangalize-005-candidates
+          test -z "$(find /tmp/mangalize-005-candidates -name '*.png' -o -name 'admission.json' -o -name 'projection.json')"
+      - name: Independently replay only the separately admitted black presentation
+        run: python specimens/mangalize-005/verify_founding.py /tmp/mangalize-005-black
+      - name: Upload numeric candidates, exact black projection and complete custody trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: mangalize-005-black-presentation
+          path: |
+            /tmp/mangalize-005-candidates
+            /tmp/mangalize-005-black
+            specimens/mangalize-005/authority
+            specimens/mangalize-005/FINAL_TRACE.md

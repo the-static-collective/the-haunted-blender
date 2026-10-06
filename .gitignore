@@ -41,6 +41,9 @@ renders/
 
 .mangalize-003-ci/
 .mangalize-004-ci/
+.mangalize-005-ci/
 # Exactly approved synthetic static raster witnesses, not arbitrary renders.
 !specimens/mangalize-004/executed/manga-page.png
 !specimens/mangalize-004/executed/layers/*.raster.png
+# Exact separately admitted black presentation witness only.
+!specimens/mangalize-005/projected/presentation.png

@@ -40,6 +40,13 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 ## Current scaffold capability
 
+[MANGALIZE-005](docs/MANGALIZE_005.md) separates presentation ground proposals,
+numeric contrast observations and separately admitted opaque PNG projections.
+Synthetic sibling presentations replay deterministically. Separate exact user
+selection admits one real black-ground projection; the transparent 004 page
+remains unchanged. White/mid-gray proposals remain unadmitted, and presentation
+grants no publication, print, motion, sound or source-mutation authority.
+
 [MANGALIZE-004](docs/MANGALIZE_004.md) binds static raster rules, separate pixel
 admission, per-use PNG witnesses, exact RGBA matrix identity and encoded-file
 identity. Separate exact user approval executes the real #66 layout as one
