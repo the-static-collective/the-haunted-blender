@@ -248,18 +248,28 @@ def scan(
         previous_last = last
         previous_sources = source_set
 
-    motion = [row["motionEnergy"] for row in raw_rows]
-    # Low motion is weak, so invert normalized motion.
-    motion_norm = _normalize(motion)
-    stasis = [1.0 - v for v in motion_norm]
-    overuse = _normalize([row["sourceOveruseRaw"] for row in raw_rows])
-    repetition = _normalize([row["recentRepetitionRaw"] for row in raw_rows])
-    novelty = _normalize([row["noveltyRaw"] for row in raw_rows])
-    novelty_deficit = [1.0 - v for v in novelty]
-
-    # Transition jolt penalizes only unusually large jumps relative to this cut.
-    jolts = [row["transitionJoltRaw"] for row in raw_rows]
-    jolt_norm = _normalize(jolts)
+    # Absolute bounded components make before/after reports comparable.
+    # Thresholds are intentionally coarse: this is triage, not aesthetic truth.
+    stasis = [
+        max(0.0, 1.0 - min(1.0, float(row["motionEnergy"]) / 0.020))
+        for row in raw_rows
+    ]
+    overuse = [
+        min(1.0, max(0.0, float(row["sourceOveruseRaw"])))
+        for row in raw_rows
+    ]
+    repetition = [
+        min(1.0, max(0.0, float(row["recentRepetitionRaw"])))
+        for row in raw_rows
+    ]
+    novelty_deficit = [
+        max(0.0, 1.0 - min(1.0, float(row["noveltyRaw"]) / 0.250))
+        for row in raw_rows
+    ]
+    jolt_norm = [
+        min(1.0, max(0.0, float(row["transitionJoltRaw"]) / 0.350))
+        for row in raw_rows
+    ]
 
     windows = []
     for idx, row in enumerate(raw_rows):
