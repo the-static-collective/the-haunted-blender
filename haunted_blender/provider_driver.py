@@ -726,7 +726,15 @@ def provider_view(root, section_id: str) -> dict:
         except Exception:
             approval = None
 
-    board = motion_organ.candidate_board(root, current["engine"]["motionRequestPath"])
+    board = motion_organ.candidate_board(root, _safe_relative(root, current["engine"]["motionRequestPath"]))
+    candidates = []
+    for item in board.get("candidates") or []:
+        copy_item = copy.deepcopy(item)
+        try:
+            copy_item["relativePath"] = str(Path(copy_item["video"]).resolve().relative_to(root))
+        except Exception:
+            copy_item["relativePath"] = None
+        candidates.append(copy_item)
     return {
         "sectionId": section_id,
         "configured": _config_path(root).is_file(),
@@ -739,7 +747,7 @@ def provider_view(root, section_id: str) -> dict:
         "approvalRequired": next_action == "SUBMIT" and _approval_needed(attempt) and approval is None,
         "approval": approval,
         "quote": quote,
-        "candidates": board.get("candidates") or [],
+        "candidates": candidates,
         "canDeclineAndContinue": next_action == "PRESENT"
         and int(current["state"].get("currentAttempt", 0)) < len(current["state"].get("attempts") or []),
         "laws": [
