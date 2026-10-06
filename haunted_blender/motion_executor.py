@@ -10,6 +10,7 @@ QUOTE_SCHEMA="haunted-blender/provider-quote-receipt/v1"
 SUBMIT_SCHEMA="haunted-blender/provider-submit-receipt/v1"
 STATUS_SCHEMA="haunted-blender/provider-status-receipt/v1"
 FETCH_SCHEMA="haunted-blender/provider-fetch-receipt/v1"
+DECLINE_SCHEMA="haunted-blender/provider-candidate-decline-receipt/v1"
 
 def _canonical(value): return project.stable_bytes(value)
 def _sha(value): return hashlib.sha256(_canonical(value)).hexdigest()
@@ -45,7 +46,7 @@ def build_plan(root,route_path,*,occurrence_budget_usd_micros,per_job_budget_usd
             "spendClass":item["spendClass"],"routeEstimatedUsdMicros":item.get("estimatedUsdMicros"),
             "phase":"needs_capabilities","capabilitiesReceiptSha256":None,"quoteReceiptSha256":None,
             "submitReceiptSha256":None,"statusReceiptSha256":None,"fetchReceiptSha256":None,
-            "vendorRequestId":None,"candidateVideoSha256":None,
+            "vendorRequestId":None,"candidateVideoSha256":None,"editorialDeclineReceiptSha256":None,
         })
     body={
         "schema":PLAN_SCHEMA,"requestSha256":route["requestSha256"],"routeSha256":route_sha,
@@ -248,5 +249,36 @@ def record_fetch(root,plan_path,state_path,receipt):
         facts={"outputSha256":sha,"durationSeconds":receipt.get("durationSeconds"),
                "width":receipt.get("width"),"height":receipt.get("height"),
                "container":receipt.get("container"),"codec":receipt.get("codec")}
+    )
+    return _write_next(root,state)
+
+
+def record_editorial_decline(root,plan_path,state_path,receipt):
+    plan,_=load_plan(root,plan_path);state,_=load_state(root,state_path)
+    a=state["attempts"][state["currentAttempt"]-1]
+    if a["phase"]!="candidate_ready":
+        raise ValueError("Editorial decline requires a presented candidate")
+    if receipt.get("schema")!=DECLINE_SCHEMA or receipt.get("offerId")!=a["offerId"]:
+        raise ValueError("Editorial decline does not bind current offer")
+    if receipt.get("candidateVideoSha256")!=a.get("candidateVideoSha256"):
+        raise ValueError("Editorial decline does not bind current candidate")
+    if receipt.get("decision")!="DECLINE_CONTINUE_ROUTE":
+        raise ValueError("Unsupported editorial decline decision")
+    a["editorialDeclineReceiptSha256"]=_sha(receipt)
+    a["phase"]="editorially_declined"
+    nxt=state["currentAttempt"]+1
+    if nxt>len(state["attempts"]):
+        state["status"]="exhausted"
+        state["stopReason"]="candidate declined; no route attempts remain"
+    else:
+        state["currentAttempt"]=nxt
+        state["status"]="ready"
+        state["stopReason"]=None
+    atlas_black_box.record_operational(
+        root, kind="filmmaker.candidate-decline",
+        observed_at="unspecified",
+        plan_sha256=_sha(plan), provider_id=a["providerId"], offer_id=a["offerId"], attempt=a["attempt"],
+        facts={"candidateVideoSha256":a.get("candidateVideoSha256"),
+               "editorialDecline":True,"providerFailure":False}
     )
     return _write_next(root,state)
