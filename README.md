@@ -40,6 +40,14 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 ## Current scaffold capability
 
+[MANGALIZE-002](docs/MANGALIZE_002.md) makes quarantine, selection, later grant,
+and promotion independent immutable events. Explicit reuse/derivative permission
+can admit exact descendants to the existing Parts Drawer while retaining their
+original pixels and full ancestry. The generic material provenance envelope
+survives the role/proposal boundary with no staging authority. A separate,
+user-approved grant promotes the exact panel, center crop and edge mask into a
+real drawer; 22 siblings remain quarantined. MANGALIZE-001 stays closed.
+
 [MANGALIZE-001](docs/MANGALIZE_001.md) gives the creative grammar an immutable
 request/admission/execution/return verb event. Its first vertical carries an
 exact LemonPRESS page locator through the existing geometry quarry, with

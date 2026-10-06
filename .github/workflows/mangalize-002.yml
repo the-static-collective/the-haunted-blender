@@ -1,0 +1,90 @@
+name: mangalize-002
+on:
+  push:
+    branches: [integration/mangalize-002-quarantine-release]
+  pull_request:
+    branches: [integration/mangalize-001-first-class-verb]
+permissions:
+  contents: read
+jobs:
+  quarantine-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install inherited render dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install Pillow==12.1.1
+      - name: Syntax and complete inherited suite
+        run: |
+          python -m compileall -q haunted_blender
+          node --check haunted_blender/web/cockpit.js
+          python -m unittest discover -s tests -v
+      - uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/the-haunted-blender
+          ref: 268d31f4a5283ce96209e3f7957edcfa2df30a7b
+          path: .mangalize-002-ci/parent
+      - name: Prove all 001 evidence remains byte-identical
+        run: python specimens/mangalize-002/check_parent.py .mangalize-002-ci/parent
+      - uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/lemonPRESS
+          ref: 88978ff88f9b07a72040976b426b04afc2abd835
+          path: .mangalize-002-ci/lemonpress
+      - name: Verify exact original foreign witness
+        run: python specimens/mangalize-001/check_pin.py .mangalize-002-ci/lemonpress
+      - name: Independently replay the real later promotion
+        run: |
+          python -m haunted_blender.manga_quarantine_cli promote \
+            specimens/mangalize-002/prepared/quarantine-set.json \
+            specimens/mangalize-002/prepared/selection.json \
+            specimens/mangalize-002/grants/selected-assets.grant.json \
+            specimens/mangalize-001/lemonpress specimens/mangalize-001/executed \
+            /tmp/mangalize-002-replayed
+          python -m haunted_blender.manga_quarantine_cli verify \
+            specimens/mangalize-002/prepared/quarantine-set.json \
+            specimens/mangalize-002/prepared/selection.json \
+            specimens/mangalize-002/grants/selected-assets.grant.json \
+            specimens/mangalize-001/lemonpress specimens/mangalize-001/executed \
+            specimens/mangalize-002/released
+          python -m haunted_blender.manga_quarantine_cli verify \
+            specimens/mangalize-002/prepared/quarantine-set.json \
+            specimens/mangalize-002/prepared/selection.json \
+            specimens/mangalize-002/grants/selected-assets.grant.json \
+            specimens/mangalize-001/lemonpress specimens/mangalize-001/executed \
+            /tmp/mangalize-002-replayed
+      - name: Verify three admitted assets, 22 closed siblings and proposal-only custody
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from haunted_blender import mangalize as m, parts_harvester as parts
+          root = Path('specimens/mangalize-002')
+          drawer = m.read(root / 'released/parts-drawer.json')
+          promotion = m.read(root / 'released/promotion.json')
+          grant = m.read(root / 'grants/selected-assets.grant.json')
+          witness = m.read(root / 'witnesses/material-proposal-boundary.json')
+          assert drawer['artifactCount'] == 3
+          assert drawer['byKind'] == {'still': 1, 'crop': 1, 'mask': 1}
+          assert len(promotion['stillQuarantined']) == 22
+          assert grant['permissions'] == {k: k in ('pixelReuse', 'derivativeReuse') for k in m.GRANTS}
+          assert not any(promotion['authority'].values())
+          assert witness == parts.select_for_stage(drawer, max_per_role=2)
+          assert witness['authority'] == 'proposal-only'
+          rows = {row['id']: row for row in drawer['artifacts']}
+          proposed = [row for values in witness['selection'].values() for row in values]
+          assert {row['assetId'] for row in proposed} == set(rows)
+          for row in proposed:
+              assert row['provenance'] == rows[row['assetId']]['provenance']
+              assert not any(row['provenance']['authority'].values())
+          PY
+      - name: Upload exact authority events and drawer (original pixels remain in 001)
+        uses: actions/upload-artifact@v4
+        with:
+          name: mangalize-002-quarantine-release
+          path: /tmp/mangalize-002-replayed

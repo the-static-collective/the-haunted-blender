@@ -1,0 +1,195 @@
+{
+  "repository": "the-static-collective/the-haunted-blender",
+  "commit": "268d31f4a5283ce96209e3f7957edcfa2df30a7b",
+  "pr": 64,
+  "files": [
+    {
+      "path": "docs/MANGALIZE_001.md",
+      "sha256": "8b3d04299c5308e8eb73bfaae134a23cf3a0dd2021bfd31b561e330254f8d1e4"
+    },
+    {
+      "path": "haunted_blender/manga_atlas.py",
+      "sha256": "00f3cb89d7733d82897e352ed799cf82099acbdb7dacd3f21fdb85979b1dad7e"
+    },
+    {
+      "path": "haunted_blender/mangalize.py",
+      "sha256": "e72f6c0d97d83590efbf90ee214cd55faab224a1c2ec51f49b5d6b936e514d17"
+    },
+    {
+      "path": "haunted_blender/mangalize_cli.py",
+      "sha256": "440a3d410dd11eca39e1c6c42aac202b5ba701cff1dfe49bde1ed364ab8f1eb5"
+    },
+    {
+      "path": "specimens/mangalize-001/check_pin.py",
+      "sha256": "60ec24fb8b4fc2373f678b0e8ccdec41600ee37c3696fd8f092bc7af94a8f6df"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/TRACE.md",
+      "sha256": "76e55417424ac32d4c7d8155f8a74e37784327abff999ace975d5456a35898a0"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/page-grammar-report.json",
+      "sha256": "7282eb46b55d77a0c6442a31729e27c307b309c967b5eaf4224ecb74ddd25298"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/page-harvest.json",
+      "sha256": "518f29fffb8493e23e9f719a1d40b91600c030a1ed08f01d581016c8ecb5f6b4"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/panels/panel-001/edge-mask.png",
+      "sha256": "f617cc565a42f9028ac77dfc444e398ad5642d956c2a9718d8cc3c2adaad2580"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/panels/panel-001/panel.png",
+      "sha256": "674a270d4a1d2aa451d713b19e4889fc2886d4a6d1961f83563f9b16007f92e7"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/panels/panel-001/region-center.png",
+      "sha256": "0754b290a875411d4ea81e48ee433c841bd00f5627c2a1516cc24a5f24c400a8"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/panels/panel-001/region-ne.png",
+      "sha256": "4fb329dba7a622ccbe92c91ce20eaa09984f8c71f4da6f89e7404937c09d5a30"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/panels/panel-001/region-nw.png",
+      "sha256": "d6be400993250acbee0d5b9e559e38010490520941cf4ec12373dbe049822d4c"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/panels/panel-001/region-se.png",
+      "sha256": "fb4024785f0f3e9db731e8ca50714805c82a300857730255b38c80f6c4baf99c"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/panels/panel-001/region-sw.png",
+      "sha256": "00da6ce9c670e202cb5a20a4356b38296fa015658db3339f895fcebe70138d39"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-2x3-01-01.png",
+      "sha256": "4a47c3ba9922d59cb156b4fcc2189af71ade29a83ba3c9b74eae6937a2f633e8"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-2x3-01-02.png",
+      "sha256": "d3d2c64e80a4b88e2b9fc446ad5afbdd01387ae9518f63b07702cfc3441b3b3d"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-2x3-02-01.png",
+      "sha256": "46d2da74c3430eca00f053312522a4805d56327fa8cdb6e2c64cf3c1f8406c92"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-2x3-02-02.png",
+      "sha256": "dc8c6c74e2ba82a070e99303216ab286cf61e62dbedf962c04e8dafd53a4ca3a"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-2x3-03-01.png",
+      "sha256": "de56493f9d477414bfe9442b34b8d5d0f11c95f3c5ab5f888acfecdbc21e9c45"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-2x3-03-02.png",
+      "sha256": "565ea6a6d8df36910aaf28635c03b0f99f2bd414044082f512e642eadccd050f"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-01-01.png",
+      "sha256": "c575f06d6b27389432bada5dd52158c9b451d61a6601f23dd4f8365ffef226c1"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-01-02.png",
+      "sha256": "36f1caa0c08431d37c8aba2a2424ec5a66ef6a54b081898a26d4edce3dbd29b4"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-01-03.png",
+      "sha256": "1d855b410bae3ae11d897e4605a666780d99a37fc2562f0a75f5ff68be9253f8"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-02-01.png",
+      "sha256": "dd97a96e9561da7df0ec5c3b07be679766cd376876590fa07851a36444d00021"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-02-02.png",
+      "sha256": "faf074b7db50e3ae58092e58397b05f6106cc8a0cd24852e7ffb58df1965d687"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-02-03.png",
+      "sha256": "497827eaa25a5aa87e92f4ad3410eede0e4dd5646da1069f06b65f6bef083652"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-03-01.png",
+      "sha256": "3f669d838e7257367d5b1b486de039982403eb1571f50032d411eb2c72ca4687"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-03-02.png",
+      "sha256": "72a1ad68a51b9035460fc78a4fefb8fcc53cc3e86624023dde623e424e890dd1"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-03-03.png",
+      "sha256": "ee824cb2f614dc66977453c57d66df52af22d4548bfe36e08d547cd8679894a5"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-04-01.png",
+      "sha256": "17c02104d6ad4c4b2368c2f863a60dcd7adb8a8ffabb1e8e1d18f6f6dd07be24"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-04-02.png",
+      "sha256": "6b97ec1359af40586eaa046ff0b0251dfc0dec186f87035bac6cc64f123fb59f"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/harvest/quarry/quarry-3x4-04-03.png",
+      "sha256": "04e689dc3576f0afdcce09084dad290413a84b7ed192738d6674246b47beae2f"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/mangalize.admission.json",
+      "sha256": "c9198e98be1cddea049bfec26c09daa7ac3f490b765ed3f57b9a223c562333b0"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/mangalize.execution.json",
+      "sha256": "0f41b22d70b293d15d8ad6d3bfbc376479e2232a4ddfb65aa39999dd8e110e90"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/mangalize.request.json",
+      "sha256": "b2f8ac06b378c23e7c79ec8a36925895651266e260deb19596e744d9541b0a7b"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/mangalize.return.json",
+      "sha256": "ab185c47b4c500051c516948dd988ef39fd48f5ab156c1d5a28c703acd57bccb"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/page-analysis.json",
+      "sha256": "b49ed12c0ebde2ca0babf5bf0e92de3eeaf49068d93743ffc5acbf4fa1d1e1c7"
+    },
+    {
+      "path": "specimens/mangalize-001/executed/page-source.json",
+      "sha256": "971dabb04e43cb1e9d7d2ead205e0126628537ad6899e826e7e98c30f890fafb"
+    },
+    {
+      "path": "specimens/mangalize-001/lemonpress/PIN.json",
+      "sha256": "390b5f0911093fc596adeb03b48c04ec2c518f03ede02602dc7187b46f8a9e16"
+    },
+    {
+      "path": "specimens/mangalize-001/lemonpress/separate-authority/page-05.harvest-only-grant.json",
+      "sha256": "78f2c1afc7180b28e56bb403a7f6ef8d90ac904e0ba41db5b0067b9e657df78d"
+    },
+    {
+      "path": "specimens/mangalize-001/lemonpress/works/manga-press-specimen/manga/001/blender-compatibility-handoff.json",
+      "sha256": "d0ddcef4ce0a4416baeeb3d5c0bbb7452529f6cb9ea9ad3d6ef522d43e94afb9"
+    },
+    {
+      "path": "specimens/mangalize-001/lemonpress/works/manga-press-specimen/manga/001/pages/page-05.json",
+      "sha256": "87b7f24f994f7c2fedb34d95a41bb4d9bc6ed5b0e0ef9c51b447b60ea869d875"
+    },
+    {
+      "path": "specimens/mangalize-001/lemonpress/works/manga-press-specimen/manga/001/pixels/page-05.png",
+      "sha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "path": "specimens/mangalize-001/refusal/TRACE.md",
+      "sha256": "e5c4bcea857cfa9a0229d340d1c73e0ad040081e4ecbaab057ff648637dd9f9c"
+    },
+    {
+      "path": "specimens/mangalize-001/refusal/mangalize.admission.json",
+      "sha256": "961faf103550c5cce2e23d3795a1085893e42a6c0cd3101f9099fef9c071745a"
+    },
+    {
+      "path": "specimens/mangalize-001/refusal/mangalize.request.json",
+      "sha256": "57d3fa1d5797b4ce32e87de88185c0bbe81199e3abb3252bea7995caf5144cfa"
+    }
+  ]
+}
