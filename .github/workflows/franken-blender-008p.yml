@@ -1,0 +1,48 @@
+name: franken-blender-008p
+
+on:
+  push:
+    branches:
+      - integration/franken-blender-008p-owned-pixel-manga-film
+  pull_request:
+    branches:
+      - integration/franken-blender-008o-page-five-manga-film
+
+jobs:
+  owned-pixel-manga-film:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install Pillow
+        run: python -m pip install --upgrade pip "Pillow>=9"
+      - name: Compile Python
+        run: python -m compileall -q haunted_blender
+      - name: Check browser JavaScript
+        run: node --check haunted_blender/web/cockpit.js
+      - name: Full suite
+        run: python -m unittest discover -s tests -v
+      - name: Render owned-pixel Page Five film
+        run: |
+          rm -rf /tmp/008p-page-five
+          python -m haunted_blender.owned_pixel_film_cli \
+            specimens/008n/bus-page-5-a-page-you-can-hear-001.json \
+            specimens/008p/static-collective-bus-signal-001.donor.json \
+            /tmp/008p-page-five
+          test -s /tmp/008p-page-five/page-five-owned-pixel-manga-film.mp4
+          test -s /tmp/008p-page-five/page-five-owned-pixel-manga-film.receipt.json
+          ffprobe -v error \
+            -show_entries format=duration:stream=codec_type,codec_name,width,height \
+            -of json /tmp/008p-page-five/page-five-owned-pixel-manga-film.mp4
+      - name: Upload owned-pixel descendant
+        uses: actions/upload-artifact@v4
+        with:
+          name: 008p-page-five-owned-pixel-manga-film
+          path: |
+            /tmp/008p-page-five/page-five-owned-pixel-manga-film.mp4
+            /tmp/008p-page-five/page-five-owned-pixel-manga-film.receipt.json
