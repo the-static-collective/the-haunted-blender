@@ -36,6 +36,7 @@ DEFAULT_RECIPES = (
     "slow",
     "fast",
     "push",
+    "kinetic-push",
     "pull",
     "misregister",
     "mirror-reverse",
@@ -229,11 +230,22 @@ def _recipe_filter(name: str, *, width: int, height: int, fps: int, duration: fl
     if name == "fast":
         return base + ",setpts=0.75*PTS"
     if name == "push":
-        # Scale up, then crop center. Cheap fake camera push.
+        # Scale up, then crop center. Cheap static reframing.
         return (
             f"scale={math.ceil(width*1.10)}:{math.ceil(height*1.10)}:"
             "force_original_aspect_ratio=increase:flags=lanczos,"
             f"crop={width}:{height},setsar=1,fps={fps}"
+        )
+    if name == "kinetic-push":
+        # Real temporal motion from otherwise static footage. zoompan's zoom
+        # state advances on each output frame; no external generation required.
+        return (
+            f"scale={math.ceil(width*1.18)}:{math.ceil(height*1.18)}:"
+            "force_original_aspect_ratio=increase:flags=lanczos,"
+            f"zoompan=z='min(zoom+0.004,1.16)':"
+            f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+            f"d=1:s={width}x{height}:fps={fps},"
+            "setsar=1"
         )
     if name == "pull":
         return (
