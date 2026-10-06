@@ -553,7 +553,7 @@ def render(
             subprocess.run(
                 [
                     "ffmpeg", "-nostdin", "-v", "error", "-y",
-                    "-ss", f"{start:.6f}", "-i", str(base),
+                    "-i", str(base), "-ss", f"{start:.6f}",
                     "-t", f"{span:.6f}",
                     "-vf", _shot_filter(crop, width=width, height=height),
                     "-an", "-c:v", "libx264", "-pix_fmt", "yuv420p",
