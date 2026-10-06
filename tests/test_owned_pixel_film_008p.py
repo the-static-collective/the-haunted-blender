@@ -26,9 +26,9 @@ class OwnedPixelMangaFilm008pTests(unittest.TestCase):
         manifest = donor["manifest"]
         self.assertEqual(
             donor["derivativeSha256"],
-            "7842a139f34bb5f35ca800d88ee5a7a263758f6f709b063f23f17701e47572cd",
+            "ce5a87e16ba5066d3e468ab120d15f0d800806905d039e696444b5b1ea3bedb5",
         )
-        self.assertEqual(donor["image"].size, (160, 90))
+        self.assertEqual(donor["image"].size, (8, 4))
         self.assertEqual(
             manifest["sourceSha256"],
             "c9ee8d9956e8a469082be0b181b0265271465aaba908b9f6c5412302207fc41c",
@@ -42,21 +42,19 @@ class OwnedPixelMangaFilm008pTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             manifest = json.loads(DONOR.read_text(encoding="utf-8"))
-            source_b64 = (
-                ROOT / "specimens" / "008p" / "static-collective-bus-signal-001.jpg.b64"
+            source_hex = (
+                ROOT / "specimens" / "008p" / "static-collective-bus-signal-001.rgb8x4.hex"
             )
-            local_b64 = root / "donor.jpg.b64"
-            local_b64.write_text(source_b64.read_text(encoding="utf-8"), encoding="utf-8")
-            manifest["derivative"]["path"] = "specimens/008p/donor.jpg.b64"
-            manifest["derivative"]["sha256"] = "0" * 64
 
             # Recreate the expected <repo>/specimens/008p layout in temp.
             fake_repo = root / "repo"
             target_dir = fake_repo / "specimens" / "008p"
             target_dir.mkdir(parents=True)
-            (target_dir / "donor.jpg.b64").write_text(
-                source_b64.read_text(encoding="utf-8"), encoding="utf-8"
+            (target_dir / "donor.rgb.hex").write_text(
+                source_hex.read_text(encoding="utf-8"), encoding="utf-8"
             )
+            manifest["derivative"]["path"] = "specimens/008p/donor.rgb.hex"
+            manifest["derivative"]["sha256"] = "0" * 64
             manifest_path = target_dir / "donor.json"
             manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
 
