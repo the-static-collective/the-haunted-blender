@@ -35,6 +35,13 @@ def main(argv=None):
     approve.add_argument("--usd-micros", type=int, required=True)
     approve.add_argument("--approved-at")
 
+    reconcile = sub.add_parser("reconcile")
+    reconcile.add_argument("root")
+    reconcile.add_argument("section_id")
+    reconcile.add_argument("--vendor-request-id", required=True)
+    reconcile.add_argument("--submitted-parameter-sha256", required=True)
+    reconcile.add_argument("--observed-at")
+
     decline = sub.add_parser("decline")
     decline.add_argument("root")
     decline.add_argument("section_id")
@@ -65,6 +72,14 @@ def main(argv=None):
             args.section_id,
             expected_usd_micros=args.usd_micros,
             approved_at=args.approved_at or datetime.now(timezone.utc).isoformat(),
+        )
+    elif args.command == "reconcile":
+        result = provider_driver.reconcile_submission(
+            args.root,
+            args.section_id,
+            vendor_request_id=args.vendor_request_id,
+            submitted_parameter_sha256=args.submitted_parameter_sha256,
+            observed_at=args.observed_at or datetime.now(timezone.utc).isoformat(),
         )
     elif args.command == "decline":
         result = provider_driver.decline_current_candidate(
