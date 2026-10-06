@@ -17,7 +17,7 @@ import tempfile
 from pathlib import Path
 
 from .cutout_stage import SCHEMA as CUTOUT_SCHEMA, render_cutout
-from . import moving_insert_stage
+from . import material_surface, moving_insert_stage
 from .scene_growth import TIMING_SCHEMA
 
 SPEC_SCHEMA = "haunted-blender/puppet-spec/v1"
@@ -216,6 +216,15 @@ def build_rig(spec: dict, output_dir: str | Path) -> dict:
     if not isinstance(raw_parts, list) or not raw_parts:
         raise ValueError("Puppet requires part images")
 
+    root = Path(output_dir).expanduser().resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    material_dir = root / "material-parts"
+    material_dir.mkdir(parents=True, exist_ok=True)
+
+    default_material = material_surface.profile(
+        spec.get("materialDefaults") or "paper"
+    )
+
     parts = []
     roles = set()
     ids = set()
@@ -229,11 +238,22 @@ def build_rig(spec: dict, output_dir: str | Path) -> dict:
             raise ValueError("Puppet part ids must be unique")
         ids.add(part_id)
         roles.add(role)
+        mat_value = raw.get("material") or default_material["type"]
+        mat = material_surface.profile(mat_value)
+        materialized = material_surface.materialize_asset(
+            source,
+            material_dir / f"{_safe_name(part_id)}-{mat['type']}.png",
+            mat,
+        )
         parts.append({
             "id": part_id,
             "role": role,
             "source": str(source),
             "sourceSha256": _file_sha(source),
+            "renderSource": materialized["outputPath"],
+            "renderSourceSha256": materialized["outputSha256"],
+            "material": mat,
+            "materializedAssetId": materialized["id"],
             "x": float(raw.get("x", 0)),
             "y": float(raw.get("y", 0)),
             "scale": float(raw.get("scale", 1)),
@@ -244,20 +264,33 @@ def build_rig(spec: dict, output_dir: str | Path) -> dict:
     if "body" not in roles or "head" not in roles:
         raise ValueError("Puppet requires at least body and head")
 
-    root = Path(output_dir).expanduser().resolve()
-    root.mkdir(parents=True, exist_ok=True)
-
     room_source = spec.get("roomSource")
     if room_source:
         room = Path(str(room_source)).expanduser().resolve(strict=True)
-        room_witness = {"path": str(room), "sha256": _file_sha(room)}
+        raw_room = {"path": str(room), "sha256": _file_sha(room)}
     else:
-        room_witness = create_room(
-            root / "room.png",
+        raw_room = create_room(
+            root / "room-source.png",
             width=width,
             height=height,
             label=str(spec.get("roomLabel") or "ROOM"),
         )
+    room_material = material_surface.profile(
+        spec.get("roomMaterial") or "cardboard"
+    )
+    room_asset = material_surface.materialize_asset(
+        raw_room["path"],
+        root / f"room-{room_material['type']}.png",
+        room_material,
+    )
+    room_witness = {
+        "path": room_asset["outputPath"],
+        "sha256": room_asset["outputSha256"],
+        "sourcePath": raw_room["path"],
+        "sourceSha256": raw_room["sha256"],
+        "material": room_material,
+        "materializedAssetId": room_asset["id"],
+    }
 
     mouths = create_mouth_atlas(root / "mouth-atlas")
     anchor = spec.get("mouthAnchor") or {}
@@ -276,9 +309,13 @@ def build_rig(spec: dict, output_dir: str | Path) -> dict:
         "room": room_witness,
         "parts": parts,
         "mouth": mouth,
+        "materialDefaults": default_material,
+        "materialTypes": sorted({part["material"]["type"] for part in parts}),
         "poseGrammar": sorted(POSE_GRAMMAR),
         "laws": [
             "RIG != PERFORMANCE",
+            "MATERIAL != PHYSICS CLAIM",
+            "MATERIALIZED ASSET != ORIGINAL SOURCE",
             "PART IMAGE != JOINT AUTHORITY",
             "MOUTH SHAPE != PHONETIC CLAIM",
             "CRUDE MOTION IS AN INTENTIONAL STYLE SURFACE",
@@ -525,16 +562,28 @@ def compile_performance(
         layers.append(_cue_layer(cue, asset, duration=duration, z=8))
 
     for part in rig["parts"]:
+        motion_frames = _hold_keyframes(
+            part, poses, duration=duration, fps=fps
+        )
+        motion_frames = material_surface.apply_motion(
+            motion_frames,
+            part.get("material") or rig.get("materialDefaults"),
+            fps=fps,
+            role=part["role"],
+        )
         layers.append({
             "id": part["id"],
-            "source": part["source"],
+            "source": part.get("renderSource") or part["source"],
+            "sourceAuthoritySha256": part["sourceSha256"],
+            "material": part.get("material"),
+            "materializedAssetId": part.get("materializedAssetId"),
             "z": part["z"],
             "x": part["x"],
             "y": part["y"],
             "scale": part["scale"],
             "rotation": part["rotation"],
             "opacity": part["opacity"],
-            "keyframes": _hold_keyframes(part, poses, duration=duration, fps=fps),
+            "keyframes": motion_frames,
         })
 
     mouth_anchor = rig["mouth"]
@@ -594,8 +643,17 @@ def compile_performance(
         "lyricGeography": geography,
         "cutaways": cutaway_layers,
         "cutoutPlan": plan,
+        "materials": {
+            "default": rig.get("materialDefaults"),
+            "room": (rig.get("room") or {}).get("material"),
+            "parts": {
+                part["id"]: part.get("material")
+                for part in rig.get("parts") or []
+            },
+        },
         "cost": {"externalGenerations": 0, "providerCredits": 0, "usdMicros": 0},
         "laws": [
+            "SURFACE STYLE MAY MODIFY MOTION GRAMMAR",
             "WORDS MAY BECOME SCENERY",
             "MOUTH FLIP != SPEECH RECOGNITION",
             "POSE GRAMMAR != FULL-BODY GENERATION",
