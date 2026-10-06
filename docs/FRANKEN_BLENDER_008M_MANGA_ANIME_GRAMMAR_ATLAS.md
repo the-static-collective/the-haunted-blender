@@ -205,6 +205,51 @@ ATLAS AGGREGATES GRAMMAR NOT OWNERSHIP
 OWNERSHIP DOES NOT TRANSFER BETWEEN SOURCES
 ```
 
+## Registered owned eight-page batch
+
+The Google Drive folder `1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5` is now registered as an explicit owned-pixel batch after the user stated that all eight images are ours.
+
+The batch witness lives at:
+
+```text
+examples/manga_atlas/static-collective-owned-manga-batch-001.json
+```
+
+It freezes:
+
+- all eight Drive file ids
+- exact SHA-256 for every image
+- image dimensions
+- creation metadata
+- pixel reuse = true
+- derivative reuse = true
+- publication reuse = true
+
+```text
+EXACT FILE SHA BINDS THE RIGHTS RECORD TO THESE PIXELS
+```
+
+Folder location alone is not treated as ownership evidence. The rights state comes from the user's explicit ownership assertion.
+
+```text
+BATCH LOCATION != OWNERSHIP PROOF
+OWNERSHIP RIGHTS COME FROM EXPLICIT SOURCE ASSERTION
+```
+
+Creation/ingest order is preserved only as transport metadata and is not silently promoted to story order.
+
+```text
+INGEST ORDER != STORY ORDER
+```
+
+This means all eight pages may now feed both:
+
+```text
+PIXEL HARVEST
++
+GRAMMAR / SEQUENCE ANALYSIS
+```
+
 ## Multi-page sequence grammar
 
 The new eight-page Drive batch adds something the first two specimens did not provide strongly enough: **continuity across pages**.
