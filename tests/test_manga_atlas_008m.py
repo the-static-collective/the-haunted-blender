@@ -363,6 +363,14 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
             all(len(row["sha256"]) == 64 for row in batch["entries"])
         )
         self.assertIn("INGEST ORDER != STORY ORDER", batch["laws"])
+        self.assertEqual(
+            collection["memberSnapshot"][-1]["externalId"],
+            "1xl5NMdMhJhNSvSvRbSoqPF0EnAfdP2i-",
+        )
+        self.assertEqual(
+            batch["entries"][-1]["sha256"],
+            "08c88577896e5b2d04ced3c8c8124780b497d5dd25c3f0871b0547bd595e4cb7",
+        )
 
     def test_owned_batch_runs_exact_bytes_through_reports_harvest_and_combined_drawer(self):
         import hashlib
