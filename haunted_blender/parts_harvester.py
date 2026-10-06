@@ -12,6 +12,7 @@ Every derivative binds the source SHA-256 and transform recipe.
 from __future__ import annotations
 
 import hashlib
+import copy
 import json
 import math
 import shutil
@@ -532,7 +533,7 @@ def _artifact_key(row: dict) -> tuple:
 
 def resolve_drawer_artifact(drawer: dict, row: dict, *, artifact_root=None) -> Path:
     """Resolve canonical event-relative custody without treating a name as ancestry."""
-    if drawer.get("pathBase") == "event-root":
+    if drawer.get("pathBase") in ("event-root", "material-root"):
         if artifact_root is None:
             raise ValueError("Event-relative Parts Drawer requires explicit artifact_root")
         root = Path(artifact_root).resolve(strict=True)
@@ -547,6 +548,47 @@ def resolve_drawer_artifact(drawer: dict, row: dict, *, artifact_root=None) -> P
     if _file_sha(path) != row["sha256"]:
         raise ValueError("Drawer artifact bytes changed")
     return path
+
+
+def index_materials(artifacts, *, source_count, harvest_ids, laws, metadata=None):
+    """Existing drawer grammar, shared by harvest and later admission views.
+
+    Indexing is not authorization. Callers must independently admit material.
+    """
+    by_kind = {}
+    for row in artifacts:
+        by_kind[row["kind"]] = by_kind.get(row["kind"], 0) + 1
+    body = {
+        "schema": DRAWER_SCHEMA, "sourceCount": source_count,
+        "harvestIds": harvest_ids, "artifactCount": len(artifacts),
+        "byKind": by_kind, "artifacts": copy.deepcopy(artifacts), "laws": laws,
+    }
+    for key, value in (metadata or {}).items():
+        if key in body or key == "id":
+            raise ValueError("Drawer metadata cannot replace core identity")
+        body[key] = copy.deepcopy(value)
+    return {**body, "id": "parts-drawer:" + _sha(body)[:24]}
+
+
+def material_provenance(row):
+    """Carry an opaque, generic custody envelope across proposal boundaries."""
+    if "provenance" in row:
+        envelope = row["provenance"]
+        if envelope.get("schema") != "haunted-blender/material-provenance/v1":
+            raise ValueError("Unsupported material provenance envelope")
+        if envelope["artifact"]["id"] != row.get("id") or envelope["artifact"]["sha256"] != row["sha256"]:
+            raise ValueError("Material provenance identity/SHA mismatch")
+        return copy.deepcopy(envelope)
+    if not any(k in row for k in ("id", "foreignAncestry", "eventLineage")):
+        return None  # Preserve legacy proposals byte for byte.
+    return {
+        "schema": "haunted-blender/material-provenance/v1",
+        "artifact": {"id": row.get("id"), "sha256": row["sha256"], "sourceSha256": row.get("sourceSha256")},
+        "foreignAncestry": copy.deepcopy(row.get("foreignAncestry", [])),
+        "eventLineage": copy.deepcopy(row.get("eventLineage", [])),
+        "transformRecipe": copy.deepcopy(row.get("recipe")),
+        "effectivePermissions": copy.deepcopy(row.get("rights", {})),
+    }
 
 
 def build_drawer(harvests: list[dict], output_path: str | Path) -> dict:
@@ -569,24 +611,14 @@ def build_drawer(harvests: list[dict], output_path: str | Path) -> dict:
                 "harvestId": harvest["id"],
             })
 
-    by_kind: dict[str, int] = {}
-    for row in artifacts:
-        by_kind[row["kind"]] = by_kind.get(row["kind"], 0) + 1
-
-    body = {
-        "schema": DRAWER_SCHEMA,
-        "sourceCount": len(set(source_ids)),
-        "harvestIds": [h["id"] for h in harvests],
-        "artifactCount": len(artifacts),
-        "byKind": by_kind,
-        "artifacts": artifacts,
-        "laws": [
+    result = index_materials(
+        artifacts, source_count=len(set(source_ids)),
+        harvest_ids=[h["id"] for h in harvests], laws=[
             "DRAWER INDEX != SELECTION",
             "MORE PARTS != MORE SOURCE AUTHORITY",
             "REUSE PRESERVES ORIGINAL PROVENANCE",
         ],
-    }
-    result = {**body, "id": "parts-drawer:" + _sha(body)[:24]}
+    )
     path = Path(output_path).expanduser().resolve()
     if path.exists():
         raise FileExistsError("Parts drawer never overwrites")
@@ -626,14 +658,19 @@ def select_for_stage(
                 source = row.get("sourceSha256")
                 if source in used_sources and len(rows) < max_per_role - 1:
                     continue
-                rows.append({
+                selected = {
                     "role": role,
                     "kind": row["kind"],
                     "path": row["path"],
                     "sha256": row["sha256"],
                     "sourceSha256": source,
                     "harvestId": row["harvestId"],
-                })
+                }
+                provenance = material_provenance(row)
+                if provenance is not None:
+                    selected["assetId"] = row.get("id")
+                    selected["provenance"] = provenance
+                rows.append(selected)
                 used_sources.add(source)
                 if len(rows) >= max_per_role:
                     break
@@ -653,6 +690,8 @@ def select_for_stage(
             "POSTER MAY BE A FREEZE FRAME",
         ],
     }
+    if "pathBase" in drawer:
+        body["pathBase"] = drawer["pathBase"]
     return {**body, "id": "parts-stage-selection:" + _sha(body)[:24]}
 
 
