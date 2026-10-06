@@ -322,11 +322,14 @@ def _source_path(root: Path, section_id: str) -> Path:
 
 
 def _base_payload(root: Path, section_id: str, current: dict) -> dict:
+    engine = current.get("engine") or {}
+    source_video = engine.get("motionSourceVideoPath")
     return {
         "sectionId": section_id,
         "request": copy.deepcopy(current["request"]),
         "attempt": copy.deepcopy(current["attempt"] or {}),
         "sourcePath": str(_source_path(root, section_id)),
+        "sourceVideoPath": str(_safe_relative(root, source_video)) if source_video else None,
         "planSha256": current["planSha256"],
         "routeSha256": current["routeSha256"],
     }
