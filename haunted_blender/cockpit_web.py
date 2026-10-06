@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from . import cockpit, cockpit_media
+from . import cockpit, cockpit_engine, cockpit_media
 
 WEB_DIR = Path(__file__).resolve().parent / "web"
 
@@ -119,6 +119,10 @@ def make_handler(project_root: str | Path):
                     section_id = unquote(path.removeprefix("/api/media-view/"))
                     self._send_json(200, cockpit_media.media_view(root, section_id))
                     return
+                if path.startswith("/api/engine-view/"):
+                    section_id = unquote(path.removeprefix("/api/engine-view/"))
+                    self._send_json(200, cockpit_engine.engine_view(root, section_id))
+                    return
                 if path.startswith("/media/"):
                     relative = unquote(path.removeprefix("/media/"))
                     media = cockpit_media.resolve_media(root, relative)
@@ -138,6 +142,28 @@ def make_handler(project_root: str | Path):
             try:
                 parsed = urlparse(self.path)
                 path = parsed.path
+
+                if path == "/api/auto/play":
+                    result = cockpit_engine.play(root)
+                    self._send_json(200, result)
+                    return
+
+                if path.startswith("/api/auto/section/"):
+                    rest = path.removeprefix("/api/auto/section/").split("/")
+                    if len(rest) != 2:
+                        raise ValueError("Expected /api/auto/section/<id>/<verb>")
+                    section_id, verb = map(unquote, rest)
+                    body = self._read_json()
+                    if verb == "grow":
+                        result = cockpit_engine.grow(root, section_id)
+                    elif verb == "keep":
+                        result = cockpit_engine.keep(root, section_id, slot=int(body["slot"]))
+                    elif verb == "awaken":
+                        result = cockpit_engine.awaken(root, section_id)
+                    else:
+                        raise ValueError("Unknown automatic Cockpit verb")
+                    self._send_json(200, result)
+                    return
 
                 if path == "/api/local-only":
                     body = self._read_json()
