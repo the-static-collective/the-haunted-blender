@@ -52,6 +52,12 @@ def main(argv=None):
     select.add_argument("output_json")
     select.add_argument("--max-per-role", type=int, default=3)
 
+    doctor = sub.add_parser("doctor-prescribe")
+    doctor.add_argument("doctor_report_json")
+    doctor.add_argument("drawer_json")
+    doctor.add_argument("output_json")
+    doctor.add_argument("--max-windows", type=int, default=6)
+
     transplant = sub.add_parser("transplant")
     transplant.add_argument("behavior_json")
     transplant.add_argument("target_sha256")
@@ -96,6 +102,13 @@ def main(argv=None):
         result = parts_harvester.select_for_stage(
             _read(args.drawer_json),
             max_per_role=args.max_per_role,
+        )
+        _write(Path(args.output_json).expanduser().resolve(), result)
+    elif args.command == "doctor-prescribe":
+        result = parts_harvester.prescribe_for_weak_windows(
+            _read(args.doctor_report_json),
+            _read(args.drawer_json),
+            max_windows=args.max_windows,
         )
         _write(Path(args.output_json).expanduser().resolve(), result)
     else:
