@@ -127,6 +127,16 @@ insert
 
 The detector makes no character or object claims.
 
+The founding uploaded specimens also showed that manga pages may use heavy dark borders and overlapping composition instead of clean white gutters. 008m therefore has a second continuous-dark-border fallback. It only activates when the whitespace pass finds no useful subdivision.
+
+```text
+WHITE GUTTER DETECTION
+        OR
+DARK BORDER DETECTION
+        ↓
+GEOMETRIC PANEL CANDIDATES
+```
+
 ```text
 PANEL MAP IS GEOMETRY, NOT SEMANTIC UNDERSTANDING
 ```
@@ -254,6 +264,28 @@ python -m haunted_blender.manga_atlas_cli harvest \
   ./film/manga-harvest
 ```
 
+Bridge an authorized page harvest directly into the existing 008h Parts Drawer:
+
+```bash
+python -m haunted_blender.manga_atlas_cli drawer \
+  ./film/manga-harvest/page-harvest.json \
+  ./film/manga-parts-drawer.json
+```
+
+The bridge maps:
+
+```text
+panel             → still
+region-candidate  → crop
+edge-mask         → mask
+```
+
+and preserves the original page SHA and page-harvest id.
+
+```text
+PAGE PROVENANCE SURVIVES DRAWER BRIDGE
+```
+
 Build the atlas:
 
 ```bash
@@ -273,12 +305,14 @@ python -m haunted_blender.manga_atlas_cli director \
 
 ## Intended next composition
 
-008m establishes the rights/provenance and geometry layer required for:
+008m now directly bridges authorized owned-page pixels into the existing parts ecology:
 
 ```text
 OWNED COMIC PAGE
       ↓
 008m PAGE HARVEST
+      ↓
+008m → 008h DRAWER BRIDGE
       ↓
 008h PARTS DRAWER
       ↓
