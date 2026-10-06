@@ -567,6 +567,20 @@ def engine_view(root, section_id: str) -> dict:
             {"slot": p["slot"], "label": p["label"], "traits": p["traits"]}
             for p in ecology.get("proposals") or []
         ]
+    kept_slot = None
+    awakening_windows = []
+    if state.get("keepPath"):
+        keep_path = _safe_path(root, state["keepPath"])
+        keep_result = json.loads(keep_path.read_text(encoding="utf-8"))
+        kept_id = keep_result.get("ecology", {}).get("disposition", {}).get("proposalId")
+        kept = next((p for p in keep_result.get("ecology", {}).get("proposals", []) if p.get("id") == kept_id), None)
+        if kept:
+            kept_slot = kept.get("slot")
+    if state.get("scenePath"):
+        scene_path = _safe_path(root, state["scenePath"])
+        scene = json.loads(scene_path.read_text(encoding="utf-8"))
+        awakening_windows = list(scene.get("awakeningWindows") or [])
+
     next_action = None
     if state.get("motionPlanPath") and state.get("motionStatePath"):
         next_action = motion_executor.next_action(
@@ -578,6 +592,8 @@ def engine_view(root, section_id: str) -> dict:
         "sectionId": section_id,
         "temperature": section["temperature"],
         "proposals": proposals,
+        "keptSlot": kept_slot,
+        "awakeningWindows": awakening_windows,
         "engine": copy.deepcopy(state),
         "nextMotionAction": next_action,
         "configured": _config_path(root).is_file(),
