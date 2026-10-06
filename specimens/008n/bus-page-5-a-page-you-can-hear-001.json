@@ -1,0 +1,146 @@
+{
+  "schema": "haunted-blender/particular-performance-spec/v1",
+  "label": "The Bus That Joined the Band — Page 5 — A page you can hear",
+  "sourceLocator": {
+    "provider": "google-drive",
+    "documentId": "1MfkACtc3bIg0qqtmZHl6_51CQhB3mEUyIDlmI2Byg6w",
+    "revisionId": "ANLCKQlL5Ga3UV-dGHL5xasFMYIELI4BDj1pE0Fj_zLTaAnR23Le-aNbFJoPKEtWY5kWbE6yPc4aLk9O7HP_4FdjFr23LunQupU0J07f9Rc",
+    "title": "01 — THREE MORE DOORS — Issues 0.022101–0.022103 + Side Stories 002",
+    "issue": "0.022101",
+    "page": 5,
+    "sourceScope": "human-authored beat sheet; staging remains proposal until admitted"
+  },
+  "boundaryClaims": [
+    "Every sound has a pictured source.",
+    "Nobody appoints the bus conductor.",
+    "The blinker appears to land on the newly opened space."
+  ],
+  "particulars": [
+    {
+      "id": "p-guitar-string",
+      "kind": "visible-sound-source",
+      "text": "guitar string",
+      "observable": true
+    },
+    {
+      "id": "p-mug-lid",
+      "kind": "visible-sound-source",
+      "text": "loose mug lid",
+      "observable": true
+    },
+    {
+      "id": "p-grace-breath",
+      "kind": "visible-sound-source",
+      "text": "Grace's breath",
+      "observable": true
+    },
+    {
+      "id": "p-seat-spring",
+      "kind": "visible-sound-source",
+      "text": "seat spring",
+      "observable": true
+    },
+    {
+      "id": "p-fingers-rail",
+      "kind": "visible-sound-source",
+      "text": "fingers against the seat rail",
+      "observable": true
+    },
+    {
+      "id": "p-window-edge",
+      "kind": "visible-sound-source",
+      "text": "window edge",
+      "observable": true
+    },
+    {
+      "id": "p-lumi-blinker",
+      "kind": "attention-particular",
+      "text": "Lumi watching the blinker",
+      "observable": true
+    },
+    {
+      "id": "p-wide-interior",
+      "kind": "composition-particular",
+      "text": "A wider last panel shows the whole parked interior.",
+      "observable": true
+    }
+  ],
+  "beats": [
+    {
+      "id": "beat-01",
+      "sourceParticularId": "p-guitar-string",
+      "shotType": "INSERT",
+      "durationSeconds": 0.7,
+      "staging": "Macro crop on a vibrating guitar string; keep the hand or instrument body visible enough to preserve an ordinary source.",
+      "interpretation": "Open with source before pattern."
+    },
+    {
+      "id": "beat-02",
+      "sourceParticularId": "p-mug-lid",
+      "shotType": "INSERT",
+      "durationSeconds": 0.6,
+      "staging": "Cut to the loose mug lid rattling in frame; no reaction shot explains it.",
+      "interpretation": "A second pictured source answers without becoming a character."
+    },
+    {
+      "id": "beat-03",
+      "sourceParticularId": "p-grace-breath",
+      "shotType": "CLOSE_UP",
+      "durationSeconds": 0.7,
+      "staging": "Close on Grace breathing between phrases; preserve breath as breath, not narration.",
+      "interpretation": "Human sound joins object sound without hierarchy."
+    },
+    {
+      "id": "beat-04",
+      "sourceParticularId": "p-seat-spring",
+      "shotType": "INSERT",
+      "durationSeconds": 0.6,
+      "staging": "Show the seat spring compress and release inside the bus geometry.",
+      "interpretation": "Mechanical rhythm remains mechanically sourced."
+    },
+    {
+      "id": "beat-05",
+      "sourceParticularId": "p-fingers-rail",
+      "shotType": "CLOSE_UP",
+      "durationSeconds": 0.6,
+      "staging": "Frame fingers against the seat rail with contact visible.",
+      "interpretation": "Gesture is allowed to rhyme with the beat without being declared its cause."
+    },
+    {
+      "id": "beat-06",
+      "sourceParticularId": "p-window-edge",
+      "shotType": "INSERT",
+      "durationSeconds": 0.6,
+      "staging": "Hold the window edge against its frame long enough to register a small physical rattle.",
+      "interpretation": "The room participates through an observable contact point."
+    },
+    {
+      "id": "beat-07",
+      "sourceParticularId": "p-lumi-blinker",
+      "shotType": "REACTION",
+      "durationSeconds": 1.2,
+      "staging": "Lumi watches the blinker. Leave negative temporal space before the next cut.",
+      "interpretation": "Attention notices a relation; it does not prove command or causality."
+    },
+    {
+      "id": "beat-08",
+      "sourceParticularId": "p-wide-interior",
+      "shotType": "WIDE",
+      "durationSeconds": 1.8,
+      "staging": "Return to the whole parked interior and let every prior source coexist in one stable geography.",
+      "interpretation": "The arrangement is visible without appointing a conductor."
+    }
+  ],
+  "admittedBeatIds": [
+    "beat-01",
+    "beat-02",
+    "beat-03",
+    "beat-04",
+    "beat-05",
+    "beat-06",
+    "beat-07",
+    "beat-08"
+  ],
+  "authorityRef": "human-editorial-approval:chatgpt:2026-10-06:008n",
+  "decisionNote": "User explicitly approved the 008n Particular-to-Performance smash in conversation."
+}
