@@ -320,6 +320,27 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
                 for row in prescription["beats"]
             ))
 
+    def test_registered_owned_drive_batch_freezes_eight_reusable_pixel_sources(self):
+        batch_path = (
+            Path(__file__).resolve().parents[1]
+            / "examples"
+            / "manga_atlas"
+            / "static-collective-owned-manga-batch-001.json"
+        )
+        batch = json.loads(batch_path.read_text(encoding="utf-8"))
+        self.assertEqual(batch["schema"], "haunted-blender/page-source-batch/v1")
+        self.assertEqual(batch["sourceClass"], "owned")
+        self.assertTrue(batch["rights"]["pixelReuse"])
+        self.assertTrue(batch["rights"]["derivativeReuse"])
+        self.assertTrue(batch["rights"]["publicationReuse"])
+        self.assertEqual(len(batch["items"]), 8)
+        self.assertEqual(
+            len({row["sha256"] for row in batch["items"]}),
+            8,
+        )
+        self.assertTrue(all(len(row["sha256"]) == 64 for row in batch["items"]))
+        self.assertIn("INGEST ORDER != STORY ORDER", batch["laws"])
+
     def test_reference_manifest_cannot_self_grant_reuse_rights(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
