@@ -901,6 +901,16 @@ def decline_current_candidate(root, section_id: str, *, reason: str = "") -> dic
         meta.setdefault("declines", []).append(str(path.relative_to(root)))
 
     _set_meta(root, section_id, mutate)
+    plugin_orchard.record_usage(
+        root,
+        observed_at="unspecified",
+        provider_id=attempt["providerId"],
+        model=attempt["model"],
+        phase="editorial",
+        outcome="declined",
+        candidate_sha256=candidate_sha,
+        notes=[str(reason or "")] if reason else [],
+    )
     return {"decline": str(path), "declineSha256": digest, "view": provider_view(root, section_id)}
 
 
@@ -951,9 +961,6 @@ def accept_candidate(root, section_id: str, candidate_path: str) -> dict:
     )
     cockpit.action_witness(root, section_id, video_address=address)
 
-    def update_engine(meta_project):
-        pass
-
     project_body, updated_section = _project_section(root, section_id)
     engine = _engine(updated_section)
     engine["acceptedCandidatePath"] = str(path.relative_to(root))
@@ -961,6 +968,15 @@ def accept_candidate(root, section_id: str, candidate_path: str) -> dict:
     engine["awakenedScenePath"] = str(Path(awakened["output"]).resolve().relative_to(root))
     engine["awakenedSceneReceiptPath"] = str(Path(awakened["receipt"]).resolve().relative_to(root))
     cockpit._save(root, project_body)
+    plugin_orchard.record_usage(
+        root,
+        observed_at="unspecified",
+        provider_id=current["attempt"]["providerId"],
+        model=current["attempt"]["model"],
+        phase="editorial",
+        outcome="accepted",
+        candidate_sha256=accepted["videoSha256"],
+    )
 
     return {
         "status": "witnessed",
@@ -1012,19 +1028,60 @@ def provider_view(root, section_id: str) -> dict:
         except Exception:
             copy_item["relativePath"] = None
         candidates.append(copy_item)
+    adapter = None
+    bridge_pending = None
+    if attempt:
+        try:
+            adapter = _adapter_spec(root, attempt["providerId"])
+        except Exception:
+            adapter = None
+        if adapter and adapter.get("transport") == "plugin_bridge":
+            phase = next_action
+            pending_rows = plugin_bridge.pending(root)
+            bridge_pending = next(
+                (
+                    row for row in pending_rows
+                    if row.get("providerId") == attempt["providerId"]
+                    and row.get("phase") == phase
+                ),
+                None,
+            )
+
+    display_action = next_action
+    display_status = current["state"].get("status")
+    reconcile_required = False
+    if bridge_pending is not None:
+        if bridge_pending.get("claimed") and next_action == "SUBMIT":
+            display_action = "RECONCILE_SUBMISSION"
+            display_status = "reconcile_required"
+            reconcile_required = True
+        else:
+            display_action = "PLUGIN_BRIDGE"
+            display_status = "bridge_required"
+    elif unresolved_guard is not None:
+        if adapter and adapter.get("transport") == "plugin_bridge":
+            # A resolved bridge result may be waiting to be consumed on the next drive pass.
+            display_action = next_action
+        else:
+            display_action = "RECONCILE_SUBMISSION"
+            display_status = "reconcile_required"
+            reconcile_required = True
+
     return {
         "sectionId": section_id,
         "configured": _config_path(root).is_file(),
         "ready": True,
-        "nextAction": "RECONCILE_SUBMISSION" if unresolved_guard else next_action,
+        "nextAction": display_action,
         "executorNextAction": next_action,
-        "status": "reconcile_required" if unresolved_guard else current["state"].get("status"),
+        "status": display_status,
         "currentAttempt": current["state"].get("currentAttempt"),
         "attemptCount": len(current["state"].get("attempts") or []),
         "attempt": copy.deepcopy(attempt),
         "approvalRequired": next_action == "SUBMIT" and not unresolved_guard and _approval_needed(attempt) and approval is None,
-        "reconcileRequired": unresolved_guard is not None,
+        "reconcileRequired": reconcile_required,
         "submitGuard": unresolved_guard,
+        "adapter": copy.deepcopy(adapter),
+        "pluginBridge": copy.deepcopy(bridge_pending),
         "approval": approval,
         "quote": quote,
         "candidates": candidates,
@@ -1032,6 +1089,7 @@ def provider_view(root, section_id: str) -> dict:
         and int(current["state"].get("currentAttempt", 0)) < len(current["state"].get("attempts") or []),
         "laws": [
             "ADAPTER != AUTHORITY",
+            "PLUGIN BRIDGE != LOCAL CREDENTIAL",
             "QUOTE != APPROVAL",
             "SUBMIT ONCE PER ATTEMPT",
             "CANDIDATE != ACCEPTANCE",
