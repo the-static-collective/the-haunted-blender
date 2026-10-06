@@ -294,17 +294,6 @@ def _source_path(root: Path, section_id: str) -> Path:
     return _safe_relative(root, path)
 
 
-def _adapter_payload(current: dict, section_id: str) -> dict:
-    attempt = current["attempt"] or {}
-    payload = {
-        "sectionId": section_id,
-        "request": copy.deepcopy(current["request"]),
-        "attempt": copy.deepcopy(attempt),
-        "sourcePath": str(_source_path(_root(current["planPath"]).parents[2] if False else Path("."), section_id)) if False else None,
-    }
-    return payload
-
-
 def _base_payload(root: Path, section_id: str, current: dict) -> dict:
     return {
         "sectionId": section_id,
@@ -648,7 +637,7 @@ def accept_candidate(root, section_id: str, candidate_path: str) -> dict:
     path = _safe_relative(root, candidate_path)
     accepted = motion_organ.accept_candidate(
         root,
-        current["engine"]["motionRequestPath"],
+        _safe_relative(root, current["engine"]["motionRequestPath"]),
         path,
         filmmaker_approval=True,
     )
