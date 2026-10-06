@@ -1,7 +1,7 @@
 from __future__ import annotations
 import copy,hashlib,json
 from pathlib import Path
-from . import motion_organ,project
+from . import atlas_black_box,motion_organ,project
 
 PLAN_SCHEMA="haunted-blender/motion-execution-plan/v1"
 STATE_SCHEMA="haunted-blender/motion-execution-state/v1"
@@ -122,6 +122,13 @@ def record_capabilities(root,plan_path,state_path,receipt):
               and req["aspectRatio"] in set(receipt.get("aspectRatios") or [])
               and float(receipt.get("minSeconds",0))<=req["durationSeconds"]<=float(receipt.get("maxSeconds",0)))
     a["capabilitiesReceiptSha256"]=_sha(receipt);a["phase"]="needs_quote" if eligible else "ineligible"
+    atlas_black_box.record_operational(
+        root, kind="provider.capabilities",
+        observed_at=str(receipt.get("observedAt") or "unspecified"),
+        plan_sha256=_sha(plan), provider_id=a["providerId"], offer_id=a["offerId"], attempt=a["attempt"],
+        facts={"available":bool(receipt.get("available")),"eligibleForRequest":bool(eligible),
+               "minSeconds":receipt.get("minSeconds"),"maxSeconds":receipt.get("maxSeconds")}
+    )
     return _write_next(root,state)
 
 def record_quote(root,plan_path,state_path,receipt):
@@ -143,11 +150,27 @@ def record_quote(root,plan_path,state_path,receipt):
         if usd>plan["perJobBudgetUsdMicros"] or state["spentAuthorizedUsdMicros"]+usd>plan["occurrenceBudgetUsdMicros"]:
             a["quoteReceiptSha256"]=_sha(receipt);a["phase"]="budget_blocked"
             state["status"]="budget_blocked";state["stopReason"]="quote exceeds explicit budget"
+            atlas_black_box.record_operational(
+                root, kind="provider.quote",
+                observed_at=str(receipt.get("observedAt") or "unspecified"),
+                plan_sha256=_sha(plan), provider_id=a["providerId"], offer_id=a["offerId"], attempt=a["attempt"],
+                facts={"denomination":denomination,"wholeJobUsdMicros":usd,
+                       "generatedDurationSeconds":generated,"exactConfiguration":True,
+                       "budgetAllowed":False}
+            )
             return _write_next(root,state)
     elif a["spendClass"]=="paid":
         raise ValueError("Paid execution requires exact whole-job USD quote")
     a["quoteReceiptSha256"]=_sha(receipt);a["quotedUsdMicros"]=usd
     a["generatedDurationSeconds"]=generated;a["phase"]="ready_to_submit"
+    atlas_black_box.record_operational(
+        root, kind="provider.quote",
+        observed_at=str(receipt.get("observedAt") or "unspecified"),
+        plan_sha256=_sha(plan), provider_id=a["providerId"], offer_id=a["offerId"], attempt=a["attempt"],
+        facts={"denomination":denomination,"wholeJobUsdMicros":usd,
+               "generatedDurationSeconds":generated,"exactConfiguration":True,
+               "budgetAllowed":True}
+    )
     return _write_next(root,state)
 
 def record_submit(root,plan_path,state_path,receipt):
@@ -162,6 +185,14 @@ def record_submit(root,plan_path,state_path,receipt):
     a["submitReceiptSha256"]=_sha(receipt);a["vendorRequestId"]=vendor;a["phase"]="submitted"
     usd=a.get("quotedUsdMicros")
     if isinstance(usd,int): state["spentAuthorizedUsdMicros"]+=usd
+    atlas_black_box.record_operational(
+        root, kind="provider.submit",
+        observed_at=str(receipt.get("observedAt") or "unspecified"),
+        plan_sha256=_sha(plan), provider_id=a["providerId"], offer_id=a["offerId"], attempt=a["attempt"],
+        facts={"vendorRequestIdSha256":hashlib.sha256(vendor.encode("utf-8")).hexdigest(),
+               "submittedParameterSha256":receipt.get("submittedParameterSha256"),
+               "authorizedUsdMicros":usd}
+    )
     return _write_next(root,state)
 
 def record_status(root,plan_path,state_path,receipt):
@@ -179,6 +210,13 @@ def record_status(root,plan_path,state_path,receipt):
     elif status=="running": a["phase"]="running"
     else:
         a["phase"]=status;state["status"]="reconcile_required";state["stopReason"]="submitted job unresolved"
+    atlas_black_box.record_operational(
+        root, kind="provider.status",
+        observed_at=str(receipt.get("observedAt") or "unspecified"),
+        plan_sha256=_sha(plan), provider_id=a["providerId"], offer_id=a["offerId"], attempt=a["attempt"],
+        facts={"status":status,"queueSeconds":receipt.get("queueSeconds"),
+               "runtimeSeconds":receipt.get("runtimeSeconds")}
+    )
     return _write_next(root,state)
 
 def advance(root,plan_path,state_path):
@@ -203,4 +241,12 @@ def record_fetch(root,plan_path,state_path,receipt):
         raise ValueError("Fetched candidate too short")
     a["fetchReceiptSha256"]=_sha(receipt);a["candidateVideoSha256"]=sha;a["phase"]="candidate_ready"
     state["status"]="candidate_ready"
+    atlas_black_box.record_operational(
+        root, kind="provider.fetch",
+        observed_at=str(receipt.get("observedAt") or "unspecified"),
+        plan_sha256=_sha(plan), provider_id=a["providerId"], offer_id=a["offerId"], attempt=a["attempt"],
+        facts={"outputSha256":sha,"durationSeconds":receipt.get("durationSeconds"),
+               "width":receipt.get("width"),"height":receipt.get("height"),
+               "container":receipt.get("container"),"codec":receipt.get("codec")}
+    )
     return _write_next(root,state)

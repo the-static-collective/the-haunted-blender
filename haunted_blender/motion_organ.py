@@ -16,7 +16,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from . import catalog, project
+from . import atlas_black_box, catalog, project
 
 REQUEST_SCHEMA = "haunted-blender/motion-organ-request/v1"
 OFFERS_SCHEMA = "haunted-blender/motion-provider-offers/v1"
@@ -532,4 +532,10 @@ def accept_candidate(root, request_path, video, *, filmmaker_approval: bool = Fa
     digest = _sha(witness)
     dest = _acceptance_path(root, digest)
     _save(dest, witness)
+    atlas_black_box.record_creative_keep(
+        root, observed_at="unspecified", request_sha256=request_sha,
+        scene_sha256=request["sceneSha256"], window_id=request["windowId"],
+        provider_id=receipt["providerId"], offer_id=receipt["offerId"],
+        candidate_sha256=receipt["outputSha256"]
+    )
     return {"acceptance": str(dest), "video": str(path), "videoSha256": witness["videoSha256"]}
