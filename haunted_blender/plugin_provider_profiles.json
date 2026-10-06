@@ -1,0 +1,214 @@
+{
+  "schema": "haunted-blender/plugin-provider-profiles/v1",
+  "profiles": [
+    {
+      "id": "openart",
+      "label": "OpenArt",
+      "role": "motion-generator",
+      "routeKinds": [
+        "image-to-video",
+        "text-to-video",
+        "element-to-video"
+      ],
+      "tools": {
+        "account": "mcp__OpenArt__openart_account_get",
+        "catalog": "mcp__OpenArt__openart_model_list",
+        "quote": "mcp__OpenArt__openart_model_cost",
+        "submit": "mcp__OpenArt__openart_generate_video",
+        "status": "mcp__OpenArt__openart_creation_get"
+      }
+    },
+    {
+      "id": "higgsfield",
+      "label": "Higgsfield",
+      "role": "motion-generator",
+      "routeKinds": [
+        "image-to-video",
+        "motion-control",
+        "replace-object",
+        "text-to-video"
+      ],
+      "tools": {
+        "account": "mcp__Higgsfield__balance",
+        "catalog": "mcp__Higgsfield__models_list",
+        "quote": "mcp__Higgsfield__estimate_video_cost",
+        "submit": "mcp__Higgsfield__generate_video",
+        "status": "mcp__Higgsfield__jobs_wait"
+      }
+    },
+    {
+      "id": "picsart",
+      "label": "Picsart",
+      "role": "motion-generator+finisher",
+      "routeKinds": [
+        "image-to-video",
+        "text-to-video",
+        "video-to-video",
+        "finish"
+      ],
+      "tools": {
+        "account": "mcp__Picsart__picsart_credits",
+        "catalog": "mcp__Picsart__picsart_model_catalog",
+        "quote": "mcp__Picsart__picsart_preflight",
+        "submit": "mcp__Picsart__picsart_generate",
+        "status": "mcp__Picsart__picsart_job_status"
+      }
+    },
+    {
+      "id": "pollo",
+      "label": "Pollo AI",
+      "role": "motion-generator+finisher",
+      "routeKinds": [
+        "image-to-video",
+        "text-to-video",
+        "reference-to-video",
+        "motion",
+        "finish"
+      ],
+      "tools": {
+        "account": "mcp__Pollo_AI__pollo_account_status",
+        "catalog": "mcp__Pollo_AI__pollo_list_models",
+        "quote": "mcp__Pollo_AI__pollo_estimate_generation_cost",
+        "submit": "mcp__Pollo_AI__pollo_generate_video",
+        "status": "mcp__Pollo_AI__pollo_get_generation_status"
+      }
+    },
+    {
+      "id": "creative-claw",
+      "label": "Creative Claw",
+      "role": "motion-generator+finisher",
+      "routeKinds": [
+        "image-to-video",
+        "text-to-video",
+        "html-video",
+        "finish"
+      ],
+      "tools": {
+        "account": "mcp__Creative_Claw__manage_account",
+        "catalog": "mcp__Creative_Claw__list_models",
+        "quote": "mcp__Creative_Claw__estimate_generation",
+        "submit": "mcp__Creative_Claw__generate_video",
+        "status": "mcp__Creative_Claw__check_job",
+        "finish": "mcp__Creative_Claw__merge_media"
+      }
+    },
+    {
+      "id": "fal",
+      "label": "fal",
+      "role": "motion-generator",
+      "routeKinds": [
+        "image-to-video",
+        "text-to-video"
+      ],
+      "tools": {
+        "account": "mcp__fal__check_account_status",
+        "catalog": "mcp__fal__search_models",
+        "schema": "mcp__fal__get_model_schema",
+        "submit": "mcp__fal__submit_job",
+        "status": "mcp__fal__check_job",
+        "fetch": "mcp__fal__get_job_result"
+      }
+    },
+    {
+      "id": "krea",
+      "label": "Krea",
+      "role": "motion-generator",
+      "routeKinds": [
+        "image-to-video",
+        "text-to-video"
+      ],
+      "tools": {
+        "catalog": "mcp__Krea__list_models",
+        "schema": "mcp__Krea__get_model_schema",
+        "submit": "mcp__Krea__generate_video",
+        "status": "mcp__Krea__get_job"
+      }
+    },
+    {
+      "id": "everygen",
+      "label": "Everygen",
+      "role": "motion-generator+finisher",
+      "routeKinds": [
+        "image-to-video",
+        "text-to-video",
+        "reference-to-video",
+        "finish"
+      ],
+      "tools": {
+        "account": "mcp__Everygen__get_credit_balance",
+        "catalog": "mcp__Everygen__list_supported_models",
+        "quote": "mcp__Everygen__estimate_generation_cost",
+        "submit": "mcp__Everygen__generate_video",
+        "status": "mcp__Everygen__get_video_generation_status",
+        "finish": "mcp__Everygen__compose_video"
+      }
+    },
+    {
+      "id": "runway",
+      "label": "Runway",
+      "role": "motion-generator+finisher",
+      "routeKinds": [
+        "image-to-video",
+        "text-to-video",
+        "video-to-video",
+        "finish"
+      ],
+      "tools": {
+        "account": "mcp__Runway__show_plans_and_credits",
+        "submit": "mcp__Runway__generate_video",
+        "finish": "mcp__Runway__edit_video"
+      }
+    },
+    {
+      "id": "veed",
+      "label": "VEED Video Generator",
+      "role": "assembled-video-generator",
+      "routeKinds": [
+        "script-video"
+      ],
+      "tools": {
+        "account": "mcp__VEED_Video_Generator__get_credit_balance",
+        "submit": "mcp__VEED_Video_Generator__create_fabric_video",
+        "status": "mcp__VEED_Video_Generator__get_generation_status"
+      }
+    },
+    {
+      "id": "videogen",
+      "label": "VideoGen",
+      "role": "motion-generator+finisher",
+      "routeKinds": [
+        "image-to-video",
+        "text-to-video",
+        "storyboard-video",
+        "finish"
+      ],
+      "tools": {
+        "account": "mcp__VideoGen__get_me",
+        "submit": "mcp__VideoGen__generate_video_clip",
+        "status": "mcp__VideoGen__get_tool_execution",
+        "finish": "mcp__VideoGen__export_project"
+      }
+    },
+    {
+      "id": "screel",
+      "label": "Screel",
+      "role": "scene-builder+finisher",
+      "routeKinds": [
+        "storyboard-video",
+        "finish"
+      ],
+      "tools": {
+        "account": "mcp__Screel__get_account",
+        "status": "mcp__Screel__get_job_status",
+        "finish": "mcp__Screel__render_project"
+      }
+    }
+  ],
+  "laws": [
+    "PLUGIN PROFILE != LIVE CAPABILITY",
+    "CONNECTED APP != LOCAL API",
+    "MODEL CATALOG != AFFORDABILITY",
+    "BALANCE OBSERVATION != SPEND AUTHORITY",
+    "FINISHER != MOTION GENERATOR"
+  ]
+}
