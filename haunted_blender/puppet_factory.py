@@ -620,6 +620,12 @@ def render_performance(performance: dict, output_path: str | Path) -> dict:
         "mouthEventCount": len(performance["mouthEvents"]),
         "lyricGeographyCount": len(performance["lyricGeography"]),
         "cutawayCount": len(performance["cutaways"]),
+        "harvestedStageLayerCount": len(
+            (performance.get("harvestedStageDressing") or {}).get("witnesses") or []
+        ),
+        "movingInsertProposalCount": len(
+            (performance.get("harvestedStageDressing") or {}).get("movingInserts") or []
+        ),
         "externalGenerations": 0,
         "providerCredits": 0,
         "usdMicros": 0,
