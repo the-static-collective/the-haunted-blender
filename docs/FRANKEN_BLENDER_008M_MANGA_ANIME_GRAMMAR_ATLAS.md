@@ -12,30 +12,52 @@ Those two authorities are deliberately separate.
 
 A page may be useful for grammar even when its pixels are not authorized for reuse.
 
-## Owned Drive batch 001
+## Owned manga collection + exact snapshot
 
-The user explicitly confirmed that the eight inspected pages from Drive folder `1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5` are owned pixels and may be reused.
+The user explicitly confirmed that the **entire Drive folder** is their owned pixel collection and that pages deliberately added to it may be reused, cut apart, derived, recomposed, and published.
 
-That authority is frozen in:
-
-```text
-docs/fixtures/008m-owned-drive-batch-001.json
-```
-
-The declaration is intentionally **exact-file-list scoped**. Later additions to the Drive folder do not inherit ownership authority automatically.
+008m now models that in two layers:
 
 ```text
-OWNED BATCH AUTHORITY
-  → pixel reuse YES
-  → derivative reuse YES
-  → publication reuse YES
+GROWING DRIVE COLLECTION
+  futureMembersInherit = true
+          ↓
+membership / rights authority
 
-BUT
-
-REMOTE FILE ID != BYTE SHA
+EXACT PAGE SNAPSHOT
+  14 current PNGs
+  exact SHA-256 + dimensions
+          ↓
+byte custody
 ```
 
-Each downloaded page must still be materialized locally and SHA-256 frozen before 008m exports derivatives.
+Canonical collection policy:
+
+```text
+specimens/008m/static-collective-owned-page-collection-001.json
+```
+
+Current exact-byte snapshot:
+
+```text
+specimens/008m/static-collective-owned-page-batch-snapshot-001.json
+```
+
+The current snapshot contains **14 PNG pages**. Their actual downloaded bytes were SHA-256 frozen independently before being registered.
+
+A later page added to the declared collection may inherit the collection's ownership/reuse policy, but it still receives its own fresh SHA-256 when ingested.
+
+```text
+FOLDER MEMBERSHIP
+      !=
+BYTE IDENTITY
+
+COLLECTION RIGHTS
+      +
+PER-PAGE SHA
+      ↓
+HARVEST AUTHORITY
+```
 
 ## Founding source classes
 
@@ -137,7 +159,7 @@ COLLECTION RIGHTS APPLY TO DECLARED MEMBERSHIP NOT UNKNOWN BYTES
 EACH INGESTED PAGE STILL REQUIRES ITS OWN SOURCE SHA
 ```
 
-The repository collection snapshot intentionally omits private Drive URLs and Drive file ids. Current member filenames plus later per-page SHA custody are sufficient for the public artifact.
+The collection specimen records the declared Drive collection and its current membership snapshot. Exact image bytes are not committed; byte identity is represented by the separate SHA-256 snapshot.
 
 ## Source manifest
 
@@ -286,17 +308,17 @@ OWNERSHIP DOES NOT TRANSFER BETWEEN SOURCES
 
 ## Registered owned collection snapshot
 
-The earlier eight-page batch has been superseded by the rights-bearing **14-page owned collection** described above.
-
-The old private-location witness is no longer the canonical public specimen. Current and future collection members inherit the user-declared ownership policy, while each actual image still receives an exact SHA-256 at ingestion.
+The earlier eight-page state is superseded by the current **14-page owned collection + exact-byte snapshot**.
 
 ```text
-FOLDER MEMBERSHIP POLICY
+GROWING COLLECTION POLICY
         +
-PER-PAGE SHA CUSTODY
+CURRENT 14-PAGE SHA SNAPSHOT
         ↓
 OWNED PAGE HARVEST AUTHORITY
 ```
+
+New pages can join the collection without rewriting old byte history. A subsequent exact snapshot can freeze those new bytes as a new batch.
 
 ## Multi-page sequence grammar
 
