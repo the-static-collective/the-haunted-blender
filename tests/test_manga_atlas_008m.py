@@ -530,11 +530,36 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
                 collection,
                 external_id="new.png",
                 grammar_families=["sequence-rhythm"],
+                observed_membership=True,
             )
             self.assertTrue(manifest["rightsInheritedFromCollection"])
             self.assertEqual(manifest["externalMemberId"], "new.png")
             self.assertEqual(len(manifest["sourceSha256"]), 64)
             self.assertNotEqual(manifest["sourceSha256"], manga_atlas._file_sha(old))
+
+    def test_future_member_requires_membership_witness_even_when_collection_inherits(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "new.png"
+            self.make_page(source)
+            collection = manga_atlas.collection_manifest(
+                label="Growing owned collection",
+                collection_id="growing-guard",
+                collection_url="",
+                source_class="owned",
+                pixel_reuse=True,
+                derivative_reuse=True,
+                publication_reuse=True,
+                rights_note="Future deliberate folder members are owned.",
+                member_snapshot=[],
+                future_members_inherit=True,
+            )
+            with self.assertRaisesRegex(PermissionError, "membership witness"):
+                manga_atlas.source_from_collection(
+                    source,
+                    collection,
+                    external_id="new.png",
+                )
 
     def test_future_member_is_refused_when_collection_policy_does_not_inherit(self):
         with tempfile.TemporaryDirectory() as td:
