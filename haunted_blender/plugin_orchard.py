@@ -136,6 +136,12 @@ def _normalize_model(raw: dict) -> dict:
         "maxSeconds": max_s,
         "freeRunsRemaining": int(raw.get("freeRunsRemaining") or 0),
         "entitlement": str(raw.get("entitlement") or ""),
+        "availabilityClass": str(raw.get("availabilityClass") or ""),
+        "repeatableFree": bool(raw.get("repeatableFree", False)),
+        "regeneratingAllowance": bool(raw.get("regeneratingAllowance", False)),
+        "resetSeconds": int(raw["resetSeconds"]) if raw.get("resetSeconds") is not None else None,
+        "maxRunsPerWindow": int(raw["maxRunsPerWindow"]) if raw.get("maxRunsPerWindow") is not None else None,
+        "secondsPerRun": float(raw.get("secondsPerRun") or raw.get("maxSeconds") or 0),
         "quoteFresh": bool(raw.get("quoteFresh", False)),
         "notes": [str(v) for v in (raw.get("notes") or [])],
     }
@@ -267,6 +273,12 @@ def export_motion_offers(root, observation: dict) -> dict:
                 notes.append(f"freeRunsRemaining={model['freeRunsRemaining']}")
             if model.get("entitlement"):
                 notes.append(f"entitlement={model['entitlement']}")
+            if model.get("availabilityClass"):
+                notes.append(f"availabilityClass={model['availabilityClass']}")
+            if model.get("repeatableFree"):
+                notes.append("repeatableFree=true")
+            if model.get("resetSeconds") is not None:
+                notes.append(f"resetSeconds={model['resetSeconds']}")
             row = {
                 "offerId": offer_id,
                 "providerId": provider["providerId"],
