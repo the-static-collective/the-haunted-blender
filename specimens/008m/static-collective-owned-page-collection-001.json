@@ -1,0 +1,123 @@
+{
+  "collectionId": "static-collective-manga-owned-001",
+  "collectionUrl": "",
+  "futureMembersInherit": true,
+  "id": "page-source-collection:62162185ccf3369837b2dbc7",
+  "label": "Static Collective Manga — Owned Page Collection 001",
+  "laws": [
+    "COLLECTION RIGHTS APPLY TO DECLARED MEMBERSHIP NOT UNKNOWN BYTES",
+    "EACH INGESTED PAGE STILL REQUIRES ITS OWN SOURCE SHA",
+    "FUTURE MEMBER INHERITANCE REQUIRES USER-DECLARED COLLECTION POLICY",
+    "COLLECTION OWNERSHIP != PAGE SEMANTICS"
+  ],
+  "memberCount": 14,
+  "memberSnapshot": [
+    {
+      "createdTime": null,
+      "externalId": "file_00000000047081f6bacba2d9cf411782.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_00000000047081f6bacba2d9cf411782.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_0000000005ec81f5ab3d10b52a51940a.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_0000000005ec81f5ab3d10b52a51940a.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_0000000008f481f5a4573899015a13bd.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_0000000008f481f5a4573899015a13bd.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_0000000013f481f88fe3ebe1bc37ff01.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_0000000013f481f88fe3ebe1bc37ff01.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_00000000166881f88729b6a636845ae4.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_00000000166881f88729b6a636845ae4.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_0000000044bc81f89c9325a5909d06e7.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_0000000044bc81f89c9325a5909d06e7.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_0000000047948230b9f4f1999e9e57e5.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_0000000047948230b9f4f1999e9e57e5.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_0000000053a881f49d2e953cd20e046a.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_0000000053a881f49d2e953cd20e046a.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_00000000745c8206b3b28183d45a0097.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_00000000745c8206b3b28183d45a0097.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_00000000a71c81f5b79b167a79b210db.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_00000000a71c81f5b79b167a79b210db.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_00000000ac8c820e8df97e4b07c8de1a.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_00000000ac8c820e8df97e4b07c8de1a.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_00000000e0ac81f5a13b8091a75ca910.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_00000000e0ac81f5a13b8091a75ca910.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_00000000f80081f5bead517552cfc8bf.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_00000000f80081f5bead517552cfc8bf.png"
+    },
+    {
+      "createdTime": null,
+      "externalId": "file_00000000fedc81f899bb5267f73fe72f.png",
+      "mimeType": "image/png",
+      "modifiedTime": null,
+      "title": "file_00000000fedc81f899bb5267f73fe72f.png"
+    }
+  ],
+  "membershipAuthority": "user-declared-collection + external-metadata-snapshot",
+  "rights": {
+    "derivativeReuse": true,
+    "note": "User explicitly states the entire source folder, including current and future additions deliberately placed there, consists of their owned pixels and may be reused, transformed, recomposed, and published.",
+    "pixelReuse": true,
+    "publicationReuse": true
+  },
+  "schema": "haunted-blender/page-source-collection/v1",
+  "sourceClass": "owned"
+}
