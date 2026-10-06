@@ -12,6 +12,31 @@ Those two authorities are deliberately separate.
 
 A page may be useful for grammar even when its pixels are not authorized for reuse.
 
+## Owned Drive batch 001
+
+The user explicitly confirmed that the eight inspected pages from Drive folder `1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5` are owned pixels and may be reused.
+
+That authority is frozen in:
+
+```text
+docs/fixtures/008m-owned-drive-batch-001.json
+```
+
+The declaration is intentionally **exact-file-list scoped**. Later additions to the Drive folder do not inherit ownership authority automatically.
+
+```text
+OWNED BATCH AUTHORITY
+  → pixel reuse YES
+  → derivative reuse YES
+  → publication reuse YES
+
+BUT
+
+REMOTE FILE ID != BYTE SHA
+```
+
+Each downloaded page must still be materialized locally and SHA-256 frozen before 008m exports derivatives.
+
 ## Founding source classes
 
 008m begins with two distinct specimen classes from the current experiment.
