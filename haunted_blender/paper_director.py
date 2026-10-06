@@ -17,6 +17,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from . import material_surface
 from .scene_growth import TIMING_SCHEMA
 
 PLAN_SCHEMA = "haunted-blender/paper-director-plan/v1"
@@ -136,6 +137,16 @@ def _ensemble_turn(performance: dict | None, cue_index: int | None) -> dict | No
     return None
 
 
+def _character_material(performance: dict | None, character_id: str | None) -> dict | None:
+    if not performance:
+        return None
+    if character_id:
+        for row in ((performance.get("ensemble") or {}).get("cast") or []):
+            if row.get("id") == character_id:
+                return row.get("materialDefault")
+    return ((performance.get("materials") or {}).get("default"))
+
+
 def _cast_box(performance: dict | None, character_id: str | None) -> dict | None:
     if not performance or not character_id:
         return None
@@ -248,6 +259,8 @@ def _append(
     preserve_type: bool = False,
     speaker_id: str | None = None,
     listener_id: str | None = None,
+    speaker_material: dict | None = None,
+    material_bias: dict | None = None,
 ) -> None:
     if end - start < 1e-6:
         return
@@ -270,6 +283,8 @@ def _append(
         "preserveType": bool(preserve_type),
         "speakerId": speaker_id,
         "listenerId": listener_id,
+        "speakerMaterialType": (speaker_material or {}).get("type"),
+        "materialBias": material_bias,
     })
 
 
@@ -418,15 +433,35 @@ def plan(
         turn = _ensemble_turn(performance, cue.get("index"))
         speaker_id = (turn or {}).get("speakerId")
         listener_id = (turn or {}).get("primaryListenerId")
+        punctuation_lock = "?" in str(cue.get("text") or "") or "!" in str(cue.get("text") or "")
+        speaker_material = _character_material(performance, speaker_id)
+        material_bias = (
+            material_surface.directing_bias(speaker_material)
+            if speaker_material
+            else None
+        )
+
         if turn:
             # Ensemble-aware grammar turns generic wide/reaction views into
             # character-addressable shots while punctuation/insert authority
             # remains intact.
             if shot_type == "WIDE":
                 shot_type = "TWO_SHOT"
-            elif shot_type == "REACTION" and "?" not in str(cue.get("text") or ""):
+            elif shot_type == "REACTION" and not punctuation_lock:
                 shot_type = "LISTENER"
-        punctuation_lock = "?" in str(cue.get("text") or "") or "!" in str(cue.get("text") or "")
+
+        # Material is deliberately a weak aesthetic vote. It never overrides
+        # punctuation, Doctor authority, or an already-selected INSERT.
+        if material_bias and not punctuation_lock and shot_type not in {"INSERT", "REACTION", "LISTENER"}:
+            close_bias = float(material_bias.get("closeupBias", 1))
+            wide_bias = float(material_bias.get("wideBias", 1))
+            insert_bias = float(material_bias.get("insertBias", 1))
+            if insert and insert_bias >= 1.35:
+                shot_type = "INSERT"
+            elif close_bias >= 1.25 and shot_type in {"SPEAKER", "WIDE", "TWO_SHOT"}:
+                shot_type = "CLOSE_UP"
+            elif wide_bias >= 1.30 and shot_type in {"SPEAKER", "CLOSE_UP"}:
+                shot_type = "TWO_SHOT" if turn else "WIDE"
         _append(
             shots,
             start=start,
@@ -444,6 +479,8 @@ def plan(
             preserve_type=punctuation_lock,
             speaker_id=speaker_id,
             listener_id=listener_id,
+            speaker_material=speaker_material,
+            material_bias=material_bias,
         )
         cursor = max(cursor, cue_end)
 
@@ -521,6 +558,7 @@ def plan(
             "REACTION MAY REUSE EXISTING PERFORMANCE",
             "INSERT SHOT MUST BIND EXISTING MOVING SURFACE",
             "DIRECTING MAY CHANGE VIEW WITHOUT CHANGING WORLD",
+            "MATERIAL BIAS IS WEAKER THAN EXPLICIT EDITORIAL SIGNALS",
             "FULL SONG COVERAGE MAY NOT DECREASE",
         ],
     }
@@ -722,6 +760,8 @@ def render(
                 "weakWindowId": shot.get("weakWindowId"),
                 "speakerId": shot.get("speakerId"),
                 "listenerId": shot.get("listenerId"),
+                "speakerMaterialType": shot.get("speakerMaterialType"),
+                "materialBias": shot.get("materialBias"),
             })
 
         concat = temp / "shots.txt"

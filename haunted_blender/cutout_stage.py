@@ -120,6 +120,9 @@ def render_cutout(plan: dict, output_path: str | Path) -> dict:
             {
                 "id": layer["id"],
                 "sourceSha256": digest,
+                "sourceAuthoritySha256": layer.get("sourceAuthoritySha256"),
+                "material": layer.get("material"),
+                "materializedAssetId": layer.get("materializedAssetId"),
                 "byteLength": source.stat().st_size,
                 "z": int(layer.get("z", 0)),
             }
@@ -134,6 +137,9 @@ def render_cutout(plan: dict, output_path: str | Path) -> dict:
             {
                 "id": layer["id"],
                 "sourceSha256": digest,
+                "sourceAuthoritySha256": layer.get("sourceAuthoritySha256"),
+                "material": layer.get("material"),
+                "materializedAssetId": layer.get("materializedAssetId"),
                 "z": int(layer.get("z", 0)),
                 "x": float(layer.get("x", 0)),
                 "y": float(layer.get("y", 0)),

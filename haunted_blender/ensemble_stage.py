@@ -13,7 +13,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from . import puppet_factory
+from . import material_surface, puppet_factory
 from .scene_growth import TIMING_SCHEMA
 
 SPEC_SCHEMA = "haunted-blender/ensemble-spec/v1"
@@ -47,7 +47,7 @@ def _image_size(path: str | Path) -> tuple[int, int]:
 def _rig_bounds(rig: dict) -> tuple[float, float, float, float]:
     boxes = []
     for part in rig["parts"]:
-        iw, ih = _image_size(part["source"])
+        iw, ih = _image_size(part.get("renderSource") or part["source"])
         scale = float(part.get("scale", 1))
         x = float(part.get("x", 0))
         y = float(part.get("y", 0))
@@ -398,6 +398,12 @@ def compile_ensemble(
             frames = puppet_factory._hold_keyframes(
                 transformed, pose_events, duration=duration, fps=fps
             )
+            frames = material_surface.apply_motion(
+                frames,
+                part.get("material") or rig.get("materialDefaults"),
+                fps=fps,
+                role=part["role"],
+            )
             frames = _visibility_keyframes(
                 frames,
                 enter_at=enter_at,
@@ -407,7 +413,10 @@ def compile_ensemble(
             )
             layers.append({
                 "id": f"{member_id}--{part['id']}",
-                "source": part["source"],
+                "source": part.get("renderSource") or part["source"],
+                "sourceAuthoritySha256": part["sourceSha256"],
+                "material": part.get("material"),
+                "materializedAssetId": part.get("materializedAssetId"),
                 "z": transformed["z"],
                 "x": transformed["x"],
                 "y": transformed["y"],
@@ -443,6 +452,8 @@ def compile_ensemble(
             "id": member_id,
             "label": str(member.get("label") or rig.get("label") or member_id),
             "rigId": rig["id"],
+            "materialDefault": rig.get("materialDefaults"),
+            "materialTypes": rig.get("materialTypes") or [],
             "slot": member_index,
             "side": placement["side"],
             "box": placement["box"],
@@ -514,8 +525,19 @@ def compile_ensemble(
         "cutaways": cutaway_layers,
         "cutoutPlan": plan,
         "ensemble": ensemble,
+        "materials": {
+            "cast": {
+                row["id"]: {
+                    "default": row.get("materialDefault"),
+                    "types": row.get("materialTypes") or [],
+                }
+                for row in cast_meta
+            },
+            "room": (cast[0]["rig"].get("room") or {}).get("material"),
+        },
         "cost": {"externalGenerations": 0, "providerCredits": 0, "usdMicros": 0},
         "laws": [
+            "MIXED MATERIAL CAST != COLLAPSED MATERIAL IDENTITY",
             "ENSEMBLE PERFORMANCE != MULTIPLE SOURCE AUTHORITIES COLLAPSED",
             "ONE ROOM MAY HOST MULTIPLE HASHED RIGS",
             "ONLY ASSIGNED SPEAKER RECEIVES MOUTH EVENTS",
