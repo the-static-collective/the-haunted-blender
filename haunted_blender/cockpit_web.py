@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from . import cockpit, cockpit_engine, cockpit_media
+from . import cockpit, cockpit_engine, cockpit_media, provider_driver
 
 WEB_DIR = Path(__file__).resolve().parent / "web"
 
@@ -123,6 +123,10 @@ def make_handler(project_root: str | Path):
                     section_id = unquote(path.removeprefix("/api/engine-view/"))
                     self._send_json(200, cockpit_engine.engine_view(root, section_id))
                     return
+                if path.startswith("/api/provider-view/"):
+                    section_id = unquote(path.removeprefix("/api/provider-view/"))
+                    self._send_json(200, provider_driver.provider_view(root, section_id))
+                    return
                 if path.startswith("/media/"):
                     relative = unquote(path.removeprefix("/media/"))
                     media = cockpit_media.resolve_media(root, relative)
@@ -147,6 +151,36 @@ def make_handler(project_root: str | Path):
                     result = cockpit_engine.play(root)
                     self._send_json(200, result)
                     return
+                if path.startswith("/api/provider/section/"):
+                    rest = path.removeprefix("/api/provider/section/").split("/")
+                    if len(rest) != 2:
+                        raise ValueError("Expected /api/provider/section/<id>/<action>")
+                    section_id, action = map(unquote, rest)
+                    body = self._read_json()
+                    if action == "drive":
+                        result = provider_driver.drive(
+                            root, section_id, max_steps=int(body.get("maxSteps") or 12)
+                        )
+                    elif action == "approve":
+                        result = provider_driver.approve_spend(
+                            root,
+                            section_id,
+                            expected_usd_micros=body.get("expectedUsdMicros"),
+                            approved_at=str(body.get("approvedAt") or ""),
+                        )
+                    elif action == "decline":
+                        result = provider_driver.decline_current_candidate(
+                            root, section_id, reason=str(body.get("reason") or "")
+                        )
+                    elif action == "accept":
+                        result = provider_driver.accept_candidate(
+                            root, section_id, str(body["candidatePath"])
+                        )
+                    else:
+                        raise ValueError("Unknown provider-driver action")
+                    self._send_json(200, result)
+                    return
+
 
                 if path.startswith("/api/auto/section/"):
                     rest = path.removeprefix("/api/auto/section/").split("/")
