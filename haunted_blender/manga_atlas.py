@@ -18,6 +18,7 @@ SOURCE_SCHEMA = "haunted-blender/page-source/v1"
 REPORT_SCHEMA = "haunted-blender/page-grammar-report/v1"
 ATLAS_SCHEMA = "haunted-blender/manga-anime-grammar-atlas/v1"
 BATCH_SCHEMA = "haunted-blender/page-source-batch/v1"
+BATCH_SCHEMA = "haunted-blender/page-source-batch/v1"
 BATCH_RUN_SCHEMA = "haunted-blender/page-source-batch-run/v1"
 
 SOURCE_CLASSES = {"owned", "licensed", "reference"}
@@ -65,6 +66,121 @@ def _file_sha(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def source_batch_manifest(
+    *,
+    label: str,
+    source_class: str,
+    pixel_reuse: bool,
+    derivative_reuse: bool,
+    publication_reuse: bool,
+    rights_note: str,
+    folder_url: str | None = None,
+    file_locators: list[dict] | tuple[dict, ...] = (),
+    grammar_families: list[str] | tuple[str, ...] = (),
+) -> dict:
+    """Declare rights and grammar scope for a folder/batch before per-file hashing.
+
+    The batch never substitutes for per-file SHA custody. Individual source
+    manifests still freeze exact bytes when a page is ingested.
+    """
+    normalized_class = str(source_class).strip().lower()
+    if normalized_class not in SOURCE_CLASSES:
+        raise ValueError(f"source_class must be one of {sorted(SOURCE_CLASSES)}")
+    if normalized_class == "reference" and (pixel_reuse or derivative_reuse or publication_reuse):
+        raise ValueError("Reference-only batch cannot grant reuse rights")
+    if normalized_class in {"owned", "licensed"} and not rights_note.strip():
+        raise ValueError("Owned/licensed batches require an explicit rights_note")
+
+    families = sorted({str(x).strip() for x in grammar_families if str(x).strip()})
+    unknown = [x for x in families if x not in GRAMMAR_FAMILIES]
+    if unknown:
+        raise ValueError(f"Unknown grammar families: {unknown}")
+
+    locators = []
+    seen = set()
+    for raw in file_locators:
+        file_id = str(raw.get("id") or "").strip()
+        title = str(raw.get("title") or "").strip()
+        url = str(raw.get("url") or "").strip()
+        key = file_id or url or title
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        locators.append({
+            "id": file_id or None,
+            "title": title or None,
+            "url": url or None,
+        })
+
+    body = {
+        "schema": BATCH_SCHEMA,
+        "label": label,
+        "sourceClass": normalized_class,
+        "folderUrl": folder_url,
+        "rights": {
+            "pixelReuse": bool(pixel_reuse),
+            "derivativeReuse": bool(derivative_reuse),
+            "publicationReuse": bool(publication_reuse),
+            "note": rights_note.strip(),
+        },
+        "grammarFamilies": families,
+        "fileCount": len(locators),
+        "files": locators,
+        "laws": [
+            "BATCH RIGHTS MAY BE INHERITED BY LISTED FILES",
+            "BATCH MANIFEST != PER-FILE BYTE CUSTODY",
+            "PER-FILE SHA IS FROZEN AT INGESTION",
+            "ADDING A FILE TO A FOLDER DOES NOT RETROACTIVELY CHANGE AN OLD BATCH MANIFEST",
+        ],
+    }
+    return {**body, "id": "page-source-batch:" + _hash(body)[:24]}
+
+
+def source_manifest_from_batch(
+    source_path: str | Path,
+    batch: dict,
+    *,
+    file_id: str | None = None,
+    file_url: str | None = None,
+    label: str = "",
+    page_role: str | None = None,
+    continuity_group: str | None = None,
+    motifs: list[str] | tuple[str, ...] = (),
+    sequence_index: int | None = None,
+    grammar_families: list[str] | tuple[str, ...] | None = None,
+) -> dict:
+    if batch.get("schema") != BATCH_SCHEMA:
+        raise ValueError("Expected page source batch")
+    listed = batch.get("files") or []
+    if file_id or file_url:
+        matched = any(
+            (file_id and row.get("id") == file_id)
+            or (file_url and row.get("url") == file_url)
+            for row in listed
+        )
+        if listed and not matched:
+            raise PermissionError("Page locator is not present in frozen source batch")
+    rights = batch.get("rights") or {}
+    return source_manifest(
+        source_path,
+        source_class=batch["sourceClass"],
+        pixel_reuse=bool(rights.get("pixelReuse")),
+        derivative_reuse=bool(rights.get("derivativeReuse")),
+        publication_reuse=bool(rights.get("publicationReuse")),
+        grammar_families=(
+            grammar_families
+            if grammar_families is not None
+            else batch.get("grammarFamilies") or []
+        ),
+        rights_note=rights.get("note") or "",
+        label=label,
+        page_role=page_role,
+        continuity_group=continuity_group,
+        motifs=motifs,
+        sequence_index=sequence_index,
+    )
 
 
 def source_manifest(
