@@ -85,6 +85,60 @@ PIXEL EXPORT:      NO
 
 until a manifest explicitly grants otherwise.
 
+## Owned collection policy
+
+The Static Collective manga folder is now modeled as a rights-bearing collection:
+
+```text
+haunted-blender/page-source-collection/v1
+```
+
+The current privacy-safe repository snapshot contains **14 PNG members**:
+
+```text
+specimens/008m/static-collective-owned-page-collection-001.json
+```
+
+The user explicitly declares the collection's pixels owned and reusable for:
+
+```text
+pixel reuse
+derivative reuse
+recomposition
+publication
+```
+
+The collection also freezes:
+
+```text
+futureMembersInherit = true
+```
+
+A future page deliberately placed into this owned collection may inherit the same rights policy when ingested.
+
+Collection authority never replaces byte custody:
+
+```text
+COLLECTION RIGHTS
+      ↓
+membership authority
+
+ACTUAL INGESTED PAGE
+      ↓
+fresh SHA-256
+      ↓
+page-source manifest
+      ↓
+harvest authority
+```
+
+```text
+COLLECTION RIGHTS APPLY TO DECLARED MEMBERSHIP NOT UNKNOWN BYTES
+EACH INGESTED PAGE STILL REQUIRES ITS OWN SOURCE SHA
+```
+
+The repository collection snapshot intentionally omits private Drive URLs and Drive file ids. Current member filenames plus later per-page SHA custody are sufficient for the public artifact.
+
 ## Source manifest
 
 Every page enters through:
@@ -230,49 +284,18 @@ ATLAS AGGREGATES GRAMMAR NOT OWNERSHIP
 OWNERSHIP DOES NOT TRANSFER BETWEEN SOURCES
 ```
 
-## Registered owned eight-page batch
+## Registered owned collection snapshot
 
-The Google Drive folder `1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5` is now registered as an explicit owned-pixel batch after the user stated that all eight images are ours.
+The earlier eight-page batch has been superseded by the rights-bearing **14-page owned collection** described above.
 
-The batch witness lives at:
-
-```text
-examples/manga_atlas/static-collective-owned-manga-batch-001.json
-```
-
-It freezes:
-
-- all eight Drive file ids
-- exact SHA-256 for every image
-- image dimensions
-- creation metadata
-- pixel reuse = true
-- derivative reuse = true
-- publication reuse = true
+The old private-location witness is no longer the canonical public specimen. Current and future collection members inherit the user-declared ownership policy, while each actual image still receives an exact SHA-256 at ingestion.
 
 ```text
-EXACT FILE SHA BINDS THE RIGHTS RECORD TO THESE PIXELS
-```
-
-Folder location alone is not treated as ownership evidence. The rights state comes from the user's explicit ownership assertion.
-
-```text
-BATCH LOCATION != OWNERSHIP PROOF
-OWNERSHIP RIGHTS COME FROM EXPLICIT SOURCE ASSERTION
-```
-
-Creation/ingest order is preserved only as transport metadata and is not silently promoted to story order.
-
-```text
-INGEST ORDER != STORY ORDER
-```
-
-This means all eight pages may now feed both:
-
-```text
-PIXEL HARVEST
-+
-GRAMMAR / SEQUENCE ANALYSIS
+FOLDER MEMBERSHIP POLICY
+        +
+PER-PAGE SHA CUSTODY
+        ↓
+OWNED PAGE HARVEST AUTHORITY
 ```
 
 ## Multi-page sequence grammar
@@ -380,6 +403,33 @@ GRAMMAR PROPOSAL != EDITORIAL KEEP
 ```
 
 ## Command door
+
+Create or refresh a local owned collection declaration:
+
+```bash
+python -m haunted_blender.manga_atlas_cli collection \
+  ./owned-collection.json \
+  --label "Static Collective Manga" \
+  --collection-id static-collective-manga-owned-001 \
+  --class owned \
+  --pixel-reuse \
+  --derivative-reuse \
+  --publication-reuse \
+  --future-members-inherit \
+  --rights-note "User-declared owned manga collection."
+```
+
+Bind actual page bytes to that collection:
+
+```bash
+python -m haunted_blender.manga_atlas_cli source-from-collection \
+  ./new-page.png \
+  ./owned-collection.json \
+  new-page.png \
+  ./new-page.source.json
+```
+
+The second command hashes the real page bytes before harvest authority is exercised.
 
 Create an owned page source:
 
