@@ -208,11 +208,9 @@ class MovingInsertStage008iTests(unittest.TestCase):
                 dressing, width=192, height=108, fps=12, duration_seconds=2.0
             )
             self.make_video(moving, pattern="red", duration=0.8)
-            # Replanning catches the changed harvested bytes.
+            # The render crossing re-verifies the exact bytes frozen by planning.
             with self.assertRaises(ValueError):
-                moving_insert_stage.plan_from_dressing(
-                    dressing, width=192, height=108, fps=12, duration_seconds=2.0
-                )
+                moving_insert_stage.render(base, plan, root / "should-not-render.mp4")
 
     def test_parts_drawer_automatically_becomes_real_moving_puppet_surfaces(self):
         with tempfile.TemporaryDirectory() as td:
