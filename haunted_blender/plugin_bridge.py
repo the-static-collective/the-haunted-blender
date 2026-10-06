@@ -30,6 +30,12 @@ class PluginBridgeRequired(RuntimeError):
         self.packet = packet
 
 
+class PluginBridgeReconcileRequired(RuntimeError):
+    def __init__(self, packet: dict):
+        super().__init__("Claimed plugin SUBMIT is unresolved; do not replay it")
+        self.packet = packet
+
+
 def _root(root) -> Path:
     return Path(root).expanduser().resolve()
 
@@ -312,6 +318,9 @@ def consume_or_require(
     )
     result_path = root / prepared["resultPath"]
     if not result_path.is_file():
+        claim_path = root / prepared["claimPath"]
+        if phase == "SUBMIT" and claim_path.is_file():
+            raise PluginBridgeReconcileRequired(prepared)
         raise PluginBridgeRequired(prepared)
     body = json.loads(result_path.read_text(encoding="utf-8"))
     if (
