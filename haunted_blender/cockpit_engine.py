@@ -19,7 +19,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from . import cockpit, cockpit_media, dreambreeder, motion_executor, motion_organ, scene_growth
+from . import cockpit, cockpit_media, dreambreeder, motion_executor, motion_organ, plugin_orchard, scene_growth
 from .dream_cutout_compiler import KIT_SCHEMA, render_sixup
 
 CONFIG_SCHEMA = "haunted-blender/cockpit-engine-config/v1"
@@ -395,6 +395,33 @@ def _extract_source_frame(scene_video: Path, output: Path, at_seconds: float) ->
     return output
 
 
+def _extract_source_window(
+    scene_video: Path,
+    output: Path,
+    *,
+    start_seconds: float,
+    duration_seconds: float,
+) -> Path:
+    if shutil.which("ffmpeg") is None:
+        raise RuntimeError("FFmpeg is required for automatic AWAKEN source extraction")
+    if output.is_file():
+        return output
+    output.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        [
+            "ffmpeg", "-v", "error", "-y",
+            "-ss", f"{float(start_seconds):.6f}",
+            "-i", str(scene_video),
+            "-t", f"{float(duration_seconds):.6f}",
+            "-an", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+            "-movflags", "+faststart",
+            str(output),
+        ],
+        check=True,
+    )
+    return output
+
+
 def awaken(root, section_id: str) -> dict:
     root = _root(root)
     config = load_config(root)
@@ -421,6 +448,12 @@ def awaken(root, section_id: str) -> dict:
 
     scene_video = _safe_path(root, folder / "scene" / "kept-scene.mp4")
     source_frame = _extract_source_frame(scene_video, folder / "motion-source.png", float(window["start"]))
+    source_window = _extract_source_window(
+        scene_video,
+        folder / "motion-source.mp4",
+        start_seconds=float(window["start"]),
+        duration_seconds=float(window["duration"]),
+    )
     source_sha = _digest_file(source_frame)
 
     keep_result = json.loads(_safe_path(root, state["keepPath"]).read_text(encoding="utf-8"))
@@ -447,11 +480,20 @@ def awaken(root, section_id: str) -> dict:
         remote_disclosure_approved=True,
     )
 
-    offers_config = config.get("motionOffersPath")
-    if not offers_config:
-        raise ValueError("Automatic AWAKEN needs motionOffersPath in cockpit.engine.json")
-    offers_snapshot = json.loads(_safe_path(root, offers_config).read_text(encoding="utf-8"))
-    offers = motion_organ.freeze_offers(root, offers_snapshot)
+    orchard_offers = plugin_orchard.latest_offers_path(root)
+    if orchard_offers is not None:
+        motion_organ.load_offers(root, orchard_offers)
+        offers = {"offers": str(orchard_offers)}
+        offers_source = "plugin-orchard"
+    else:
+        offers_config = config.get("motionOffersPath")
+        if not offers_config:
+            raise ValueError(
+                "Automatic AWAKEN needs a plugin-orchard snapshot or motionOffersPath in cockpit.engine.json"
+            )
+        offers_snapshot = json.loads(_safe_path(root, offers_config).read_text(encoding="utf-8"))
+        offers = motion_organ.freeze_offers(root, offers_snapshot)
+        offers_source = "engine-config"
     route = motion_organ.route_request(root, request["request"], offers["offers"])
     plan = motion_executor.build_plan(
         root,
@@ -468,10 +510,13 @@ def awaken(root, section_id: str) -> dict:
     state = _engine_state(section)
     state["motionRequestPath"] = str(Path(request["request"]).resolve().relative_to(root))
     state["motionOffersPath"] = str(Path(offers["offers"]).resolve().relative_to(root))
+    state["motionOffersSource"] = offers_source
     state["motionRoutePath"] = str(Path(route["route"]).resolve().relative_to(root))
     state["motionPlanPath"] = str(Path(plan["plan"]).resolve().relative_to(root))
     state["motionStatePath"] = str(Path(plan["state"]).resolve().relative_to(root))
     state["motionWindowId"] = window["id"]
+    state["motionSourceImagePath"] = str(source_frame.resolve().relative_to(root))
+    state["motionSourceVideoPath"] = str(source_window.resolve().relative_to(root))
     cockpit._save(root, project)
 
     return {
@@ -480,6 +525,8 @@ def awaken(root, section_id: str) -> dict:
         "requestSha256": request["requestSha256"],
         "routeSha256": route["routeSha256"],
         "planSha256": plan["planSha256"],
+        "sourceFrame": str(source_frame),
+        "sourceDrivingClip": str(source_window),
         "next": motion_executor.next_action(root, plan["plan"], plan["state"]),
         "submitted": False,
         "laws": ["AUTO AWAKEN != AUTO SUBMIT", "ROUTE != PROVIDER AUTHORITY"],

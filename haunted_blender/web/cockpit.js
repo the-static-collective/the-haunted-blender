@@ -147,8 +147,21 @@ function drawControls(){
       f.innerHTML='<code>python -m haunted_blender.provider_driver_cli configure ...</code>';
       return;
     }
+    if(p.nextAction==="PLUGIN_BRIDGE"){
+      const bridge=p.pluginBridge||{};
+      c.textContent="This route targets an installed ChatGPT plugin. The local repo cannot borrow connector auth, so execution is paused on a content-addressed bridge packet.";
+      f.innerHTML='<div class="quote-card"><div class="eyebrow">PLUGIN BRIDGE</div>'+
+        '<strong>'+esc(bridge.profileId||p.adapter?.profileId||p.attempt?.providerId||"provider")+' / '+esc(bridge.phase||p.executorNextAction||"phase")+'</strong>'+
+        '<span>'+esc(bridge.callPath||"cockpit-plugin-bridge/outbox/...")+'</span></div>'+
+        '<div class="door-copy">Resolve that exact packet with the installed plugin, then press CHECK BRIDGE. For SUBMIT, claim the packet before invoking the provider.</div>';
+      b.awaken.textContent="CHECK BRIDGE";
+      b.awaken.disabled=false;
+      return;
+    }
     if(p.reconcileRequired){
-      c.textContent="A SUBMIT intent exists without a durable submit receipt. Do not resubmit. Reconcile the already-created vendor job here.";
+      c.textContent=p.adapter?.transport==="plugin_bridge" ?
+        "A claimed plugin SUBMIT has no durable result yet. Do not replay it. Reconcile the already-created vendor job into this exact attempt." :
+        "A SUBMIT intent exists without a durable submit receipt. Do not resubmit. Reconcile the already-created vendor job here.";
       f.innerHTML='<label>Existing vendor job ID<input id="reconcile-job" placeholder="job_..." /></label>'+
         '<label>Submitted parameter SHA-256<input id="reconcile-sha" placeholder="64 lowercase hex characters" /></label>'+
         '<button id="reconcile-submit" class="secondary-button">RECONCILE EXISTING JOB</button>';
@@ -201,6 +214,7 @@ async function providerAction(action,body={}){
 async function driveProvider(){
   const r=await providerAction("drive",{maxSteps:12});
   if(r.status==="approval_required")toast("Exact paid quote needs approval.");
+  else if(r.status==="plugin_bridge_required")toast("Plugin bridge packet ready; resolve it with the installed connector.");
   else if(r.status==="running")toast("Provider job is running; next AWAKEN polls the same job.");
   else if(r.status==="candidate_ready")toast("Candidate ready for human KEEP.");
   else if(r.status==="reconcile_required")toast("Ambiguous provider state: stopped for reconciliation.",true);

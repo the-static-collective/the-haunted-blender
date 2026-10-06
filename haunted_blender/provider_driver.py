@@ -16,6 +16,7 @@ import json
 import os
 import re
 import subprocess
+import time
 from pathlib import Path
 
 from . import (
@@ -24,6 +25,8 @@ from . import (
     cockpit_media,
     motion_executor,
     motion_organ,
+    plugin_bridge,
+    plugin_orchard,
     project,
     scene_growth,
 )
@@ -75,36 +78,51 @@ def configure_adapters(root, adapters: list[dict]) -> dict:
         if not provider_id or provider_id in seen:
             raise ValueError("Provider adapter ids must be unique and nonempty")
         seen.add(provider_id)
-        transport = raw.get("transport", "command")
-        if transport != "command":
-            raise ValueError("008c supports only command transport")
-        argv = raw.get("argv")
-        if not isinstance(argv, list) or not argv or not all(isinstance(v, str) and v for v in argv):
-            raise ValueError("Command adapter argv must be a nonempty string list")
-        cwd_value = str(raw.get("cwd") or ".")
-        cwd = _safe_relative(root, cwd_value)
-        if not cwd.is_dir():
-            raise ValueError("Adapter cwd must be a directory")
-        timeout = int(raw.get("timeoutSeconds", 180))
-        if not (1 <= timeout <= 1800):
-            raise ValueError("Adapter timeoutSeconds must be between 1 and 1800")
-        normalized.append(
-            {
-                "providerId": provider_id,
-                "transport": "command",
-                "argv": list(argv),
-                "cwd": str(cwd.relative_to(root)),
-                "timeoutSeconds": timeout,
-                "notes": list(raw.get("notes") or []),
-            }
-        )
+        transport = str(raw.get("transport") or "command")
+        if transport == "command":
+            argv = raw.get("argv")
+            if not isinstance(argv, list) or not argv or not all(isinstance(v, str) and v for v in argv):
+                raise ValueError("Command adapter argv must be a nonempty string list")
+            cwd_value = str(raw.get("cwd") or ".")
+            cwd = _safe_relative(root, cwd_value)
+            if not cwd.is_dir():
+                raise ValueError("Adapter cwd must be a directory")
+            timeout = int(raw.get("timeoutSeconds", 180))
+            if not (1 <= timeout <= 1800):
+                raise ValueError("Adapter timeoutSeconds must be between 1 and 1800")
+            normalized.append(
+                {
+                    "providerId": provider_id,
+                    "transport": "command",
+                    "argv": list(argv),
+                    "cwd": str(cwd.relative_to(root)),
+                    "timeoutSeconds": timeout,
+                    "notes": list(raw.get("notes") or []),
+                }
+            )
+        elif transport == "plugin_bridge":
+            profile_id = str(raw.get("profileId") or provider_id).strip()
+            known = {str(p["id"]) for p in plugin_orchard.load_profiles().get("profiles") or []}
+            if profile_id not in known:
+                raise ValueError(f"Unknown plugin bridge profile: {profile_id}")
+            normalized.append(
+                {
+                    "providerId": provider_id,
+                    "transport": "plugin_bridge",
+                    "profileId": profile_id,
+                    "notes": list(raw.get("notes") or []),
+                }
+            )
+        else:
+            raise ValueError("Adapter transport must be command or plugin_bridge")
 
     body = {
         "schema": ADAPTER_CONFIG_SCHEMA,
         "adapters": sorted(normalized, key=lambda a: a["providerId"]),
         "laws": [
             "ADAPTER != AUTHORITY",
-            "NO SHELL",
+            "PLUGIN BRIDGE != LOCAL CREDENTIAL",
+            "NO SHELL FOR COMMAND ADAPTERS",
             "QUOTE != SPEND APPROVAL",
             "SUBMIT RECEIPT != EDITORIAL KEEP",
         ],
@@ -134,6 +152,15 @@ def _adapter_spec(root: Path, provider_id: str) -> dict:
 
 def _invoke(root: Path, provider_id: str, phase: str, payload: dict) -> dict:
     spec = _adapter_spec(root, provider_id)
+    if spec.get("transport") == "plugin_bridge":
+        return plugin_bridge.consume_or_require(
+            root,
+            provider_id=provider_id,
+            profile_id=spec["profileId"],
+            phase=phase,
+            payload=payload,
+        )
+
     packet = {
         "schema": ADAPTER_CALL_SCHEMA,
         "phase": phase,
@@ -175,7 +202,6 @@ def _invoke(root: Path, provider_id: str, phase: str, payload: dict) -> dict:
     if not isinstance(result, dict):
         raise ValueError("Provider adapter result must be an object")
     return result
-
 
 def _project_section(root: Path, section_id: str) -> tuple[dict, dict]:
     project_body = cockpit.load_project(root)
@@ -296,11 +322,14 @@ def _source_path(root: Path, section_id: str) -> Path:
 
 
 def _base_payload(root: Path, section_id: str, current: dict) -> dict:
+    engine = current.get("engine") or {}
+    source_video = engine.get("motionSourceVideoPath")
     return {
         "sectionId": section_id,
         "request": copy.deepcopy(current["request"]),
         "attempt": copy.deepcopy(current["attempt"] or {}),
         "sourcePath": str(_source_path(root, section_id)),
+        "sourceVideoPath": str(_safe_relative(root, source_video)) if source_video else None,
         "planSha256": current["planSha256"],
         "routeSha256": current["routeSha256"],
     }
@@ -484,6 +513,39 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
         raise ValueError("max_steps must be between 1 and 32")
 
     trace = []
+
+    def call_phase(current: dict, attempt: dict, phase: str, payload: dict):
+        started = time.monotonic()
+        try:
+            raw = _invoke(root, attempt["providerId"], phase, payload)
+        except plugin_bridge.PluginBridgeRequired as exc:
+            return None, {
+                "status": "plugin_bridge_required",
+                "bridge": exc.packet,
+                "trace": copy.deepcopy(trace),
+                "view": provider_view(root, section_id),
+            }, None
+        except plugin_bridge.PluginBridgeReconcileRequired as exc:
+            return None, {
+                "status": "reconcile_required",
+                "reason": "claimed plugin SUBMIT is unresolved; do not replay it",
+                "bridge": exc.packet,
+                "trace": copy.deepcopy(trace),
+                "view": provider_view(root, section_id),
+            }, None
+        except Exception:
+            plugin_orchard.record_usage(
+                root,
+                observed_at="unspecified",
+                provider_id=attempt["providerId"],
+                model=attempt["model"],
+                phase=phase.lower(),
+                outcome="error",
+                latency_ms=round((time.monotonic() - started) * 1000),
+            )
+            raise
+        return raw, None, round((time.monotonic() - started) * 1000)
+
     for _ in range(max_steps):
         current = _current(root, section_id)
         action = current["next"].get("action")
@@ -509,7 +571,9 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
         payload = _base_payload(root, section_id, current)
 
         if action == "CAPABILITIES":
-            raw = _invoke(root, provider_id, "CAPABILITIES", payload)
+            raw, stop, latency = call_phase(current, attempt, "CAPABILITIES", payload)
+            if stop:
+                return stop
             receipt = {
                 "schema": motion_executor.CAP_SCHEMA,
                 "offerId": attempt["offerId"],
@@ -527,10 +591,22 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 root, current["planPath"], current["statePath"], receipt
             )
             _record_transition(root, section_id, result)
+            phase = result["stateBody"]["attempts"][attempt["attempt"] - 1]["phase"]
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="capabilities",
+                outcome="success" if phase == "needs_quote" else "ineligible",
+                latency_ms=latency,
+            )
             continue
 
         if action == "QUOTE":
-            raw = _invoke(root, provider_id, "QUOTE", payload)
+            raw, stop, latency = call_phase(current, attempt, "QUOTE", payload)
+            if stop:
+                return stop
             receipt = {
                 "schema": motion_executor.QUOTE_SCHEMA,
                 "offerId": attempt["offerId"],
@@ -548,6 +624,18 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 root, current["planPath"], current["statePath"], receipt
             )
             _record_transition(root, section_id, result)
+            outcome = "budget_blocked" if result["stateBody"].get("status") == "budget_blocked" else "success"
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="quote",
+                outcome=outcome,
+                latency_ms=latency,
+                quoted_credits=receipt.get("amount") if receipt.get("denomination") == "provider-credits" else None,
+                quoted_usd_micros=receipt.get("wholeJobUsdMicros"),
+            )
             after = _current(root, section_id)
             if after["next"].get("action") == "SUBMIT" and _approval_needed(after["attempt"]):
                 if _approval_for(root, section_id, after) is None:
@@ -565,16 +653,21 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                     "trace": trace,
                     "view": provider_view(root, section_id),
                 }
+            spec = _adapter_spec(root, provider_id)
             unresolved = _unresolved_submit_guard(root, section_id, current)
-            if unresolved is not None:
+            if unresolved is not None and spec.get("transport") != "plugin_bridge":
                 return {
                     "status": "reconcile_required",
                     "reason": "submit intent exists without a durable provider submit receipt",
                     "trace": trace,
                     "view": provider_view(root, section_id),
                 }
-            _write_submit_intent(root, section_id, current)
-            raw = _invoke(root, provider_id, "SUBMIT", payload)
+            if unresolved is None:
+                _write_submit_intent(root, section_id, current)
+
+            raw, stop, latency = call_phase(current, attempt, "SUBMIT", payload)
+            if stop:
+                return stop
             receipt = {
                 "schema": motion_executor.SUBMIT_SCHEMA,
                 "offerId": attempt["offerId"],
@@ -596,10 +689,22 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 submit_receipt_sha256=receipt_sha,
                 reconciled=False,
             )
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="submit",
+                outcome="success",
+                latency_ms=latency,
+                quoted_usd_micros=attempt.get("quotedUsdMicros"),
+            )
             continue
 
         if action == "STATUS":
-            raw = _invoke(root, provider_id, "STATUS", payload)
+            raw, stop, latency = call_phase(current, attempt, "STATUS", payload)
+            if stop:
+                return stop
             receipt = {
                 "schema": motion_executor.STATUS_SCHEMA,
                 "offerId": attempt["offerId"],
@@ -614,6 +719,15 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 root, current["planPath"], current["statePath"], receipt
             )
             _record_transition(root, section_id, result)
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="status",
+                outcome=receipt["status"],
+                latency_ms=latency,
+            )
             if receipt["status"] == "running":
                 return {"status": "running", "trace": trace, "view": provider_view(root, section_id)}
             if receipt["status"] in {"timeout", "unresolved"}:
@@ -631,7 +745,9 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 raise FileExistsError("Provider fetch output already exists; refusing an ambiguous refetch")
             payload["outputPath"] = str(output)
             payload["vendorRequestId"] = vendor_id
-            raw = _invoke(root, provider_id, "FETCH", payload)
+            raw, stop, latency = call_phase(current, attempt, "FETCH", payload)
+            if stop:
+                return stop
             if not output.is_file():
                 raise ValueError("Provider adapter FETCH did not materialize the requested MP4")
             admitted = motion_organ.admit_candidate(
@@ -669,13 +785,21 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 cost_class=attempt["spendClass"],
                 label=f"{provider_id} / {attempt['model']}",
             )
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="fetch",
+                outcome="candidate_ready",
+                latency_ms=latency,
+                candidate_sha256=admitted["outputSha256"],
+            )
             return {"status": "candidate_ready", "trace": trace, "view": provider_view(root, section_id)}
 
         raise ValueError(f"Unsupported 007 action: {action}")
 
     return {"status": "step_limit", "trace": trace, "view": provider_view(root, section_id)}
-
-
 
 def reconcile_submission(
     root,
@@ -780,6 +904,16 @@ def decline_current_candidate(root, section_id: str, *, reason: str = "") -> dic
         meta.setdefault("declines", []).append(str(path.relative_to(root)))
 
     _set_meta(root, section_id, mutate)
+    plugin_orchard.record_usage(
+        root,
+        observed_at="unspecified",
+        provider_id=attempt["providerId"],
+        model=attempt["model"],
+        phase="editorial",
+        outcome="declined",
+        candidate_sha256=candidate_sha,
+        notes=[str(reason or "")] if reason else [],
+    )
     return {"decline": str(path), "declineSha256": digest, "view": provider_view(root, section_id)}
 
 
@@ -830,9 +964,6 @@ def accept_candidate(root, section_id: str, candidate_path: str) -> dict:
     )
     cockpit.action_witness(root, section_id, video_address=address)
 
-    def update_engine(meta_project):
-        pass
-
     project_body, updated_section = _project_section(root, section_id)
     engine = _engine(updated_section)
     engine["acceptedCandidatePath"] = str(path.relative_to(root))
@@ -840,6 +971,15 @@ def accept_candidate(root, section_id: str, candidate_path: str) -> dict:
     engine["awakenedScenePath"] = str(Path(awakened["output"]).resolve().relative_to(root))
     engine["awakenedSceneReceiptPath"] = str(Path(awakened["receipt"]).resolve().relative_to(root))
     cockpit._save(root, project_body)
+    plugin_orchard.record_usage(
+        root,
+        observed_at="unspecified",
+        provider_id=current["attempt"]["providerId"],
+        model=current["attempt"]["model"],
+        phase="editorial",
+        outcome="accepted",
+        candidate_sha256=accepted["videoSha256"],
+    )
 
     return {
         "status": "witnessed",
@@ -891,19 +1031,60 @@ def provider_view(root, section_id: str) -> dict:
         except Exception:
             copy_item["relativePath"] = None
         candidates.append(copy_item)
+    adapter = None
+    bridge_pending = None
+    if attempt:
+        try:
+            adapter = _adapter_spec(root, attempt["providerId"])
+        except Exception:
+            adapter = None
+        if adapter and adapter.get("transport") == "plugin_bridge":
+            phase = next_action
+            pending_rows = plugin_bridge.pending(root)
+            bridge_pending = next(
+                (
+                    row for row in pending_rows
+                    if row.get("providerId") == attempt["providerId"]
+                    and row.get("phase") == phase
+                ),
+                None,
+            )
+
+    display_action = next_action
+    display_status = current["state"].get("status")
+    reconcile_required = False
+    if bridge_pending is not None:
+        if bridge_pending.get("claimed") and next_action == "SUBMIT":
+            display_action = "RECONCILE_SUBMISSION"
+            display_status = "reconcile_required"
+            reconcile_required = True
+        else:
+            display_action = "PLUGIN_BRIDGE"
+            display_status = "bridge_required"
+    elif unresolved_guard is not None:
+        if adapter and adapter.get("transport") == "plugin_bridge":
+            # A resolved bridge result may be waiting to be consumed on the next drive pass.
+            display_action = next_action
+        else:
+            display_action = "RECONCILE_SUBMISSION"
+            display_status = "reconcile_required"
+            reconcile_required = True
+
     return {
         "sectionId": section_id,
         "configured": _config_path(root).is_file(),
         "ready": True,
-        "nextAction": "RECONCILE_SUBMISSION" if unresolved_guard else next_action,
+        "nextAction": display_action,
         "executorNextAction": next_action,
-        "status": "reconcile_required" if unresolved_guard else current["state"].get("status"),
+        "status": display_status,
         "currentAttempt": current["state"].get("currentAttempt"),
         "attemptCount": len(current["state"].get("attempts") or []),
         "attempt": copy.deepcopy(attempt),
         "approvalRequired": next_action == "SUBMIT" and not unresolved_guard and _approval_needed(attempt) and approval is None,
-        "reconcileRequired": unresolved_guard is not None,
+        "reconcileRequired": reconcile_required,
         "submitGuard": unresolved_guard,
+        "adapter": copy.deepcopy(adapter),
+        "pluginBridge": copy.deepcopy(bridge_pending),
         "approval": approval,
         "quote": quote,
         "candidates": candidates,
@@ -911,6 +1092,7 @@ def provider_view(root, section_id: str) -> dict:
         and int(current["state"].get("currentAttempt", 0)) < len(current["state"].get("attempts") or []),
         "laws": [
             "ADAPTER != AUTHORITY",
+            "PLUGIN BRIDGE != LOCAL CREDENTIAL",
             "QUOTE != APPROVAL",
             "SUBMIT ONCE PER ATTEMPT",
             "CANDIDATE != ACCEPTANCE",

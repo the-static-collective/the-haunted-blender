@@ -1,0 +1,37 @@
+name: franken-blender-008d
+
+on:
+  push:
+    branches:
+      - integration/franken-blender-008d-plugin-orchard
+  pull_request:
+    branches:
+      - integration/franken-blender-008c-provider-driver
+
+jobs:
+  plugin-orchard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install Pillow
+        run: python -m pip install --upgrade pip "Pillow>=9"
+      - name: Compile Python
+        run: python -m compileall -q haunted_blender
+      - name: Check browser JavaScript
+        run: node --check haunted_blender/web/cockpit.js
+      - name: Full suite
+        run: python -m unittest discover -s tests -v
+      - name: Orchard command door
+        run: python -m haunted_blender.plugin_orchard_cli --help
+      - name: Bridge command door
+        run: python -m haunted_blender.plugin_bridge_cli --help
+      - name: Provider driver command door
+        run: python -m haunted_blender.provider_driver_cli --help
+      - name: Visual Cockpit command door
+        run: python -m haunted_blender.cockpit_web --help

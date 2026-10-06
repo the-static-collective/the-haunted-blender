@@ -1,0 +1,65 @@
+{
+  "schema": "haunted-blender/live-orchard-candidate/v1",
+  "id": "live-orchard-awaken-001",
+  "disposition": "KEEP_AS_MUTATION",
+  "canonicality": "noncanonical-motion-asset",
+  "source": {
+    "kind": "google-drive-image",
+    "driveFileId": "1tpQaTYF7AlxwNLsE-fEftxQ_qWBddVa0",
+    "name": "the_static_collective_upscaled.png",
+    "role": "canonical-source-image"
+  },
+  "provider": {
+    "platform": "Pollo AI",
+    "brand": "bytedance",
+    "model": "seedance-pro-fast",
+    "accountLabel": "Pollo AI"
+  },
+  "quote": {
+    "credits": 1,
+    "durationSeconds": 2,
+    "resolution": "480p",
+    "aspectRatio": "1:1"
+  },
+  "generation": {
+    "taskId": "cmuw2lvwymht5yw1bqnio04v2",
+    "generationId": "cmuw2lvxcmht6yw1bi51fqttz",
+    "status": "succeed",
+    "detailUrl": "https://pollo.ai/v/cmuw2lvxcmht6yw1bi51fqttz",
+    "outputUrl": "https://videocdn.pollo.ai/web-cdn/pollo/production/cmusz2vdaecornoow3d3amlwa/ori/cmuw2lvxcmht6yw1bi51fqttz-0-d45a1b711f6f7e55.mp4",
+    "driveCustody": {
+      "driveFileId": "1wPr_2HSoXiGC0xxJXWYUeWJDdEdBEk5r",
+      "fileName": "cmuw2lvxcmht6yw1bi51fqttz-0-d45a1b711f6f7e55.mp4",
+      "parentFolderId": "1n7NfchXgOO9fJMeqTymnV-GW2niBb43v",
+      "sha256": "3d98db61edd7edf8f90c3a8be88eadbfc9692d976ab2ac2b18d0fd433bf25f53",
+      "sizeBytes": 1843035,
+      "media": {
+        "codec": "h264",
+        "width": 640,
+        "height": 640,
+        "fps": 24,
+        "durationSeconds": 2.041667
+      }
+    }
+  },
+  "prompt": "Animate this exact black-and-white Static Collective logo as a restrained physical object: subtle camera push-in, the white waveform and circular ripples breathe outward once, the small dandelion seeds drift slightly, preserve the original lettering and composition, no new text, no morphing of the logo.",
+  "observation": {
+    "note": "Generated take contains unexpected cryptic/glyph-like text mutation. Artist explicitly accepted the take for use.",
+    "acceptedUses": [
+      "intro/outro sting",
+      "transition",
+      "haunt layer",
+      "bounded AWAKEN window",
+      "glitch/cryptic visual motif"
+    ],
+    "excludedUse": "Do not treat generated glyphs/text as canonical Static Collective lettering."
+  },
+  "laws": [
+    "MUTATION != CANON",
+    "GENERATED TEXT != SOURCE TEXT",
+    "KEEP != REPLACE ORIGINAL",
+    "SOURCE IMAGE REMAINS AUTHORITATIVE",
+    "ONE-CREDIT LIVE CROSSING != GENERAL PROVIDER COST GUARANTEE",
+    "DRIVE CUSTODY != CANONICALITY"
+  ]
+}
