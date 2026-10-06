@@ -1,0 +1,68 @@
+{
+  "schema": "haunted-blender/live-orchard-candidate/v1",
+  "id": "live-orchard-awaken-002",
+  "disposition": "PRESENT_FOR_KEEP",
+  "canonicality": "noncanonical-motion-candidate",
+  "composition": {
+    "identityAuthority": {
+      "kind": "google-drive-image",
+      "driveFileId": "1tpQaTYF7AlxwNLsE-fEftxQ_qWBddVa0",
+      "name": "the_static_collective_upscaled.png",
+      "role": "identity-and-lettering-authority"
+    },
+    "motionAuthority": {
+      "kind": "google-drive-video",
+      "driveFileId": "1wPr_2HSoXiGC0xxJXWYUeWJDdEdBEk5r",
+      "name": "cmuw2lvxcmht6yw1bi51fqttz-0-d45a1b711f6f7e55.mp4",
+      "role": "motion-driving-authority",
+      "candidateId": "live-orchard-awaken-001"
+    }
+  },
+  "provider": {
+    "platform": "Higgsfield",
+    "model": "hf_mult_motion_control",
+    "modelLabel": "Genjutsu"
+  },
+  "preflight": {
+    "credits": 0,
+    "creditsExact": 0,
+    "useFreeGens": true,
+    "requestedResolution": "720p",
+    "requestedDurationSeconds": 2,
+    "requiredMediaPresent": true
+  },
+  "generation": {
+    "jobId": "2b35ddce-8bda-43b2-909d-be4c4897dbc2",
+    "status": "completed",
+    "resultUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IHYDbqT9IhNV79bXOGjzHozPpF/hf_20261006_025748_2b35ddce-8bda-43b2-909d-be4c4897dbc2.mp4",
+    "sha256": "36b8994a74a766d710184e94b5de422b5547a8a512aee5bda32817e2905bb92e",
+    "media": {
+      "codec": "h264",
+      "width": 960,
+      "height": 960,
+      "fps": 24,
+      "durationSeconds": 4.042,
+      "sizeBytes": 5368730
+    }
+  },
+  "entitlement": {
+    "creditsBefore": 10,
+    "creditsAfter": 10,
+    "freeGenBefore": 1,
+    "freeGenAfter": 0
+  },
+  "prompt": "Use the reference image as the identity and composition authority. Transfer only the motion and camera energy from the driving video. Preserve the original STATIC COLLECTIVE lettering exactly, preserve the original logo geometry and monochrome black-and-white design, do not invent, replace, scramble, stylize, or mutate any text or symbols. Keep the result restrained: the same gentle push-in, ripple breathing, and seed drift from the driving clip.",
+  "observations": [
+    "Generation completed from two witnessed inputs: source image for identity and Candidate 001 for motion.",
+    "Backend produced 4.042 seconds at 960x960 / 24fps despite a 2-second 720p request; preserve observed bytes rather than assuming requested media dimensions/duration.",
+    "Candidate remains PRESENT_FOR_KEEP until artist editorial acceptance."
+  ],
+  "laws": [
+    "IDENTITY AUTHORITY != MOTION AUTHORITY",
+    "SOURCE IMAGE REMAINS CANONICAL",
+    "DRIVING CANDIDATE != CANONICAL LETTERING",
+    "FREE GENERATION != ZERO COMPUTE",
+    "REQUESTED PARAMETERS != OBSERVED OUTPUT",
+    "PRESENT != KEEP"
+  ]
+}
