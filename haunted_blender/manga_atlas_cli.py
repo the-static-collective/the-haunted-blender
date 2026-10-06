@@ -157,7 +157,6 @@ def main(argv=None):
             continuity_group=args.continuity_group,
             motifs=args.motif,
             sequence_index=args.sequence_index,
-            observed_membership=args.observed_membership,
         )
         _write(Path(args.output_json).expanduser().resolve(), result)
     elif args.command == "analyze":
