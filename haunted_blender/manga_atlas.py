@@ -251,6 +251,7 @@ def collection_manifest(
             "COLLECTION RIGHTS APPLY TO DECLARED MEMBERSHIP NOT UNKNOWN BYTES",
             "EACH INGESTED PAGE STILL REQUIRES ITS OWN SOURCE SHA",
             "FUTURE MEMBER INHERITANCE REQUIRES USER-DECLARED COLLECTION POLICY",
+            "FUTURE MEMBER ALSO REQUIRES OBSERVED COLLECTION MEMBERSHIP",
             "COLLECTION OWNERSHIP != PAGE SEMANTICS",
         ],
     }
@@ -268,6 +269,7 @@ def source_from_collection(
     continuity_group: str | None = None,
     motifs: list[str] | tuple[str, ...] = (),
     sequence_index: int | None = None,
+    observed_membership: bool = False,
 ) -> dict:
     if collection.get("schema") != COLLECTION_SCHEMA:
         raise ValueError("Expected page source collection")
@@ -277,8 +279,13 @@ def source_from_collection(
         str(row.get("externalId") or "")
         for row in collection.get("memberSnapshot") or []
     }
-    if external_id not in snapshot_ids and not collection.get("futureMembersInherit"):
-        raise PermissionError("File is not in collection membership snapshot")
+    if external_id not in snapshot_ids:
+        if not collection.get("futureMembersInherit"):
+            raise PermissionError("File is not in collection membership snapshot")
+        if not observed_membership:
+            raise PermissionError(
+                "Future collection member requires an explicit membership witness"
+            )
 
     rights = collection.get("rights") or {}
     manifest = source_manifest(
@@ -301,6 +308,11 @@ def source_from_collection(
         "collectionExternalId": collection["collectionId"],
         "externalMemberId": external_id,
         "rightsInheritedFromCollection": True,
+        "membershipWitness": (
+            "frozen-member-snapshot"
+            if external_id in snapshot_ids
+            else "explicit-observed-membership"
+        ),
     }
     # Re-address after collection provenance is added.
     return {
