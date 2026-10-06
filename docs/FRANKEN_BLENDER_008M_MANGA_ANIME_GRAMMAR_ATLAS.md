@@ -186,6 +186,14 @@ reaction
 panel-rhythm
 room-ecology
 fx
+threshold-transition
+environmental-establishing
+intimate-dialogue
+object-detail
+silhouette-negative-space
+vertical-motion
+recurring-location-continuity
+sequence-rhythm
 ```
 
 A report may belong to more than one family.
@@ -195,6 +203,89 @@ The atlas aggregates geometry/rhythm across reports while preserving every repor
 ```text
 ATLAS AGGREGATES GRAMMAR NOT OWNERSHIP
 OWNERSHIP DOES NOT TRANSFER BETWEEN SOURCES
+```
+
+## Multi-page sequence grammar
+
+The new eight-page Drive batch adds something the first two specimens did not provide strongly enough: **continuity across pages**.
+
+008m therefore accepts explicit page annotations:
+
+```text
+pageRole
+continuityGroup
+motifs
+sequenceIndex
+```
+
+Supported initial page roles:
+
+```text
+establish
+dialogue
+threshold
+detail
+impact
+vertical-transition
+return
+environment
+mixed
+```
+
+These are annotations supplied by a human/tool workflow. They are not inferred semantic facts from pixels.
+
+```text
+PAGE ROLE IS ANNOTATION NOT PIXEL INFERENCE
+```
+
+A sequence grammar can then record:
+
+- page-role order
+- same-world / continuity grouping
+- shared motifs between adjacent pages
+- motifs recurring across the whole run
+- per-page panel geometry rhythm
+
+Example:
+
+```text
+ESTABLISH
+  door + room
+      ↓
+DIALOGUE
+  door + chair
+      ↓
+THRESHOLD
+  door + light
+      ↓
+RETURN
+  door + room
+```
+
+The recurring `door` may then become a callback candidate for 008j without requiring pixel reuse from every page.
+
+```text
+SHARED MOTIF MAY GUIDE CALLBACK
+WITHOUT REQUIRING PIXEL REUSE
+```
+
+Sequence roles also map to weak shot-pattern proposals:
+
+```text
+establish            → ESTABLISH / WIDE
+dialogue             → TWO_SHOT / SPEAKER / LISTENER / REACTION
+threshold            → WIDE / CLOSE_UP / INSERT / RETURN
+detail               → INSERT / CLOSE_UP / RETURN
+impact               → CLOSE_UP / CHAOS / REACTION
+vertical-transition  → WIDE / LYRIC_WORLD / CLOSE_UP / RETURN
+return               → RETURN / WIDE
+environment          → WIDE / INSERT / RETURN
+```
+
+Again:
+
+```text
+SEQUENCE PRESCRIPTION != EDITORIAL KEEP
 ```
 
 ## Page rhythm → Director proposal
@@ -301,6 +392,24 @@ Convert a report to Director proposals:
 python -m haunted_blender.manga_atlas_cli director \
   ./static.report.json \
   ./static.director.json
+```
+
+Build multi-page sequence grammar:
+
+```bash
+python -m haunted_blender.manga_atlas_cli sequence \
+  ./sequence.json \
+  ./page-01.report.json \
+  ./page-02.report.json \
+  ./page-03.report.json
+```
+
+Translate that sequence into weak Director beat patterns:
+
+```bash
+python -m haunted_blender.manga_atlas_cli sequence-director \
+  ./sequence.json \
+  ./sequence.director.json
 ```
 
 ## Intended next composition
