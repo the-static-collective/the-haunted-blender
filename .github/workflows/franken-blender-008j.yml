@@ -1,1 +1,35 @@
-name: franken-blender-008j\n\non:\n  push:\n    branches:\n      - integration/franken-blender-008j-paper-director\n  pull_request:\n    branches:\n      - integration/franken-blender-008i-moving-insert-stage\n\njobs:\n  paper-director:\n    runs-on: ubuntu-latest\n    timeout-minutes: 50\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: "3.11"\n      - name: Install FFmpeg\n        run: sudo apt-get update && sudo apt-get install -y ffmpeg\n      - name: Install Pillow\n        run: python -m pip install --upgrade pip "Pillow>=9"\n      - name: Compile Python\n        run: python -m compileall -q haunted_blender\n      - name: Check browser JavaScript\n        run: node --check haunted_blender/web/cockpit.js\n      - name: Full suite\n        run: python -m unittest discover -s tests -v\n      - name: Paper Director command door\n        run: python -m haunted_blender.paper_director_cli --help\n      - name: Puppet Studio command door\n        run: python -m haunted_blender.puppet_cli --help\n      - name: Parts Harvester command door\n        run: python -m haunted_blender.parts_harvester_cli --help\n
+name: franken-blender-008j
+
+on:
+  push:
+    branches:
+      - integration/franken-blender-008j-paper-director
+  pull_request:
+    branches:
+      - integration/franken-blender-008i-moving-insert-stage
+
+jobs:
+  paper-director:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install Pillow
+        run: python -m pip install --upgrade pip "Pillow>=9"
+      - name: Compile Python
+        run: python -m compileall -q haunted_blender
+      - name: Check browser JavaScript
+        run: node --check haunted_blender/web/cockpit.js
+      - name: Full suite
+        run: python -m unittest discover -s tests -v
+      - name: Paper Director command door
+        run: python -m haunted_blender.paper_director_cli --help
+      - name: Puppet Studio command door
+        run: python -m haunted_blender.puppet_cli --help
+      - name: Parts Harvester command door
+        run: python -m haunted_blender.parts_harvester_cli --help
