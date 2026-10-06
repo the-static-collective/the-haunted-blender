@@ -19,7 +19,6 @@ REPORT_SCHEMA = "haunted-blender/page-grammar-report/v1"
 ATLAS_SCHEMA = "haunted-blender/manga-anime-grammar-atlas/v1"
 COLLECTION_SCHEMA = "haunted-blender/page-source-collection/v1"
 BATCH_SCHEMA = "haunted-blender/page-source-batch/v1"
-BATCH_SCHEMA = "haunted-blender/page-source-batch/v1"
 BATCH_RUN_SCHEMA = "haunted-blender/page-source-batch-run/v1"
 
 SOURCE_CLASSES = {"owned", "licensed", "reference"}
