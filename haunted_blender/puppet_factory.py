@@ -13,9 +13,11 @@ import hashlib
 import json
 import math
 import re
+import tempfile
 from pathlib import Path
 
 from .cutout_stage import SCHEMA as CUTOUT_SCHEMA, render_cutout
+from . import moving_insert_stage
 from .scene_growth import TIMING_SCHEMA
 
 SPEC_SCHEMA = "haunted-blender/puppet-spec/v1"
@@ -608,14 +610,30 @@ def render_performance(performance: dict, output_path: str | Path) -> dict:
     if performance.get("schema") != PERFORMANCE_SCHEMA:
         raise ValueError("Expected puppet performance")
     output = Path(output_path).expanduser().resolve()
-    receipt = render_cutout(performance["cutoutPlan"], output)
+    insert_plan = performance.get("movingInsertPlan")
+    if insert_plan:
+        with tempfile.TemporaryDirectory(prefix="haunted-blender-puppet-base-") as td:
+            base = Path(td) / "paper-stage-base.mp4"
+            cutout_receipt = render_cutout(performance["cutoutPlan"], base)
+            insert_receipt = moving_insert_stage.render(base, insert_plan, output)
+        output_sha = insert_receipt["outputSha256"]
+        duration_seconds = insert_receipt["durationSeconds"]
+        moving_insert_count = insert_receipt["insertCount"]
+        moving_insert_receipt = insert_receipt
+    else:
+        cutout_receipt = render_cutout(performance["cutoutPlan"], output)
+        output_sha = cutout_receipt["outputSha256"]
+        duration_seconds = cutout_receipt["durationSeconds"]
+        moving_insert_count = 0
+        moving_insert_receipt = None
+
     result = {
         "schema": "haunted-blender/puppet-performance-receipt/v1",
         "performanceId": performance["id"],
         "output": str(output),
-        "outputSha256": receipt["outputSha256"],
-        "durationSeconds": receipt["durationSeconds"],
-        "frameCount": receipt["frameCount"],
+        "outputSha256": output_sha,
+        "durationSeconds": duration_seconds,
+        "frameCount": cutout_receipt["frameCount"],
         "poseEventCount": len(performance["poseEvents"]),
         "mouthEventCount": len(performance["mouthEvents"]),
         "lyricGeographyCount": len(performance["lyricGeography"]),
@@ -626,12 +644,15 @@ def render_performance(performance: dict, output_path: str | Path) -> dict:
         "movingInsertProposalCount": len(
             (performance.get("harvestedStageDressing") or {}).get("movingInserts") or []
         ),
+        "movingInsertRenderedCount": moving_insert_count,
+        "movingInsertReceipt": moving_insert_receipt,
         "externalGenerations": 0,
         "providerCredits": 0,
         "usdMicros": 0,
         "laws": [
             "PUPPET RENDER != FINAL CUT",
             "LOCAL LIMITED ANIMATION != PROVIDER GENERATION",
+            "MOVING INSERTS REMAIN BOUNDED SURFACES",
         ],
     }
     receipt_path = output.with_suffix(output.suffix + ".puppet.json")
