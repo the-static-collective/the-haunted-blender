@@ -135,6 +135,14 @@ def _cue_shot(
     text = str(cue.get("text") or "")
     kind = str((gate or {}).get("kind") or "").lower()
 
+    # Explicit punctuation is the strongest cheap directing signal. Weak-window
+    # and insert heuristics may redirect ordinary lines, but they do not erase
+    # an authored question/exclamation beat.
+    if "!" in text:
+        return "CLOSE_UP"
+    if "?" in text:
+        return "REACTION"
+
     if weakness and float(weakness.get("weaknessScore") or 0) >= 0.68:
         dominant = weakness.get("dominantWeakness")
         if insert and dominant in {"stasis", "recentRepetition", "noveltyDeficit"}:
@@ -144,10 +152,6 @@ def _cue_shot(
 
     if insert and index % 5 == 3:
         return "INSERT"
-    if "!" in text:
-        return "CLOSE_UP"
-    if "?" in text:
-        return "REACTION"
     if kind == "chorus":
         return ("WIDE", "CLOSE_UP", "LYRIC_WORLD")[index % 3]
     if kind in {"bridge", "breakdown"}:
@@ -606,6 +610,10 @@ def render(
             [
                 "ffmpeg", "-nostdin", "-v", "error", "-y",
                 "-f", "concat", "-safe", "0", "-i", str(concat),
+                # Concat/demux frame quantization can end one frame short even
+                # when every logical shot covers its exact interval. Pad the
+                # final directed picture, then trim to the frozen song length.
+                "-vf", "tpad=stop_mode=clone:stop_duration=1.000",
                 "-t", f"{duration:.6f}",
                 "-an", "-c:v", "libx264", "-pix_fmt", "yuv420p",
                 "-movflags", "+faststart",
