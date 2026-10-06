@@ -447,6 +447,92 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
                     root / "run",
                 )
 
+    def test_owned_collection_inherits_full_reuse_to_current_member_after_sha_ingest(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "member.png"
+            self.make_page(source)
+            collection = manga_atlas.collection_manifest(
+                label="Owned manga collection",
+                collection_id="owned-001",
+                collection_url="",
+                source_class="owned",
+                pixel_reuse=True,
+                derivative_reuse=True,
+                publication_reuse=True,
+                rights_note="User-declared owned collection.",
+                member_snapshot=[{"externalId": "member.png", "title": "member.png"}],
+                future_members_inherit=True,
+            )
+            manifest = manga_atlas.source_from_collection(
+                source,
+                collection,
+                external_id="member.png",
+                grammar_families=["cozy-ensemble"],
+                page_role="dialogue",
+            )
+            self.assertEqual(manifest["sourceClass"], "owned")
+            self.assertTrue(manifest["rights"]["pixelReuse"])
+            self.assertTrue(manifest["rights"]["derivativeReuse"])
+            self.assertTrue(manifest["rights"]["publicationReuse"])
+            self.assertTrue(manifest["rightsInheritedFromCollection"])
+            self.assertEqual(manifest["externalMemberId"], "member.png")
+            self.assertEqual(len(manifest["sourceSha256"]), 64)
+
+    def test_future_member_inherits_collection_rights_but_still_gets_its_own_sha(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            old = root / "old.png"
+            new = root / "new.png"
+            self.make_page(old, mode="grid")
+            self.make_page(new, mode="irregular")
+            collection = manga_atlas.collection_manifest(
+                label="Growing owned manga collection",
+                collection_id="owned-growing",
+                collection_url="",
+                source_class="owned",
+                pixel_reuse=True,
+                derivative_reuse=True,
+                publication_reuse=True,
+                rights_note="User declares current and future deliberate folder members owned.",
+                member_snapshot=[{"externalId": "old.png", "title": "old.png"}],
+                future_members_inherit=True,
+            )
+            manifest = manga_atlas.source_from_collection(
+                new,
+                collection,
+                external_id="new.png",
+                grammar_families=["sequence-rhythm"],
+            )
+            self.assertTrue(manifest["rightsInheritedFromCollection"])
+            self.assertEqual(manifest["externalMemberId"], "new.png")
+            self.assertEqual(len(manifest["sourceSha256"]), 64)
+            self.assertNotEqual(manifest["sourceSha256"], manga_atlas._file_sha(old))
+
+    def test_future_member_is_refused_when_collection_policy_does_not_inherit(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "new.png"
+            self.make_page(source)
+            collection = manga_atlas.collection_manifest(
+                label="Frozen collection",
+                collection_id="frozen-001",
+                collection_url="",
+                source_class="owned",
+                pixel_reuse=True,
+                derivative_reuse=True,
+                publication_reuse=True,
+                rights_note="Only snapshotted members are authorized.",
+                member_snapshot=[{"externalId": "old.png", "title": "old.png"}],
+                future_members_inherit=False,
+            )
+            with self.assertRaises(PermissionError):
+                manga_atlas.source_from_collection(
+                    source,
+                    collection,
+                    external_id="new.png",
+                )
+
     def test_reference_manifest_cannot_self_grant_reuse_rights(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
