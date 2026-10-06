@@ -26,16 +26,16 @@ TREATMENT_SCHEMA = "haunted-blender/weakest-window-treatment/v1"
 
 # Level-1 mutations only. Higher levels are recommendations, not automatic work.
 LOCAL_RECIPE_LADDER = {
-    "fit": ("push", "mirror", "reverse"),
+    "fit": ("kinetic-push", "push", "mirror", "reverse"),
     "mirror": ("push", "reverse", "soft-loop"),
     "reverse": ("push", "mirror", "fast"),
     "slow": ("fast", "push", "mirror-reverse"),
     "fast": ("slow", "push", "reverse"),
-    "push": ("pull", "mirror", "misregister"),
+    "push": ("kinetic-push", "pull", "mirror", "misregister"),
     "pull": ("push", "mirror", "reverse"),
     "misregister": ("push", "mirror-reverse", "soft-loop"),
     "mirror-reverse": ("push", "pull", "soft-loop"),
-    "soft-loop": ("push", "reverse", "misregister"),
+    "soft-loop": ("kinetic-push", "push", "reverse", "misregister"),
 }
 
 WEIGHTS = {
@@ -313,7 +313,7 @@ def scan(
 def _next_recipe(current: str, dominant: str) -> str:
     ladder = LOCAL_RECIPE_LADDER.get(current, ("push", "mirror", "reverse"))
     if dominant == "stasis":
-        preferences = ("push", "fast", "misregister", "mirror-reverse")
+        preferences = ("kinetic-push", "push", "fast", "misregister", "mirror-reverse")
     elif dominant in {"sourceOveruse", "recentRepetition"}:
         preferences = ("reverse", "mirror-reverse", "misregister", "pull")
     elif dominant == "transitionJolt":
