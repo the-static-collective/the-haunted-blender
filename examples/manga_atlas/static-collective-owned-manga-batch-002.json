@@ -1,0 +1,192 @@
+{
+  "schema": "haunted-blender/page-source-batch/v1",
+  "id": "static-collective-owned-manga-batch-002",
+  "label": "Static Collective owned manga batch 002 — 14 exact pages",
+  "sourceClass": "owned",
+  "rights": {
+    "pixelReuse": true,
+    "derivativeReuse": true,
+    "publicationReuse": true,
+    "note": "User explicitly states the entire source folder, including these fourteen current PNGs and future deliberate additions, consists of their owned pixels and may be reused, transformed, recomposed, and published."
+  },
+  "continuityGroup": "static-collective-manga-owned-001",
+  "grammarFamilies": [
+    "cozy-ensemble",
+    "anime-action",
+    "reaction",
+    "panel-rhythm",
+    "room-ecology",
+    "fx",
+    "threshold-transition",
+    "environmental-establishing",
+    "intimate-dialogue",
+    "object-detail",
+    "silhouette-negative-space",
+    "vertical-motion",
+    "recurring-location-continuity",
+    "sequence-rhythm"
+  ],
+  "entries": [
+    {
+      "filename": "file_0000000053a881f49d2e953cd20e046a.png",
+      "sha256": "d1d273b301633700ae1b19f85af7892c2a2bf574b868177871c61a04b3fc0f47",
+      "width": 1024,
+      "height": 1536,
+      "sizeBytes": 3162020,
+      "label": "Static Collective Manga Page 01",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 0
+    },
+    {
+      "filename": "file_00000000166881f88729b6a636845ae4.png",
+      "sha256": "0b83c522f9e2cee24a27caee18ee0907897ddcf1941052ded0aa6e70d75a01b9",
+      "width": 1254,
+      "height": 1254,
+      "sizeBytes": 3257379,
+      "label": "Static Collective Manga Page 02",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 1
+    },
+    {
+      "filename": "file_0000000013f481f88fe3ebe1bc37ff01.png",
+      "sha256": "6e13cbd419ff2460a48e49381cf96e7302331fc1a813e8649b7a9c5ab5681232",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 3134369,
+      "label": "Static Collective Manga Page 03",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 2
+    },
+    {
+      "filename": "file_0000000008f481f5a4573899015a13bd.png",
+      "sha256": "34cb5e24cf47e12387908cc8e7d02965fd2d236f71d390ecc900f24a6073f560",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 2597010,
+      "label": "Static Collective Manga Page 04",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 3
+    },
+    {
+      "filename": "file_00000000ac8c820e8df97e4b07c8de1a.png",
+      "sha256": "5dd29b4f0b1936e240e93f0d8f7bb379523f946b7991d1fc263f875e6b3039ff",
+      "width": 1024,
+      "height": 1536,
+      "sizeBytes": 3212819,
+      "label": "Static Collective Manga Page 05",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 4
+    },
+    {
+      "filename": "file_00000000745c8206b3b28183d45a0097.png",
+      "sha256": "bec131845214cdb9c9b3ae738188a24202f8d344b4ebb3028e51a02306e5479e",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 2867179,
+      "label": "Static Collective Manga Page 06",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 5
+    },
+    {
+      "filename": "file_0000000047948230b9f4f1999e9e57e5.png",
+      "sha256": "2090d7a94fe5d9848404afb9e244b33dd7455865c0da2f9b70f05e97ad50fff0",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 3155815,
+      "label": "Static Collective Manga Page 07",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 6
+    },
+    {
+      "filename": "file_00000000e0ac81f5a13b8091a75ca910.png",
+      "sha256": "49b5593bf682a723f53233396916098ab4e20d271533f3b5085a539424d9dd6a",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 2986049,
+      "label": "Static Collective Manga Page 08",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 7
+    },
+    {
+      "filename": "file_0000000044bc81f89c9325a5909d06e7.png",
+      "sha256": "1eecd2a3d9e50ee6db96d5c4dd86fa2ba4de12a973db48a8ef53615be8de862b",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 3239837,
+      "label": "Static Collective Manga Page 09",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 8
+    },
+    {
+      "filename": "file_00000000fedc81f899bb5267f73fe72f.png",
+      "sha256": "e264923991034680cc17d2a35ad82b4f3b6e3a4afc121966ceb63893adaec6a2",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 3227330,
+      "label": "Static Collective Manga Page 10",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 9
+    },
+    {
+      "filename": "file_00000000a71c81f5b79b167a79b210db.png",
+      "sha256": "97bf97effdffe69b24c00ffeb2eb40440e4cd0294aef6cb5c5b0dcc2098db383",
+      "width": 1024,
+      "height": 1536,
+      "sizeBytes": 3549389,
+      "label": "Static Collective Manga Page 11",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 10
+    },
+    {
+      "filename": "file_00000000047081f6bacba2d9cf411782.png",
+      "sha256": "3d414a124205915398e9c4108a5c58607d537e88de174e566bf0c9fcbf961178",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 3341367,
+      "label": "Static Collective Manga Page 12",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 11
+    },
+    {
+      "filename": "file_00000000f80081f5bead517552cfc8bf.png",
+      "sha256": "df01adf526260fcbc63e19fa33878970277c0fe911468ced261c4978b0f4520a",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 3233912,
+      "label": "Static Collective Manga Page 13",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 12
+    },
+    {
+      "filename": "file_0000000005ec81f5ab3d10b52a51940a.png",
+      "sha256": "ece8b206e076a2809bc40b154727b80791a806e824447819eb59727f1b99b115",
+      "width": 1055,
+      "height": 1491,
+      "sizeBytes": 3377615,
+      "label": "Static Collective Manga Page 14",
+      "motifs": [],
+      "pageRole": "mixed",
+      "sequenceIndex": 13
+    }
+  ],
+  "laws": [
+    "EXACT FILE SHA BINDS THE RIGHTS RECORD TO THESE PIXELS",
+    "BATCH RUN REQUIRES EXACT SOURCE HASH MATCH",
+    "OWNED BATCH MAY FEED PIXEL HARVEST AND GRAMMAR ANALYSIS",
+    "SEQUENCE INDEX IS INGEST ORDER NOT STORY ORDER",
+    "NO PRIVATE DRIVE LOCATORS ARE REQUIRED"
+  ]
+}
