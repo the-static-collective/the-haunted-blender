@@ -1,0 +1,11 @@
+{
+  "schema": "haunted-blender/deprecated-specimen-pointer/v1",
+  "status": "superseded",
+  "supersededBy": "specimens/008m/static-collective-owned-page-collection-001.json",
+  "reason": "The folder is now modeled as a growing rights-bearing owned collection. Private Drive locators are unnecessary in the public specimen; actual per-page SHA custody is established at ingestion.",
+  "laws": [
+    "PRIVATE LOCATION IS NOT REQUIRED FOR PIXEL PROVENANCE",
+    "COLLECTION RIGHTS + PER-PAGE SHA REPLACE LOCATION-BASED WITNESS",
+    "INGEST ORDER != STORY ORDER"
+  ]
+}

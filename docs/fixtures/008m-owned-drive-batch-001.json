@@ -1,0 +1,70 @@
+{
+  "schema": "haunted-blender/page-source-batch/v1",
+  "id": "page-source-batch:static-collective-drive-2026-10-06-001",
+  "label": "Static Collective owned manga batch 001",
+  "authority": {
+    "sourceClass": "owned",
+    "pixelReuse": true,
+    "derivativeReuse": true,
+    "publicationReuse": true,
+    "rightsNote": "User explicitly confirmed these eight inspected pages are our pixels and may be reused as source material."
+  },
+  "sourceScope": {
+    "provider": "google-drive",
+    "folderId": "1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5",
+    "scopeRule": "exact-file-list-only",
+    "note": "This declaration applies only to the eight inspected files listed below; later additions to the folder are not automatically covered."
+  },
+  "files": [
+    {
+      "id": "1xDLEg6DaWOqlP3cBLVC3sMCG_i1Cfrab",
+      "title": "file_0000000047948230b9f4f1999e9e57e5.png",
+      "url": "https://drive.google.com/file/d/1xDLEg6DaWOqlP3cBLVC3sMCG_i1Cfrab/view?usp=drivesdk"
+    },
+    {
+      "id": "1xBxlBknCpP269QFhemUTadk-kt7cGL1q",
+      "title": "file_00000000e0ac81f5a13b8091a75ca910.png",
+      "url": "https://drive.google.com/file/d/1xBxlBknCpP269QFhemUTadk-kt7cGL1q/view?usp=drivesdk"
+    },
+    {
+      "id": "1xBr0G3rznmYhiojzZlvR4VJnPZ2Z9S4v",
+      "title": "file_0000000044bc81f89c9325a5909d06e7.png",
+      "url": "https://drive.google.com/file/d/1xBr0G3rznmYhiojzZlvR4VJnPZ2Z9S4v/view?usp=drivesdk"
+    },
+    {
+      "id": "1x681roExycTpX5ocnl_6dKbKIyG0Im5O",
+      "title": "file_00000000fedc81f899bb5267f73fe72f.png",
+      "url": "https://drive.google.com/file/d/1x681roExycTpX5ocnl_6dKbKIyG0Im5O/view?usp=drivesdk"
+    },
+    {
+      "id": "1x0VyN3BcaIzXeYHmtUXPquc1m7Wfv5bf",
+      "title": "file_00000000a71c81f5b79b167a79b210db.png",
+      "url": "https://drive.google.com/file/d/1x0VyN3BcaIzXeYHmtUXPquc1m7Wfv5bf/view?usp=drivesdk"
+    },
+    {
+      "id": "1wp2adPFS-csEmU4rM4TsNNVv1xU7dZ4N",
+      "title": "file_00000000047081f6bacba2d9cf411782.png",
+      "url": "https://drive.google.com/file/d/1wp2adPFS-csEmU4rM4TsNNVv1xU7dZ4N/view?usp=drivesdk"
+    },
+    {
+      "id": "1wlezSRi3ZGM1kJU5zgkO_hzqjTcIVePs",
+      "title": "file_00000000f80081f5bead517552cfc8bf.png",
+      "url": "https://drive.google.com/file/d/1wlezSRi3ZGM1kJU5zgkO_hzqjTcIVePs/view?usp=drivesdk"
+    },
+    {
+      "id": "1wkkZmxgWqz-_hH3yqhWE2GIZ_BGCDO3I",
+      "title": "file_0000000005ec81f5ab3d10b52a51940a.png",
+      "url": "https://drive.google.com/file/d/1wkkZmxgWqz-_hH3yqhWE2GIZ_BGCDO3I/view?usp=drivesdk"
+    }
+  ],
+  "materializationPolicy": {
+    "requireSha256AfterDownload": true,
+    "note": "Ownership declaration grants reuse authority, but each local page source manifest still freezes the downloaded bytes by SHA-256 before harvest."
+  },
+  "laws": [
+    "BATCH OWNERSHIP DECLARATION != BYTE IDENTITY",
+    "EXACT FILE LIST != FUTURE FOLDER CONTENTS",
+    "OWNED PIXELS MAY ENTER PAGE HARVEST",
+    "LOCAL MATERIALIZATION MUST FREEZE SHA256 BEFORE DERIVATION"
+  ]
+}

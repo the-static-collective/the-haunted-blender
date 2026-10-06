@@ -1,0 +1,228 @@
+{
+  "schema": "haunted-blender/page-source-batch/v1",
+  "label": "Static Collective Owned Manga Batch — 2026-10-06",
+  "sourceClass": "owned",
+  "rights": {
+    "pixelReuse": true,
+    "derivativeReuse": true,
+    "publicationReuse": true,
+    "note": "User asserts ownership of all pixels in this batch and authorizes pixel reuse, cutout harvesting, derivative assets, recomposition, animation, and republication.",
+    "basis": "user-asserted ownership in ChatGPT on 2026-10-06; not independently verified"
+  },
+  "continuityGroup": "static-manga-owned-2026-10-06",
+  "grammarFamilies": [
+    "cozy-ensemble",
+    "panel-rhythm",
+    "recurring-location-continuity",
+    "room-ecology",
+    "sequence-rhythm"
+  ],
+  "pageCount": 11,
+  "entries": [
+    {
+      "filename": "file_0000000005ec81f5ab3d10b52a51940a.png",
+      "sha256": "ece8b206e076a2809bc40b154727b80791a806e824447819eb59727f1b99b115",
+      "width": 1055,
+      "height": 1491,
+      "byteLength": 3377615,
+      "sequenceIndex": 0,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 01"
+    },
+    {
+      "filename": "file_00000000f80081f5bead517552cfc8bf.png",
+      "sha256": "df01adf526260fcbc63e19fa33878970277c0fe911468ced261c4978b0f4520a",
+      "width": 1055,
+      "height": 1491,
+      "byteLength": 3233912,
+      "sequenceIndex": 1,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 02"
+    },
+    {
+      "filename": "file_00000000047081f6bacba2d9cf411782.png",
+      "sha256": "3d414a124205915398e9c4108a5c58607d537e88de174e566bf0c9fcbf961178",
+      "width": 1055,
+      "height": 1491,
+      "byteLength": 3341367,
+      "sequenceIndex": 2,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 03"
+    },
+    {
+      "filename": "file_00000000a71c81f5b79b167a79b210db.png",
+      "sha256": "97bf97effdffe69b24c00ffeb2eb40440e4cd0294aef6cb5c5b0dcc2098db383",
+      "width": 1024,
+      "height": 1536,
+      "byteLength": 3549389,
+      "sequenceIndex": 3,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 04"
+    },
+    {
+      "filename": "file_00000000fedc81f899bb5267f73fe72f.png",
+      "sha256": "e264923991034680cc17d2a35ad82b4f3b6e3a4afc121966ceb63893adaec6a2",
+      "width": 1055,
+      "height": 1491,
+      "byteLength": 3227330,
+      "sequenceIndex": 4,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 05"
+    },
+    {
+      "filename": "file_0000000044bc81f89c9325a5909d06e7.png",
+      "sha256": "1eecd2a3d9e50ee6db96d5c4dd86fa2ba4de12a973db48a8ef53615be8de862b",
+      "width": 1055,
+      "height": 1491,
+      "byteLength": 3239837,
+      "sequenceIndex": 5,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 06"
+    },
+    {
+      "filename": "file_00000000e0ac81f5a13b8091a75ca910.png",
+      "sha256": "49b5593bf682a723f53233396916098ab4e20d271533f3b5085a539424d9dd6a",
+      "width": 1055,
+      "height": 1491,
+      "byteLength": 2986049,
+      "sequenceIndex": 6,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 07"
+    },
+    {
+      "filename": "file_0000000047948230b9f4f1999e9e57e5.png",
+      "sha256": "2090d7a94fe5d9848404afb9e244b33dd7455865c0da2f9b70f05e97ad50fff0",
+      "width": 1055,
+      "height": 1491,
+      "byteLength": 3155815,
+      "sequenceIndex": 7,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 08"
+    },
+    {
+      "filename": "file_00000000745c8206b3b28183d45a0097.png",
+      "sha256": "bec131845214cdb9c9b3ae738188a24202f8d344b4ebb3028e51a02306e5479e",
+      "width": 1055,
+      "height": 1491,
+      "byteLength": 2867179,
+      "sequenceIndex": 8,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 09"
+    },
+    {
+      "filename": "file_00000000ac8c820e8df97e4b07c8de1a.png",
+      "sha256": "5dd29b4f0b1936e240e93f0d8f7bb379523f946b7991d1fc263f875e6b3039ff",
+      "width": 1024,
+      "height": 1536,
+      "byteLength": 3212819,
+      "sequenceIndex": 9,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 10"
+    },
+    {
+      "filename": "file_0000000008f481f5a4573899015a13bd.png",
+      "sha256": "34cb5e24cf47e12387908cc8e7d02965fd2d236f71d390ecc900f24a6073f560",
+      "width": 1055,
+      "height": 1491,
+      "byteLength": 2597010,
+      "sequenceIndex": 10,
+      "pageRole": null,
+      "motifs": [],
+      "grammarFamilies": [
+        "cozy-ensemble",
+        "panel-rhythm",
+        "recurring-location-continuity",
+        "room-ecology",
+        "sequence-rhythm"
+      ],
+      "label": "Static Manga Page 11"
+    }
+  ],
+  "laws": [
+    "BATCH RIGHTS APPLY TO EXACT LISTED SOURCE HASHES",
+    "BATCH OWNERSHIP DECLARATION != INDEPENDENT LEGAL VERIFICATION",
+    "OWNERSHIP AUTHORITY != SEMANTIC PAGE ANNOTATION",
+    "PRIVATE STORAGE LOCATION NEED NOT ENTER PUBLIC BATCH MANIFEST"
+  ],
+  "id": "page-source-batch:fc91c8a55a4e66af5b28fac2"
+}

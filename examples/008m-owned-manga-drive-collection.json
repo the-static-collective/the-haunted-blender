@@ -1,0 +1,29 @@
+{
+  "collectionId":"1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5",
+  "collectionUrl":"https://drive.google.com/folderview?id=1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5",
+  "futureMembersInherit":true,
+  "id":"page-source-collection:ec8bffd573a612ea12cdcf6f",
+  "label":"Static Collective owned manga Drive folder",
+  "laws":["COLLECTION RIGHTS APPLY TO DECLARED MEMBERSHIP NOT UNKNOWN BYTES","EACH INGESTED PAGE STILL REQUIRES ITS OWN SOURCE SHA","FUTURE MEMBER INHERITANCE REQUIRES USER-DECLARED COLLECTION POLICY","COLLECTION OWNERSHIP != PAGE SEMANTICS"],
+  "memberCount":14,
+  "memberSnapshot":[
+    {"createdTime":"2026-10-06T13:41:31.361Z","externalId":"1wkkZmxgWqz-_hH3yqhWE2GIZ_BGCDO3I","mimeType":"image/png","modifiedTime":"2026-10-06T13:40:56.368Z","title":"file_0000000005ec81f5ab3d10b52a51940a.png"},
+    {"createdTime":"2026-10-06T13:42:05.081Z","externalId":"1wlezSRi3ZGM1kJU5zgkO_hzqjTcIVePs","mimeType":"image/png","modifiedTime":"2026-10-06T13:40:56.462Z","title":"file_00000000f80081f5bead517552cfc8bf.png"},
+    {"createdTime":"2026-10-06T13:42:40.481Z","externalId":"1wp2adPFS-csEmU4rM4TsNNVv1xU7dZ4N","mimeType":"image/png","modifiedTime":"2026-10-06T13:40:56.574Z","title":"file_00000000047081f6bacba2d9cf411782.png"},
+    {"createdTime":"2026-10-06T13:46:36.404Z","externalId":"1x0VyN3BcaIzXeYHmtUXPquc1m7Wfv5bf","mimeType":"image/png","modifiedTime":"2026-10-06T13:45:59.219Z","title":"file_00000000a71c81f5b79b167a79b210db.png"},
+    {"createdTime":"2026-10-06T13:57:23.211Z","externalId":"1x681roExycTpX5ocnl_6dKbKIyG0Im5O","mimeType":"image/png","modifiedTime":"2026-10-06T13:56:47.653Z","title":"file_00000000fedc81f899bb5267f73fe72f.png"},
+    {"createdTime":"2026-10-06T13:57:58.718Z","externalId":"1xBr0G3rznmYhiojzZlvR4VJnPZ2Z9S4v","mimeType":"image/png","modifiedTime":"2026-10-06T13:56:47.752Z","title":"file_0000000044bc81f89c9325a5909d06e7.png"},
+    {"createdTime":"2026-10-06T13:58:30.099Z","externalId":"1xBxlBknCpP269QFhemUTadk-kt7cGL1q","mimeType":"image/png","modifiedTime":"2026-10-06T13:56:47.853Z","title":"file_00000000e0ac81f5a13b8091a75ca910.png"},
+    {"createdTime":"2026-10-06T13:59:03.187Z","externalId":"1xDLEg6DaWOqlP3cBLVC3sMCG_i1Cfrab","mimeType":"image/png","modifiedTime":"2026-10-06T13:56:47.931Z","title":"file_0000000047948230b9f4f1999e9e57e5.png"},
+    {"createdTime":"2026-10-06T14:00:19.645Z","externalId":"1xEwC0LnLxDsAHwpIdWZvFfDtgPuCkWbw","mimeType":"image/png","modifiedTime":"2026-10-06T14:00:19.645Z","title":"file_00000000745c8206b3b28183d45a0097.png"},
+    {"createdTime":"2026-10-06T14:09:12.878Z","externalId":"1xMaMaicEMzFBaABg3iuxUv9SzKPCrkCP","mimeType":"image/png","modifiedTime":"2026-10-06T14:08:39.332Z","title":"file_00000000ac8c820e8df97e4b07c8de1a.png"},
+    {"createdTime":"2026-10-06T14:19:01.399Z","externalId":"1xP1wEGGOhL8Ec5Hsh-IrgOVS7WEpTE_d","mimeType":"image/png","modifiedTime":"2026-10-06T14:19:01.399Z","title":"file_0000000008f481f5a4573899015a13bd.png"},
+    {"createdTime":"2026-10-06T14:30:14.650Z","externalId":"1xQiC9zHilgf2fyj9xRiGvHrRoYmcWQhA","mimeType":"image/png","modifiedTime":"2026-10-06T14:29:41.109Z","title":"file_0000000013f481f88fe3ebe1bc37ff01.png"},
+    {"createdTime":"2026-10-06T14:30:48.759Z","externalId":"1xWogp1FU7IXMWxgoL5AyjL5UV8ljTuQ5","mimeType":"image/png","modifiedTime":"2026-10-06T14:29:41.225Z","title":"file_00000000166881f88729b6a636845ae4.png"},
+    {"createdTime":"2026-10-06T14:42:13.869Z","externalId":"1xer24xi5RMmPUoTVF3sl84YOgNDvRJkb","mimeType":"image/png","modifiedTime":"2026-10-06T14:41:40.360Z","title":"file_0000000053a881f49d2e953cd20e046a.png"}
+  ],
+  "membershipAuthority":"user-declared-collection + external-metadata-snapshot",
+  "rights":{"derivativeReuse":true,"note":"User explicitly declares the entire Drive folder to be theirs. All current pages, and pages subsequently added to this declared collection, may be cut apart, reused, derived, recomposed, and published.","pixelReuse":true,"publicationReuse":true},
+  "schema":"haunted-blender/page-source-collection/v1",
+  "sourceClass":"owned"
+}

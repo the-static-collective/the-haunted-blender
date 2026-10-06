@@ -1,0 +1,27 @@
+{
+  "fileCount": 14,
+  "files": [
+    {"id":"1xer24xi5RMmPUoTVF3sl84YOgNDvRJkb","title":"file_0000000053a881f49d2e953cd20e046a.png","url":"https://drive.google.com/file/d/1xer24xi5RMmPUoTVF3sl84YOgNDvRJkb/view?usp=drivesdk"},
+    {"id":"1xWogp1FU7IXMWxgoL5AyjL5UV8ljTuQ5","title":"file_00000000166881f88729b6a636845ae4.png","url":"https://drive.google.com/file/d/1xWogp1FU7IXMWxgoL5AyjL5UV8ljTuQ5/view?usp=drivesdk"},
+    {"id":"1xQiC9zHilgf2fyj9xRiGvHrRoYmcWQhA","title":"file_0000000013f481f88fe3ebe1bc37ff01.png","url":"https://drive.google.com/file/d/1xQiC9zHilgf2fyj9xRiGvHrRoYmcWQhA/view?usp=drivesdk"},
+    {"id":"1xP1wEGGOhL8Ec5Hsh-IrgOVS7WEpTE_d","title":"file_0000000008f481f5a4573899015a13bd.png","url":"https://drive.google.com/file/d/1xP1wEGGOhL8Ec5Hsh-IrgOVS7WEpTE_d/view?usp=drivesdk"},
+    {"id":"1xMaMaicEMzFBaABg3iuxUv9SzKPCrkCP","title":"file_00000000ac8c820e8df97e4b07c8de1a.png","url":"https://drive.google.com/file/d/1xMaMaicEMzFBaABg3iuxUv9SzKPCrkCP/view?usp=drivesdk"},
+    {"id":"1xEwC0LnLxDsAHwpIdWZvFfDtgPuCkWbw","title":"file_00000000745c8206b3b28183d45a0097.png","url":"https://drive.google.com/file/d/1xEwC0LnLxDsAHwpIdWZvFfDtgPuCkWbw/view?usp=drivesdk"},
+    {"id":"1xDLEg6DaWOqlP3cBLVC3sMCG_i1Cfrab","title":"file_0000000047948230b9f4f1999e9e57e5.png","url":"https://drive.google.com/file/d/1xDLEg6DaWOqlP3cBLVC3sMCG_i1Cfrab/view?usp=drivesdk"},
+    {"id":"1xBxlBknCpP269QFhemUTadk-kt7cGL1q","title":"file_00000000e0ac81f5a13b8091a75ca910.png","url":"https://drive.google.com/file/d/1xBxlBknCpP269QFhemUTadk-kt7cGL1q/view?usp=drivesdk"},
+    {"id":"1xBr0G3rznmYhiojzZlvR4VJnPZ2Z9S4v","title":"file_0000000044bc81f89c9325a5909d06e7.png","url":"https://drive.google.com/file/d/1xBr0G3rznmYhiojzZlvR4VJnPZ2Z9S4v/view?usp=drivesdk"},
+    {"id":"1x681roExycTpX5ocnl_6dKbKIyG0Im5O","title":"file_00000000fedc81f899bb5267f73fe72f.png","url":"https://drive.google.com/file/d/1x681roExycTpX5ocnl_6dKbKIyG0Im5O/view?usp=drivesdk"},
+    {"id":"1x0VyN3BcaIzXeYHmtUXPquc1m7Wfv5bf","title":"file_00000000a71c81f5b79b167a79b210db.png","url":"https://drive.google.com/file/d/1x0VyN3BcaIzXeYHmtUXPquc1m7Wfv5bf/view?usp=drivesdk"},
+    {"id":"1wp2adPFS-csEmU4rM4TsNNVv1xU7dZ4N","title":"file_00000000047081f6bacba2d9cf411782.png","url":"https://drive.google.com/file/d/1wp2adPFS-csEmU4rM4TsNNVv1xU7dZ4N/view?usp=drivesdk"},
+    {"id":"1wlezSRi3ZGM1kJU5zgkO_hzqjTcIVePs","title":"file_00000000f80081f5bead517552cfc8bf.png","url":"https://drive.google.com/file/d/1wlezSRi3ZGM1kJU5zgkO_hzqjTcIVePs/view?usp=drivesdk"},
+    {"id":"1wkkZmxgWqz-_hH3yqhWE2GIZ_BGCDO3I","title":"file_0000000005ec81f5ab3d10b52a51940a.png","url":"https://drive.google.com/file/d/1wkkZmxgWqz-_hH3yqhWE2GIZ_BGCDO3I/view?usp=drivesdk"}
+  ],
+  "folderUrl":"https://drive.google.com/folderview?id=1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5",
+  "grammarFamilies":["anime-action","cozy-ensemble","environmental-establishing","fx","intimate-dialogue","object-detail","panel-rhythm","reaction","recurring-location-continuity","room-ecology","sequence-rhythm","silhouette-negative-space","threshold-transition","vertical-motion"],
+  "id":"page-source-locator-batch:8bca7fc22a0cca9255fa03af",
+  "label":"Static Collective owned manga batch — snapshot 001",
+  "laws":["BATCH RIGHTS MAY BE INHERITED BY LISTED FILES","BATCH MANIFEST != PER-FILE BYTE CUSTODY","PER-FILE SHA IS FROZEN AT INGESTION","ADDING A FILE TO A FOLDER DOES NOT RETROACTIVELY CHANGE AN OLD BATCH MANIFEST"],
+  "rights":{"derivativeReuse":true,"note":"User explicitly states the entire Drive folder and all pixels currently in it are theirs and may be reused, cut apart, derived, recomposed, and published.","pixelReuse":true,"publicationReuse":true},
+  "schema":"haunted-blender/page-source-locator-batch/v1",
+  "sourceClass":"owned"
+}
