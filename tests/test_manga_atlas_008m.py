@@ -242,6 +242,84 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
                 for row in drawer["artifacts"]
             ))
 
+    def test_multi_page_sequence_grammar_preserves_roles_continuity_and_recurring_motifs(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pages = []
+            configs = [
+                ("a.png", "establish", ["door", "room"], 0),
+                ("b.png", "dialogue", ["door", "chair"], 1),
+                ("c.png", "threshold", ["door", "light"], 2),
+                ("d.png", "return", ["door", "room"], 3),
+            ]
+            for name, role, motifs, index in configs:
+                path = root / name
+                self.make_page(path, mode="irregular" if index % 2 else "grid")
+                manifest = manga_atlas.source_manifest(
+                    path,
+                    source_class="reference",
+                    pixel_reuse=False,
+                    derivative_reuse=False,
+                    publication_reuse=False,
+                    grammar_families=["panel-rhythm", "sequence-rhythm"],
+                    page_role=role,
+                    continuity_group="room-001",
+                    motifs=motifs,
+                    sequence_index=index,
+                )
+                pages.append(manga_atlas.analyze_page(manifest))
+
+            sequence = manga_atlas.build_sequence_grammar(pages)
+            self.assertEqual(
+                [row["pageRole"] for row in sequence["pages"]],
+                ["establish", "dialogue", "threshold", "return"],
+            )
+            self.assertEqual(len(sequence["transitions"]), 3)
+            self.assertTrue(all(
+                row["sameContinuityGroup"] for row in sequence["transitions"]
+            ))
+            self.assertIn("door", sequence["recurringMotifs"])
+            self.assertEqual(len(sequence["recurringMotifs"]["door"]), 4)
+
+    def test_sequence_director_maps_page_roles_to_reusable_shot_patterns(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            reports = []
+            for index, role in enumerate(("establish", "dialogue", "vertical-transition", "return")):
+                path = root / f"{index}.png"
+                self.make_page(path, mode="irregular")
+                manifest = manga_atlas.source_manifest(
+                    path,
+                    source_class="reference",
+                    pixel_reuse=False,
+                    derivative_reuse=False,
+                    publication_reuse=False,
+                    grammar_families=["sequence-rhythm"],
+                    page_role=role,
+                    continuity_group="world-a",
+                    motifs=["window"] if index in (0, 3) else [],
+                    sequence_index=index,
+                )
+                reports.append(manga_atlas.analyze_page(manifest))
+
+            sequence = manga_atlas.build_sequence_grammar(reports)
+            prescription = manga_atlas.sequence_director_prescription(sequence)
+            self.assertEqual(
+                [row["pageRole"] for row in prescription["beats"]],
+                ["establish", "dialogue", "vertical-transition", "return"],
+            )
+            self.assertEqual(
+                prescription["beats"][0]["suggestedShotPattern"],
+                ["ESTABLISH", "WIDE"],
+            )
+            self.assertIn("TWO_SHOT", prescription["beats"][1]["suggestedShotPattern"])
+            self.assertIn("LYRIC_WORLD", prescription["beats"][2]["suggestedShotPattern"])
+            self.assertIn("window", prescription["callbackMotifs"])
+            self.assertTrue(all(
+                row["authority"] == "sequence-grammar-proposal-only"
+                for row in prescription["beats"]
+            ))
+
     def test_reference_manifest_cannot_self_grant_reuse_rights(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
