@@ -510,6 +510,39 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
         raise ValueError("max_steps must be between 1 and 32")
 
     trace = []
+
+    def call_phase(current: dict, attempt: dict, phase: str, payload: dict):
+        started = time.monotonic()
+        try:
+            raw = _invoke(root, attempt["providerId"], phase, payload)
+        except plugin_bridge.PluginBridgeRequired as exc:
+            return None, {
+                "status": "plugin_bridge_required",
+                "bridge": exc.packet,
+                "trace": copy.deepcopy(trace),
+                "view": provider_view(root, section_id),
+            }, None
+        except plugin_bridge.PluginBridgeReconcileRequired as exc:
+            return None, {
+                "status": "reconcile_required",
+                "reason": "claimed plugin SUBMIT is unresolved; do not replay it",
+                "bridge": exc.packet,
+                "trace": copy.deepcopy(trace),
+                "view": provider_view(root, section_id),
+            }, None
+        except Exception:
+            plugin_orchard.record_usage(
+                root,
+                observed_at="unspecified",
+                provider_id=attempt["providerId"],
+                model=attempt["model"],
+                phase=phase.lower(),
+                outcome="error",
+                latency_ms=round((time.monotonic() - started) * 1000),
+            )
+            raise
+        return raw, None, round((time.monotonic() - started) * 1000)
+
     for _ in range(max_steps):
         current = _current(root, section_id)
         action = current["next"].get("action")
@@ -535,7 +568,9 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
         payload = _base_payload(root, section_id, current)
 
         if action == "CAPABILITIES":
-            raw = _invoke(root, provider_id, "CAPABILITIES", payload)
+            raw, stop, latency = call_phase(current, attempt, "CAPABILITIES", payload)
+            if stop:
+                return stop
             receipt = {
                 "schema": motion_executor.CAP_SCHEMA,
                 "offerId": attempt["offerId"],
@@ -553,10 +588,22 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 root, current["planPath"], current["statePath"], receipt
             )
             _record_transition(root, section_id, result)
+            phase = result["stateBody"]["attempts"][attempt["attempt"] - 1]["phase"]
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="capabilities",
+                outcome="success" if phase == "needs_quote" else "ineligible",
+                latency_ms=latency,
+            )
             continue
 
         if action == "QUOTE":
-            raw = _invoke(root, provider_id, "QUOTE", payload)
+            raw, stop, latency = call_phase(current, attempt, "QUOTE", payload)
+            if stop:
+                return stop
             receipt = {
                 "schema": motion_executor.QUOTE_SCHEMA,
                 "offerId": attempt["offerId"],
@@ -574,6 +621,18 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 root, current["planPath"], current["statePath"], receipt
             )
             _record_transition(root, section_id, result)
+            outcome = "budget_blocked" if result["stateBody"].get("status") == "budget_blocked" else "success"
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="quote",
+                outcome=outcome,
+                latency_ms=latency,
+                quoted_credits=receipt.get("amount") if receipt.get("denomination") == "provider-credits" else None,
+                quoted_usd_micros=receipt.get("wholeJobUsdMicros"),
+            )
             after = _current(root, section_id)
             if after["next"].get("action") == "SUBMIT" and _approval_needed(after["attempt"]):
                 if _approval_for(root, section_id, after) is None:
@@ -591,16 +650,21 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                     "trace": trace,
                     "view": provider_view(root, section_id),
                 }
+            spec = _adapter_spec(root, provider_id)
             unresolved = _unresolved_submit_guard(root, section_id, current)
-            if unresolved is not None:
+            if unresolved is not None and spec.get("transport") != "plugin_bridge":
                 return {
                     "status": "reconcile_required",
                     "reason": "submit intent exists without a durable provider submit receipt",
                     "trace": trace,
                     "view": provider_view(root, section_id),
                 }
-            _write_submit_intent(root, section_id, current)
-            raw = _invoke(root, provider_id, "SUBMIT", payload)
+            if unresolved is None:
+                _write_submit_intent(root, section_id, current)
+
+            raw, stop, latency = call_phase(current, attempt, "SUBMIT", payload)
+            if stop:
+                return stop
             receipt = {
                 "schema": motion_executor.SUBMIT_SCHEMA,
                 "offerId": attempt["offerId"],
@@ -622,10 +686,22 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 submit_receipt_sha256=receipt_sha,
                 reconciled=False,
             )
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="submit",
+                outcome="success",
+                latency_ms=latency,
+                quoted_usd_micros=attempt.get("quotedUsdMicros"),
+            )
             continue
 
         if action == "STATUS":
-            raw = _invoke(root, provider_id, "STATUS", payload)
+            raw, stop, latency = call_phase(current, attempt, "STATUS", payload)
+            if stop:
+                return stop
             receipt = {
                 "schema": motion_executor.STATUS_SCHEMA,
                 "offerId": attempt["offerId"],
@@ -640,6 +716,15 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 root, current["planPath"], current["statePath"], receipt
             )
             _record_transition(root, section_id, result)
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="status",
+                outcome=receipt["status"],
+                latency_ms=latency,
+            )
             if receipt["status"] == "running":
                 return {"status": "running", "trace": trace, "view": provider_view(root, section_id)}
             if receipt["status"] in {"timeout", "unresolved"}:
@@ -657,7 +742,9 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 raise FileExistsError("Provider fetch output already exists; refusing an ambiguous refetch")
             payload["outputPath"] = str(output)
             payload["vendorRequestId"] = vendor_id
-            raw = _invoke(root, provider_id, "FETCH", payload)
+            raw, stop, latency = call_phase(current, attempt, "FETCH", payload)
+            if stop:
+                return stop
             if not output.is_file():
                 raise ValueError("Provider adapter FETCH did not materialize the requested MP4")
             admitted = motion_organ.admit_candidate(
@@ -695,13 +782,21 @@ def drive(root, section_id: str, *, max_steps: int = 12) -> dict:
                 cost_class=attempt["spendClass"],
                 label=f"{provider_id} / {attempt['model']}",
             )
+            plugin_orchard.record_usage(
+                root,
+                observed_at=receipt["observedAt"],
+                provider_id=provider_id,
+                model=attempt["model"],
+                phase="fetch",
+                outcome="candidate_ready",
+                latency_ms=latency,
+                candidate_sha256=admitted["outputSha256"],
+            )
             return {"status": "candidate_ready", "trace": trace, "view": provider_view(root, section_id)}
 
         raise ValueError(f"Unsupported 007 action: {action}")
 
     return {"status": "step_limit", "trace": trace, "view": provider_view(root, section_id)}
-
-
 
 def reconcile_submission(
     root,
