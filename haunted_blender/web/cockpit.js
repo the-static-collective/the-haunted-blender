@@ -147,6 +147,14 @@ function drawControls(){
       f.innerHTML='<code>python -m haunted_blender.provider_driver_cli configure ...</code>';
       return;
     }
+    if(p.reconcileRequired){
+      c.textContent="A SUBMIT intent exists without a durable submit receipt. Do not resubmit. Reconcile the already-created vendor job here.";
+      f.innerHTML='<label>Existing vendor job ID<input id="reconcile-job" placeholder="job_..." /></label>'+
+        '<label>Submitted parameter SHA-256<input id="reconcile-sha" placeholder="64 lowercase hex characters" /></label>'+
+        '<button id="reconcile-submit" class="secondary-button">RECONCILE EXISTING JOB</button>';
+      setTimeout(()=>{const z=$("reconcile-submit");if(z)z.onclick=reconcileSubmit;},0);
+      return;
+    }
     if(p.approvalRequired){
       c.textContent="The exact paid quote is inside budget, but SUBMIT is blocked until a separate one-time approval.";
       f.innerHTML=quoteBlock()+'<button id="approve-spend" class="spend-button">APPROVE & SUBMIT '+usd(p.quote?.wholeJobUsdMicros)+'</button>';
@@ -204,6 +212,16 @@ async function approveSpend(){
     if(amount==null)throw new Error("Exact USD quote is missing.");
     await providerAction("approve",{expectedUsdMicros:amount,approvedAt:new Date().toISOString()});
     toast("One-time spend approval recorded.");
+    await driveProvider();
+  }catch(e){toast(e.message,true);}
+}
+async function reconcileSubmit(){
+  try{
+    const vendorRequestId=$("reconcile-job")?.value?.trim()||"";
+    const submittedParameterSha256=$("reconcile-sha")?.value?.trim()||"";
+    if(!vendorRequestId||!submittedParameterSha256)throw new Error("Existing vendor job ID and parameter SHA-256 are required.");
+    await providerAction("reconcile",{vendorRequestId,submittedParameterSha256,observedAt:new Date().toISOString()});
+    toast("Existing provider submission reconciled. Polling the same job.");
     await driveProvider();
   }catch(e){toast(e.message,true);}
 }
