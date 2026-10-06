@@ -197,6 +197,11 @@ def render(
         raise ValueError("Base puppet movie does not cover insert plan duration")
 
     inserts = list(plan.get("inserts") or [])
+    for insert in inserts:
+        source = Path(str(insert.get("source") or "")).expanduser().resolve(strict=True)
+        observed_sha = _file_sha(source)
+        if observed_sha != insert.get("sourceSha256"):
+            raise ValueError("Moving insert source bytes changed after planning")
     if not inserts:
         shutil.copy2(base, out)
         return {
