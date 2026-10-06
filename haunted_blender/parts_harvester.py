@@ -754,3 +754,71 @@ def behavior_transplant(
         ],
     }
     return {**body, "id": "behavior-transplant:" + _sha(body)[:24]}
+
+
+def harvest_flow_manifest(
+    manifest: dict,
+    source_root: str | Path,
+    output_root: str | Path,
+    *,
+    still_count: int = 6,
+    loop_seconds: float = 1.5,
+    fragment_seconds: float = 0.8,
+    sample_fps: int = 4,
+) -> dict:
+    from .flow_pantry import validate_flow_manifest
+
+    validate_flow_manifest(manifest)
+    source_root = Path(source_root).expanduser().resolve(strict=True)
+    output_root = Path(output_root).expanduser().resolve()
+    if output_root.exists() and any(output_root.iterdir()):
+        raise FileExistsError("Batch harvest output directory must be empty")
+    output_root.mkdir(parents=True, exist_ok=True)
+
+    harvests = []
+    for index, item in enumerate(manifest["items"], start=1):
+        source = (source_root / item["relativePath"]).resolve(strict=True)
+        try:
+            source.relative_to(source_root)
+        except ValueError as exc:
+            raise ValueError("Flow Pantry item escaped source root") from exc
+        if _file_sha(source) != item["sha256"]:
+            raise ValueError(f"Flow Pantry source bytes changed: {item['relativePath']}")
+        folder = output_root / f"{index:04d}-{item['sha256'][:12]}"
+        harvests.append(
+            harvest(
+                source,
+                folder,
+                still_count=still_count,
+                loop_seconds=loop_seconds,
+                fragment_seconds=fragment_seconds,
+                sample_fps=sample_fps,
+            )
+        )
+
+    drawer = build_drawer(harvests, output_root / "parts-drawer.json")
+    summary = {
+        "schema": "haunted-blender/parts-harvest-batch/v1",
+        "sourceCount": len(harvests),
+        "harvestIds": [h["id"] for h in harvests],
+        "drawerId": drawer["id"],
+        "drawerPath": str(output_root / "parts-drawer.json"),
+        "artifactCount": drawer["artifactCount"],
+        "byKind": drawer["byKind"],
+        "cost": {
+            "externalGenerations": 0,
+            "providerCredits": 0,
+            "usdMicros": 0,
+        },
+        "laws": [
+            "BATCH SIZE DOES NOT CHANGE SOURCE AUTHORITY",
+            "ONE SOURCE MAY YIELD MANY DERIVATIVES",
+            "HARVESTING IS LOCAL AND REPEATABLE",
+        ],
+    }
+    summary["id"] = "parts-harvest-batch:" + _sha(summary)[:24]
+    (output_root / "batch.json").write_text(
+        json.dumps(summary, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return summary
