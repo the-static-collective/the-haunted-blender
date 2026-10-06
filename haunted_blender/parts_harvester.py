@@ -635,3 +635,122 @@ def select_for_stage(
         ],
     }
     return {**body, "id": "parts-stage-selection:" + _sha(body)[:24]}
+
+
+def behavior_keyframes(
+    behavior: dict,
+    *,
+    duration_seconds: float,
+    base_x: float = 0,
+    base_y: float = 0,
+    base_scale: float = 1,
+    base_rotation: float = 0,
+    motion_pixels: float = 26,
+    scale_gain: float = 0.08,
+    rotation_degrees: float = 8,
+    max_keyframes: int = 48,
+) -> list[dict]:
+    """Map a non-semantic motion signature onto arbitrary cutout transforms.
+
+    Change-centroid movement becomes x/y drift. Energy modulates scale and
+    rotation. This is intentionally a behavior transplant, not an assertion that
+    the source and target depict the same thing.
+    """
+    if behavior.get("schema") != BEHAVIOR_SCHEMA:
+        raise ValueError("Expected motion behavior")
+    duration = float(duration_seconds)
+    if duration <= 0:
+        raise ValueError("duration_seconds must be positive")
+    samples = list(behavior.get("samples") or [])
+    if not samples:
+        return [{
+            "time": 0.0,
+            "x": float(base_x),
+            "y": float(base_y),
+            "scale": float(base_scale),
+            "rotation": float(base_rotation),
+        }, {
+            "time": duration,
+            "x": float(base_x),
+            "y": float(base_y),
+            "scale": float(base_scale),
+            "rotation": float(base_rotation),
+        }]
+
+    if len(samples) > max_keyframes:
+        step = max(1, math.ceil(len(samples) / max_keyframes))
+        samples = samples[::step]
+        if samples[-1] != behavior["samples"][-1]:
+            samples.append(behavior["samples"][-1])
+
+    source_end = max(float(row["atSeconds"]) for row in samples)
+    source_end = max(source_end, 0.001)
+    frames = []
+    previous_x = 0.5
+    previous_y = 0.5
+    for index, row in enumerate(samples):
+        t = duration * min(1.0, float(row["atSeconds"]) / source_end)
+        cx = float(row.get("changeCentroidX", 0.5))
+        cy = float(row.get("changeCentroidY", 0.5))
+        energy = min(1.0, max(0.0, float(row.get("energy", 0))))
+        dx = (cx - 0.5) * motion_pixels
+        dy = (cy - 0.5) * motion_pixels
+        direction = ((cx - previous_x) - (cy - previous_y))
+        rotation = base_rotation + max(-1.0, min(1.0, direction * 6)) * rotation_degrees
+        scale = base_scale * (1.0 + energy * scale_gain)
+        frames.append({
+            "time": round(t, 6),
+            "x": round(base_x + dx, 6),
+            "y": round(base_y + dy, 6),
+            "scale": round(scale, 6),
+            "rotation": round(rotation, 6),
+        })
+        previous_x, previous_y = cx, cy
+
+    if frames[0]["time"] > 0:
+        frames.insert(0, {
+            "time": 0.0,
+            "x": float(base_x),
+            "y": float(base_y),
+            "scale": float(base_scale),
+            "rotation": float(base_rotation),
+        })
+    if frames[-1]["time"] < duration:
+        frames.append({**frames[-1], "time": duration})
+    return frames
+
+
+def behavior_transplant(
+    behavior: dict,
+    *,
+    target_source_sha256: str,
+    duration_seconds: float,
+    base_state: dict | None = None,
+) -> dict:
+    target_sha = str(target_source_sha256 or "").lower()
+    if len(target_sha) != 64 or any(c not in "0123456789abcdef" for c in target_sha):
+        raise ValueError("target_source_sha256 must be a SHA-256 digest")
+    state = base_state or {}
+    frames = behavior_keyframes(
+        behavior,
+        duration_seconds=duration_seconds,
+        base_x=float(state.get("x", 0)),
+        base_y=float(state.get("y", 0)),
+        base_scale=float(state.get("scale", 1)),
+        base_rotation=float(state.get("rotation", 0)),
+    )
+    body = {
+        "schema": "haunted-blender/behavior-transplant/v1",
+        "behaviorId": behavior.get("id"),
+        "targetSourceSha256": target_sha,
+        "durationSeconds": float(duration_seconds),
+        "keyframes": frames,
+        "authority": "transform-proposal-only",
+        "laws": [
+            "BEHAVIOR != APPEARANCE",
+            "SOURCE MOTION != TARGET IDENTITY",
+            "TRANSPLANT != SEMANTIC CORRESPONDENCE",
+            "TARGET BYTES REMAIN THEIR OWN AUTHORITY",
+        ],
+    }
+    return {**body, "id": "behavior-transplant:" + _sha(body)[:24]}
