@@ -731,6 +731,17 @@ def analyze_page(manifest: dict) -> dict:
         })
 
     geometry_sequence = [row["geometry"] for row in analyzed]
+    if len(analyzed) <= 2:
+        panel_map_status = "undersegmented"
+        panel_map_confidence = 0.35
+    elif len(analyzed) >= 24:
+        panel_map_status = "saturated"
+        panel_map_confidence = 0.45
+    else:
+        panel_map_status = "nominal"
+        panel_map_confidence = 0.80
+    quarry_recommended = panel_map_status != "nominal"
+
     body = {
         "schema": REPORT_SCHEMA,
         "sourceId": manifest["id"],
@@ -743,6 +754,9 @@ def analyze_page(manifest: dict) -> dict:
         "motifs": manifest.get("motifs") or [],
         "sequenceIndex": manifest.get("sequenceIndex"),
         "panelCount": len(analyzed),
+        "panelMapStatus": panel_map_status,
+        "panelMapConfidence": panel_map_confidence,
+        "quarryRecommended": quarry_recommended,
         "panels": analyzed,
         "geometrySequence": geometry_sequence,
         "geometryCounts": {
@@ -756,6 +770,7 @@ def analyze_page(manifest: dict) -> dict:
         "laws": [
             "PANEL MAP IS GEOMETRY, NOT SEMANTIC UNDERSTANDING",
             "WHITE GUTTER AND DARK BORDER DETECTION ARE BOTH HEURISTICS",
+            "EXTREME PANEL COUNTS REQUIRE QUARRY FALLBACK RATHER THAN FALSE CONFIDENCE",
             "PANEL != FINAL FRAME",
             "PANEL RHYTHM != SHOT PLAN",
         ],
@@ -834,6 +849,62 @@ def _panel_asset_rows(report: dict, source_path: Path, output_dir: Path) -> list
     return assets
 
 
+def _quarry_asset_rows(
+    report: dict,
+    source_path: Path,
+    output_dir: Path,
+) -> list[dict]:
+    """Non-semantic overlapping page tiles for low-confidence panel maps.
+
+    The quarry exists to preserve quantity when panel segmentation is uncertain.
+    It does not claim panel boundaries, characters, props, or FX.
+    """
+    from PIL import Image
+
+    if not report.get("quarryRecommended"):
+        return []
+
+    image = Image.open(source_path).convert("RGBA")
+    width, height = image.size
+    output_dir.mkdir(parents=True, exist_ok=True)
+    assets = []
+
+    # Two deterministic scales. The larger grid preserves compositions; the
+    # smaller grid yields more isolate-able ingredients.
+    grids = ((2, 3), (3, 4))
+    ordinal = 0
+    for cols, rows in grids:
+        tile_w = max(32, round(width / cols * 1.10))
+        tile_h = max(32, round(height / rows * 1.10))
+        for row in range(rows):
+            for col in range(cols):
+                ordinal += 1
+                center_x = (col + 0.5) * width / cols
+                center_y = (row + 0.5) * height / rows
+                x1 = round(max(0, min(width - tile_w, center_x - tile_w / 2)))
+                y1 = round(max(0, min(height - tile_h, center_y - tile_h / 2)))
+                x2 = min(width, x1 + tile_w)
+                y2 = min(height, y1 + tile_h)
+                crop = image.crop((x1, y1, x2, y2))
+                out = output_dir / f"quarry-{cols}x{rows}-{row+1:02d}-{col+1:02d}.png"
+                crop.save(out)
+                assets.append({
+                    "kind": "quarry-candidate",
+                    "panelId": None,
+                    "path": str(out),
+                    "sha256": _file_sha(out),
+                    "recipe": {
+                        "op": "page-quarry-tile",
+                        "grid": [cols, rows],
+                        "row": row,
+                        "col": col,
+                        "box": [x1, y1, x2, y2],
+                        "semantic": False,
+                    },
+                })
+    return assets
+
+
 def harvest_page(manifest: dict, output_dir: str | Path) -> dict:
     if manifest.get("schema") != SOURCE_SCHEMA:
         raise ValueError("Expected page source manifest")
@@ -852,6 +923,9 @@ def harvest_page(manifest: dict, output_dir: str | Path) -> dict:
 
     report = analyze_page(manifest)
     assets = _panel_asset_rows(report, source, root / "panels")
+    assets.extend(
+        _quarry_asset_rows(report, source, root / "quarry")
+    )
     for row in assets:
         row["sourceSha256"] = manifest["sourceSha256"]
         row["sourceId"] = manifest["id"]
@@ -864,6 +938,8 @@ def harvest_page(manifest: dict, output_dir: str | Path) -> dict:
         "rights": manifest["rights"],
         "reportId": report["id"],
         "panelCount": report["panelCount"],
+        "panelMapStatus": report.get("panelMapStatus"),
+        "quarryCandidateCount": sum(1 for row in assets if row.get("kind") == "quarry-candidate"),
         "assetCount": len(assets),
         "assets": assets,
         "cost": {"externalGenerations": 0, "providerCredits": 0, "usdMicros": 0},
@@ -874,6 +950,8 @@ def harvest_page(manifest: dict, output_dir: str | Path) -> dict:
             "OWNED OR LICENSED PAGE MAY BE DISASSEMBLED",
             "HARVESTED ASSET != CHARACTER IDENTITY",
             "EDGE MASK != SEMANTIC SEGMENTATION",
+            "QUARRY TILE != PANEL",
+            "LOW-CONFIDENCE PANEL MAP MAY STILL YIELD USEFUL CROPS",
             "PAGE MAY YIELD ACTORS FX PROPS AND BACKGROUNDS AFTER SELECTION",
         ],
     }
@@ -994,6 +1072,7 @@ def page_harvest_to_parts_drawer(
         "panel": "still",
         "region-candidate": "crop",
         "edge-mask": "mask",
+        "quarry-candidate": "crop",
     }
     artifacts = []
     by_kind: dict[str, int] = {}
@@ -1025,6 +1104,7 @@ def page_harvest_to_parts_drawer(
             "PAGE HARVEST MAY ENTER PARTS DRAWER ONLY WHEN PIXEL REUSE IS AUTHORIZED",
             "PANEL BECOMES STILL-CANDIDATE NOT FINAL SHOT",
             "REGION CANDIDATE BECOMES CROP-CANDIDATE NOT CHARACTER IDENTITY",
+            "QUARRY CANDIDATE BECOMES CROP-CANDIDATE NOT PANEL CLAIM",
             "PAGE PROVENANCE SURVIVES DRAWER BRIDGE",
         ],
     }
