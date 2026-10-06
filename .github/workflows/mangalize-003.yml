@@ -1,0 +1,55 @@
+name: mangalize-003
+on:
+  push:
+    branches: [integration/mangalize-003-performed-use]
+  pull_request:
+    branches: [integration/mangalize-002-quarantine-release]
+permissions:
+  contents: read
+jobs:
+  performed-use:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install inherited render dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install Pillow==12.1.1
+      - name: Syntax and complete inherited suite
+        run: |
+          python -m compileall -q haunted_blender
+          node --check haunted_blender/web/cockpit.js
+          python -m unittest discover -s tests -v
+      - uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/the-haunted-blender
+          ref: 8b4f7da114e55150dfb564fea171c827bcf8759a
+          path: .mangalize-003-ci/parent
+      - name: Prove all 001 and 002 history remains byte-identical
+        run: python specimens/mangalize-003/check_parent.py .mangalize-003-ci/parent
+      - uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/lemonPRESS
+          ref: 88978ff88f9b07a72040976b426b04afc2abd835
+          path: .mangalize-003-ci/lemonpress
+      - name: Verify exact original foreign witness
+        run: python specimens/mangalize-001/check_pin.py .mangalize-003-ci/lemonpress
+      - name: Independently replay the three exact founding proposals
+        run: |
+          python specimens/mangalize-003/prepare.py /tmp/mangalize-003-proposals
+          diff -r specimens/mangalize-003/prepared /tmp/mangalize-003-proposals
+      - name: Independently replay the real separately admitted static composition
+        run: python specimens/mangalize-003/verify_founding.py /tmp/mangalize-003-performed
+      - name: Upload exact proposals, admissions, uses, layout and full custody trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: mangalize-003-performed-use
+          path: |
+            /tmp/mangalize-003-proposals
+            /tmp/mangalize-003-performed
+            specimens/mangalize-003/authority

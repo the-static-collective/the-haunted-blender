@@ -40,6 +40,15 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 ## Current scaffold capability
 
+[MANGALIZE-003](docs/MANGALIZE_003.md) separates structural role proposals,
+authored fixed-point placements, external performed-use admission and static
+composition records. Full material custody survives the repaired stage boundary;
+managed material cannot be placed automatically. Separate user approval admits
+the exact panel as poster, center crop as cutaway and edge mask as texture in a
+640×360 static layout. These are structural roles with no semantic identity,
+rendering, motion, sound or publication authority; all earlier custody stays
+unchanged.
+
 [MANGALIZE-002](docs/MANGALIZE_002.md) makes quarantine, selection, later grant,
 and promotion independent immutable events. Explicit reuse/derivative permission
 can admit exact descendants to the existing Parts Drawer while retaining their
