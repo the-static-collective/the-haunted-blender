@@ -51,6 +51,7 @@ def main(argv=None):
     source_from_collection.add_argument("--motif", action="append", default=[])
     source_from_collection.add_argument("--sequence-index", type=int)
     source_from_collection.add_argument("--observed-membership", action="store_true")
+    source_from_collection.add_argument("--observed-membership", action="store_true")
 
     batch_run = sub.add_parser("batch-run")
     batch_run.add_argument("batch_manifest_json")
@@ -157,6 +158,7 @@ def main(argv=None):
             continuity_group=args.continuity_group,
             motifs=args.motif,
             sequence_index=args.sequence_index,
+            observed_membership=args.observed_membership,
         )
         _write(Path(args.output_json).expanduser().resolve(), result)
     elif args.command == "analyze":
