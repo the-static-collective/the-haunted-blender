@@ -45,6 +45,10 @@ def main(argv=None):
     harvest.add_argument("source_manifest_json")
     harvest.add_argument("output_dir")
 
+    drawer = sub.add_parser("drawer")
+    drawer.add_argument("page_harvest_json")
+    drawer.add_argument("output_json")
+
     atlas = sub.add_parser("atlas")
     atlas.add_argument("output_json")
     atlas.add_argument("report_json", nargs="+")
@@ -74,6 +78,11 @@ def main(argv=None):
         result = manga_atlas.harvest_page(
             _read(args.source_manifest_json),
             args.output_dir,
+        )
+    elif args.command == "drawer":
+        result = manga_atlas.page_harvest_to_parts_drawer(
+            _read(args.page_harvest_json),
+            args.output_json,
         )
     elif args.command == "atlas":
         result = manga_atlas.build_atlas([_read(path) for path in args.report_json])
