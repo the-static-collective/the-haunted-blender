@@ -320,7 +320,7 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
                 for row in prescription["beats"]
             ))
 
-    def test_registered_owned_drive_collection_and_exact_snapshot_cover_fourteen_pages(self):
+    def test_registered_owned_drive_collection_and_exact_snapshot_cover_fifteen_pages(self):
         root = Path(__file__).resolve().parents[1]
         collection = json.loads(
             (
@@ -345,19 +345,19 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
         )
         self.assertEqual(collection["sourceClass"], "owned")
         self.assertTrue(collection["futureMembersInherit"])
-        self.assertEqual(collection["memberCount"], 14)
-        self.assertEqual(len(collection["memberSnapshot"]), 14)
+        self.assertEqual(collection["memberCount"], 15)
+        self.assertEqual(len(collection["memberSnapshot"]), 15)
         self.assertTrue(collection["rights"]["pixelReuse"])
         self.assertTrue(collection["rights"]["derivativeReuse"])
         self.assertTrue(collection["rights"]["publicationReuse"])
 
         self.assertEqual(batch["schema"], "haunted-blender/page-source-batch/v1")
         self.assertEqual(batch["sourceClass"], "owned")
-        self.assertEqual(batch["pageCount"], 14)
-        self.assertEqual(len(batch["entries"]), 14)
+        self.assertEqual(batch["pageCount"], 15)
+        self.assertEqual(len(batch["entries"]), 15)
         self.assertEqual(
             len({row["sha256"] for row in batch["entries"]}),
-            14,
+            15,
         )
         self.assertTrue(
             all(len(row["sha256"]) == 64 for row in batch["entries"])
