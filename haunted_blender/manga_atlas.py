@@ -18,6 +18,7 @@ SOURCE_SCHEMA = "haunted-blender/page-source/v1"
 REPORT_SCHEMA = "haunted-blender/page-grammar-report/v1"
 ATLAS_SCHEMA = "haunted-blender/manga-anime-grammar-atlas/v1"
 COLLECTION_SCHEMA = "haunted-blender/page-source-collection/v1"
+LOCATOR_BATCH_SCHEMA = "haunted-blender/page-source-locator-batch/v1"
 BATCH_SCHEMA = "haunted-blender/page-source-batch/v1"
 BATCH_RUN_SCHEMA = "haunted-blender/page-source-batch-run/v1"
 
@@ -115,7 +116,7 @@ def source_batch_manifest(
         })
 
     body = {
-        "schema": BATCH_SCHEMA,
+        "schema": LOCATOR_BATCH_SCHEMA,
         "label": label,
         "sourceClass": normalized_class,
         "folderUrl": folder_url,
@@ -135,7 +136,7 @@ def source_batch_manifest(
             "ADDING A FILE TO A FOLDER DOES NOT RETROACTIVELY CHANGE AN OLD BATCH MANIFEST",
         ],
     }
-    return {**body, "id": "page-source-batch:" + _hash(body)[:24]}
+    return {**body, "id": "page-source-locator-batch:" + _hash(body)[:24]}
 
 
 def source_manifest_from_batch(
@@ -151,8 +152,8 @@ def source_manifest_from_batch(
     sequence_index: int | None = None,
     grammar_families: list[str] | tuple[str, ...] | None = None,
 ) -> dict:
-    if batch.get("schema") != BATCH_SCHEMA:
-        raise ValueError("Expected page source batch")
+    if batch.get("schema") != LOCATOR_BATCH_SCHEMA:
+        raise ValueError("Expected page source locator batch")
     listed = batch.get("files") or []
     if file_id or file_url:
         matched = any(
