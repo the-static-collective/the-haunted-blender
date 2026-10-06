@@ -1,8 +1,9 @@
-const S={view:null,resume:null,id:null,media:null,engine:null,preview:null};
+const S={view:null,resume:null,id:null,media:null,engine:null,provider:null,preview:null};
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 const tc=v=>"temp-"+String(v||"sleeping").toLowerCase();
 const tm=v=>{v=Math.max(0,Number(v||0));return Math.floor(v/60)+":"+Math.floor(v%60).toString().padStart(2,"0");};
+const usd=micros=>"$"+(Number(micros||0)/1000000).toFixed(4);
 
 async function api(url,opt={}){
   const r=await fetch(url,{cache:"no-store",...opt,headers:{...(opt.body&&!(opt.body instanceof Blob)?{"Content-Type":"application/json"}:{}),...(opt.headers||{})}});
@@ -12,7 +13,7 @@ async function api(url,opt={}){
 }
 function toast(msg,bad=false){
   const e=$("toast");e.textContent=msg;e.className="toast show"+(bad?" error":"");
-  clearTimeout(toast.t);toast.t=setTimeout(()=>e.className="toast",2600);
+  clearTimeout(toast.t);toast.t=setTimeout(()=>e.className="toast",3000);
 }
 function section(){return S.view?.sections?.find(x=>x.id===S.id)||null;}
 function mediaUrl(p){return "/media/"+p.split("/").map(encodeURIComponent).join("/");}
@@ -50,10 +51,11 @@ function drawStrip(){
 }
 async function drawSelected(){
   const x=section();
-  if(!x){S.media=null;S.engine=null;drawViewer();drawControls();return;}
-  [S.media,S.engine]=await Promise.all([
+  if(!x){S.media=null;S.engine=null;S.provider=null;drawViewer();drawControls();return;}
+  [S.media,S.engine,S.provider]=await Promise.all([
     api("/api/media-view/"+encodeURIComponent(x.id)),
-    api("/api/engine-view/"+encodeURIComponent(x.id))
+    api("/api/engine-view/"+encodeURIComponent(x.id)),
+    api("/api/provider-view/"+encodeURIComponent(x.id))
   ]);
   $("selected-title").textContent=x.label;
   $("selected-temp").textContent=x.temperature.toUpperCase();
@@ -61,7 +63,13 @@ async function drawSelected(){
   $("viewer-title").textContent=x.label;
   $("viewer-eyebrow").textContent=x.kind.toUpperCase()+" - "+tm(x.start)+"-"+tm(x.end);
   drawViewer();drawControls();
-  $("evidence").textContent=JSON.stringify({section:x,engine:S.engine,media:S.media,resume:S.resume?.resume,blackBox:S.resume?.blackBox?{lanes:S.resume.blackBox.lanes,laws:S.resume.blackBox.laws}:null},null,2);
+  $("evidence").textContent=JSON.stringify({
+    section:x,engine:S.engine,provider:S.provider,media:S.media,resume:S.resume?.resume,
+    blackBox:S.resume?.blackBox?{lanes:S.resume.blackBox.lanes,laws:S.resume.blackBox.laws}:null
+  },null,2);
+}
+function trackedCandidate(relativePath){
+  return (S.provider?.candidates||[]).some(c=>c.relativePath===relativePath);
 }
 function drawViewer(){
   const x=section(),stage=$("primary-stage"),board=$("candidate-board");board.innerHTML="";
@@ -75,10 +83,14 @@ function drawViewer(){
   }
   for(const c of S.media?.candidates||[]){
     const a=document.createElement("article"),cost=c.costClass||"deterministic";
+    const canKeep=section()?.temperature==="awakening"&&trackedCandidate(c.path);
     a.className="candidate";
     a.innerHTML='<video class="candidate-video" controls playsinline preload="metadata" src="'+mediaUrl(c.path)+'"></video>'+
       '<div class="candidate-meta"><span>'+esc(c.label||c.providerId||"Candidate")+'</span>'+
-      '<span class="cost-pill cost-'+esc(cost)+'">'+esc(cost)+'</span></div>';
+      '<span class="cost-pill cost-'+esc(cost)+'">'+esc(cost)+'</span></div>'+
+      (canKeep?'<button class="candidate-keep">KEEP THIS TAKE</button>':"");
+    const keep=a.querySelector(".candidate-keep");
+    if(keep)keep.onclick=()=>keepCandidate(c.path);
     board.appendChild(a);
   }
 }
@@ -89,11 +101,20 @@ function proposalSelect(){
     '<option value="'+p.slot+'">'+p.slot+' - '+esc(p.label)+' ('+esc((p.traits||[]).join(", "))+')</option>'
   ).join("")+'</select></label>';
 }
+function quoteBlock(){
+  const q=S.provider?.quote,a=S.provider?.attempt;
+  if(!q||!a)return "";
+  const amount=q.wholeJobUsdMicros!=null?usd(q.wholeJobUsdMicros):(esc(q.amount??"?")+" "+esc(q.denomination||"units"));
+  return '<div class="quote-card"><div class="eyebrow">EXACT QUOTE</div>'+
+    '<strong>'+esc(a.providerId)+' / '+esc(a.model)+'</strong>'+
+    '<span>'+amount+' · '+Number(q.generatedDurationSeconds||0).toFixed(2)+'s generated</span></div>';
+}
 function drawControls(){
   const x=section(),f=$("action-form"),c=$("door-copy"),t=$("door-title");
   const b={grow:$("grow-button"),keep:$("keep-button"),awaken:$("awaken-button"),play:$("play-button")};
   Object.values(b).forEach(z=>z.disabled=true);f.innerHTML="";
   b.play.disabled=!S.view?.sections?.some(s=>s.hasScene);
+  b.awaken.textContent="AWAKEN";
   if(!x){t.textContent="Select a section";c.textContent="The Cockpit exposes only state-valid actions.";return;}
   t.textContent=x.temperature.toUpperCase();
   if(!S.engine?.configured){
@@ -116,14 +137,41 @@ function drawControls(){
   }else if(x.temperature==="moving"||x.temperature==="alive"){
     const windows=S.engine?.awakeningWindows||[];
     c.textContent=S.view.localOnly?
-      "The deterministic scene exists. PLAY works locally; LOCAL ONLY keeps remote motion locked.":
-      (windows.length?"AWAKEN will freeze the bounded window, source frame, provider route and 007 execution plan. It will not submit a provider job.":"This section has no bounded chorus/bridge AWAKEN window.");
+      "The deterministic scene exists. PLAY works locally; LOCAL ONLY locks provider execution.":
+      (windows.length?"AWAKEN prepares the bounded 006/007 plan, then immediately walks the cheapest configured adapter until a human hinge appears.":"This section has no bounded chorus/bridge AWAKEN window.");
     b.awaken.disabled=S.view.localOnly||!windows.length;
   }else if(x.temperature==="awakening"){
-    const next=S.engine?.nextMotionAction;
-    c.textContent=next?("Motion Organ prepared. Next adapter action: "+next.action+". No provider job is submitted by 008b."):"Motion Organ prepared; provider execution remains a separate adapter boundary.";
+    const p=S.provider||{};
+    if(!p.configured){
+      c.textContent="Motion Organ is prepared, but no cockpit.adapters.json is configured.";
+      f.innerHTML='<code>python -m haunted_blender.provider_driver_cli configure ...</code>';
+      return;
+    }
+    if(p.approvalRequired){
+      c.textContent="The exact paid quote is inside budget, but SUBMIT is blocked until a separate one-time approval.";
+      f.innerHTML=quoteBlock()+'<button id="approve-spend" class="spend-button">APPROVE & SUBMIT '+usd(p.quote?.wholeJobUsdMicros)+'</button>';
+      setTimeout(()=>{const z=$("approve-spend");if(z)z.onclick=approveSpend;},0);
+      return;
+    }
+    if(p.nextAction==="PRESENT"){
+      c.textContent="Candidate motion is ready. KEEP any tracked take in the board, or deliberately continue to the next planned provider.";
+      if(p.canDeclineAndContinue){
+        f.innerHTML='<button id="try-next" class="secondary-button">TRY NEXT PROVIDER</button>';
+        setTimeout(()=>{const z=$("try-next");if(z)z.onclick=tryNext;},0);
+      }
+      return;
+    }
+    if(p.status==="reconcile_required"||p.nextAction==="STOP"){
+      c.textContent="Execution stopped. An ambiguous submitted job must be reconciled; the router will not fall through and risk a duplicate charge.";
+      return;
+    }
+    c.textContent=p.nextAction==="STATUS"?
+      "The same vendor job is still active. AWAKEN polls that existing job; it does not resubmit.":
+      ("Provider driver next action: "+(p.nextAction||"unknown")+". AWAKEN continues only that frozen plan.");
+    b.awaken.textContent=p.nextAction==="STATUS"?"POLL":"CONTINUE";
+    b.awaken.disabled=false;
   }else if(x.temperature==="witnessed"){
-    c.textContent="The accepted take is witnessed. PLAY previews the working movie; ALIVE remains an explicit admission into the cut.";
+    c.textContent="The chosen provider take has been verified, human-KEEP'd, and spliced only into its frozen window. ALIVE admits that scene into the working cut.";
     f.innerHTML='<button id="bridge" class="secondary-button">Admit to current cut -> ALIVE</button>';
     setTimeout(()=>{const z=$("bridge");if(z)z.onclick=()=>direct("alive",{});},0);
   }
@@ -137,6 +185,40 @@ async function auto(verb,body={}){
   }
   const r=await api("/api/auto/section/"+encodeURIComponent(S.id)+"/"+verb,{method:"POST",body:JSON.stringify(body)});
   await refresh();return r;
+}
+async function providerAction(action,body={}){
+  const r=await api("/api/provider/section/"+encodeURIComponent(S.id)+"/"+action,{method:"POST",body:JSON.stringify(body)});
+  await refresh();return r;
+}
+async function driveProvider(){
+  const r=await providerAction("drive",{maxSteps:12});
+  if(r.status==="approval_required")toast("Exact paid quote needs approval.");
+  else if(r.status==="running")toast("Provider job is running; next AWAKEN polls the same job.");
+  else if(r.status==="candidate_ready")toast("Candidate ready for human KEEP.");
+  else if(r.status==="reconcile_required")toast("Ambiguous provider state: stopped for reconciliation.",true);
+  return r;
+}
+async function approveSpend(){
+  try{
+    const amount=S.provider?.quote?.wholeJobUsdMicros;
+    if(amount==null)throw new Error("Exact USD quote is missing.");
+    await providerAction("approve",{expectedUsdMicros:amount,approvedAt:new Date().toISOString()});
+    toast("One-time spend approval recorded.");
+    await driveProvider();
+  }catch(e){toast(e.message,true);}
+}
+async function tryNext(){
+  try{
+    await providerAction("decline",{reason:"artist requested another provider candidate"});
+    toast("Candidate preserved; continuing route.");
+    await driveProvider();
+  }catch(e){toast(e.message,true);}
+}
+async function keepCandidate(path){
+  try{
+    await providerAction("accept",{candidatePath:path});
+    toast("Take KEEP'd and spliced into the bounded window.");
+  }catch(e){toast(e.message,true);}
 }
 async function direct(action,body){
   await api("/api/section/"+encodeURIComponent(S.id)+"/"+action,{method:"POST",body:JSON.stringify(body)});
@@ -152,7 +234,10 @@ async function act(a){
       if(!slot)throw new Error("Choose one of the six futures.");
       await auto("keep",{slot});toast("KEEP compiled into a moving scene.");
     }else if(a==="awaken"){
-      await auto("awaken");toast("Motion Organ request and route prepared. No submission made.");
+      if(section()?.temperature!=="awakening"){
+        await auto("awaken");
+      }
+      await driveProvider();
     }else{
       await auto("play");toast("Current cut preview built.");
     }
