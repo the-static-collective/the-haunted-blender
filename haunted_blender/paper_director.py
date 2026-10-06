@@ -26,6 +26,8 @@ SHOT_TYPES = (
     "ESTABLISH",
     "WIDE",
     "SPEAKER",
+    "LISTENER",
+    "TWO_SHOT",
     "CLOSE_UP",
     "REACTION",
     "INSERT",
@@ -124,6 +126,79 @@ def _weakness_at(doctor_report: dict | None, at: float) -> dict | None:
     return None
 
 
+def _ensemble_turn(performance: dict | None, cue_index: int | None) -> dict | None:
+    if not performance or cue_index is None:
+        return None
+    ensemble = performance.get("ensemble") or {}
+    for row in ensemble.get("dialogueTurns") or []:
+        if int(row.get("cueIndex", -1)) == int(cue_index):
+            return row
+    return None
+
+
+def _cast_box(performance: dict | None, character_id: str | None) -> dict | None:
+    if not performance or not character_id:
+        return None
+    ensemble = performance.get("ensemble") or {}
+    for row in ensemble.get("cast") or []:
+        if row.get("id") == character_id:
+            return row.get("box")
+    return None
+
+
+def _crop_around_box(
+    box: dict,
+    *,
+    width: int,
+    height: int,
+    pad_fraction: float = 0.20,
+) -> dict:
+    x = float(box["x"])
+    y = float(box["y"])
+    w = float(box["width"])
+    h = float(box["height"])
+    pad_x = max(8.0, w * pad_fraction)
+    pad_y = max(8.0, h * pad_fraction)
+    left = max(0.0, x - pad_x)
+    top = max(0.0, y - pad_y)
+    right = min(float(width), x + w + pad_x)
+    bottom = min(float(height), y + h + pad_y)
+    crop_w = max(16, round(right - left))
+    crop_h = max(16, round(bottom - top))
+    return {
+        "x": round(left),
+        "y": round(top),
+        "w": min(width - round(left), crop_w),
+        "h": min(height - round(top), crop_h),
+        "hflip": False,
+    }
+
+
+def _two_shot_crop(
+    performance: dict | None,
+    speaker_id: str | None,
+    listener_id: str | None,
+    *,
+    width: int,
+    height: int,
+) -> dict | None:
+    a = _cast_box(performance, speaker_id)
+    b = _cast_box(performance, listener_id)
+    if not a or not b:
+        return None
+    left = min(float(a["x"]), float(b["x"]))
+    top = min(float(a["y"]), float(b["y"]))
+    right = max(float(a["x"]) + float(a["width"]), float(b["x"]) + float(b["width"]))
+    bottom = max(float(a["y"]) + float(a["height"]), float(b["y"]) + float(b["height"]))
+    box = {
+        "x": left,
+        "y": top,
+        "width": right - left,
+        "height": bottom - top,
+    }
+    return _crop_around_box(box, width=width, height=height, pad_fraction=0.12)
+
+
 def _cue_shot(
     cue: dict,
     index: int,
@@ -171,6 +246,8 @@ def _append(
     insert: dict | None = None,
     weakness: dict | None = None,
     preserve_type: bool = False,
+    speaker_id: str | None = None,
+    listener_id: str | None = None,
 ) -> None:
     if end - start < 1e-6:
         return
@@ -191,6 +268,8 @@ def _append(
         "weakWindowId": (weakness or {}).get("id"),
         "weaknessScore": (weakness or {}).get("weaknessScore"),
         "preserveType": bool(preserve_type),
+        "speakerId": speaker_id,
+        "listenerId": listener_id,
     })
 
 
@@ -200,7 +279,7 @@ def _split_long_shots(
     max_shot_seconds: float,
 ) -> list[dict]:
     result = []
-    alternate = ("WIDE", "SPEAKER", "REACTION", "LYRIC_WORLD", "RETURN")
+    alternate = ("WIDE", "SPEAKER", "LISTENER", "TWO_SHOT", "REACTION", "LYRIC_WORLD", "RETURN")
     for shot in shots:
         duration = float(shot["end"]) - float(shot["start"])
         if duration <= max_shot_seconds + 1e-9:
@@ -233,7 +312,7 @@ def _repair_repetition(shots: list[dict], performance: dict | None) -> list[dict
     of erasing the punctuation cue.
     """
     fixed = []
-    fallback = ("WIDE", "SPEAKER", "REACTION", "LYRIC_WORLD", "RETURN", "CHAOS")
+    fallback = ("WIDE", "SPEAKER", "LISTENER", "TWO_SHOT", "REACTION", "LYRIC_WORLD", "RETURN", "CHAOS")
     for index, shot in enumerate(shots):
         row = dict(shot)
         if fixed and row["type"] == fixed[-1]["type"]:
@@ -336,6 +415,17 @@ def plan(
         shot_type = _cue_shot(
             cue, index, gate=gate, insert=insert, weakness=weakness
         )
+        turn = _ensemble_turn(performance, cue.get("index"))
+        speaker_id = (turn or {}).get("speakerId")
+        listener_id = (turn or {}).get("primaryListenerId")
+        if turn:
+            # Ensemble-aware grammar turns generic wide/reaction views into
+            # character-addressable shots while punctuation/insert authority
+            # remains intact.
+            if shot_type == "WIDE":
+                shot_type = "TWO_SHOT"
+            elif shot_type == "REACTION" and "?" not in str(cue.get("text") or ""):
+                shot_type = "LISTENER"
         punctuation_lock = "?" in str(cue.get("text") or "") or "!" in str(cue.get("text") or "")
         _append(
             shots,
@@ -352,6 +442,8 @@ def plan(
             insert=insert,
             weakness=weakness,
             preserve_type=punctuation_lock,
+            speaker_id=speaker_id,
+            listener_id=listener_id,
         )
         cursor = max(cursor, cue_end)
 
@@ -409,6 +501,7 @@ def plan(
         "schema": PLAN_SCHEMA,
         "timingId": timing["id"],
         "performanceId": (performance or {}).get("id"),
+        "ensembleId": ((performance or {}).get("ensemble") or {}).get("id"),
         "doctorReportId": (doctor_report or {}).get("id"),
         "durationSeconds": duration,
         "shotCount": len(normalized),
@@ -448,13 +541,39 @@ def _crop_for_shot(
         return {"x": 0, "y": 0, "w": width, "h": height, "hflip": False}
 
     if shot_type == "SPEAKER":
+        box = _cast_box(performance, shot.get("speakerId"))
+        if box:
+            return _crop_around_box(box, width=width, height=height, pad_fraction=0.22)
         w = max(64, round(width * 0.72))
         h = max(64, round(height * 0.80))
         x = round((width - w) * 0.52)
         y = round((height - h) * 0.20)
         return {"x": x, "y": y, "w": w, "h": h, "hflip": False}
 
+    if shot_type == "LISTENER":
+        box = _cast_box(performance, shot.get("listenerId"))
+        if box:
+            return _crop_around_box(box, width=width, height=height, pad_fraction=0.24)
+        w = max(64, round(width * 0.58))
+        h = max(64, round(height * 0.70))
+        return {"x": 0, "y": round((height-h)*0.12), "w": w, "h": h, "hflip": False}
+
+    if shot_type == "TWO_SHOT":
+        crop = _two_shot_crop(
+            performance,
+            shot.get("speakerId"),
+            shot.get("listenerId"),
+            width=width,
+            height=height,
+        )
+        if crop:
+            return crop
+        return {"x": 0, "y": 0, "w": width, "h": height, "hflip": False}
+
     if shot_type == "CLOSE_UP":
+        box = _cast_box(performance, shot.get("speakerId"))
+        if box:
+            return _crop_around_box(box, width=width, height=height, pad_fraction=0.08)
         w = max(64, round(width * 0.50))
         h = max(64, round(height * 0.60))
         x = round((width - w) * 0.52)
@@ -462,6 +581,9 @@ def _crop_for_shot(
         return {"x": x, "y": y, "w": w, "h": h, "hflip": False}
 
     if shot_type == "REACTION":
+        box = _cast_box(performance, shot.get("listenerId"))
+        if box:
+            return _crop_around_box(box, width=width, height=height, pad_fraction=0.18)
         w = max(64, round(width * 0.58))
         h = max(64, round(height * 0.70))
         side = -1 if index % 2 else 1
@@ -598,6 +720,8 @@ def render(
                 "segmentSha256": _file_sha(seg),
                 "insertId": shot.get("insertId"),
                 "weakWindowId": shot.get("weakWindowId"),
+                "speakerId": shot.get("speakerId"),
+                "listenerId": shot.get("listenerId"),
             })
 
         concat = temp / "shots.txt"
