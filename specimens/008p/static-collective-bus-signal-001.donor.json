@@ -18,20 +18,18 @@
     "publicationReuse": true
   },
   "derivative": {
-    "encoding": "base64-file",
-    "path": "specimens/008p/static-collective-bus-signal-001.jpg.b64",
-    "decodedMimeType": "image/jpeg",
-    "width": 160,
-    "height": 90,
-    "byteLength": 4997,
-    "sha256": "7842a139f34bb5f35ca800d88ee5a7a263758f6f709b063f23f17701e47572cd",
+    "encoding": "raw-rgb-hex-file",
+    "path": "specimens/008p/static-collective-bus-signal-001.rgb8x4.hex",
+    "pixelMode": "RGB",
+    "width": 8,
+    "height": 4,
+    "byteLength": 96,
+    "sha256": "ce5a87e16ba5066d3e468ab120d15f0d800806905d039e696444b5b1ea3bedb5",
     "transform": {
-      "operation": "resize+JPEG",
-      "resize": "1672x941 -> 160x90",
+      "operation": "resize+raw-RGB",
+      "resize": "1672x941 -> 8x4",
       "resampling": "Pillow LANCZOS",
-      "jpegQuality": 68,
-      "optimize": true,
-      "progressive": false
+      "encodedAs": "lowercase hexadecimal"
     }
   },
   "cropAuthority": "manual-staging-window-only",
