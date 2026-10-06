@@ -93,7 +93,7 @@ For every beat it:
 1. selects a deterministic manual staging window from the admitted donor;
 2. applies a tiny bounded Ken Burns drift;
 3. enlarges the source pixels to the frame;
-4. applies the readable 008o manga-particular grammar over those pixels;
+4. enlarges the exact RGB witness and applies the readable 008o manga-particular grammar over those pixels;
 5. uses the same deterministic 008o audio plan;
 6. records both the narrative-particular hash and the pixel-donor hash.
 
