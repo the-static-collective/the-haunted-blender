@@ -187,7 +187,8 @@ def normalization_contract(phase: str) -> dict:
             },
         },
         "FETCH": {
-            "required": ["observedAt", "outputUrl"],
+            "required": ["observedAt"],
+            "oneOf": ["outputUrl", "localPath"],
             "example": {
                 "observedAt": "2026-10-06T00:00:00Z",
                 "outputUrl": "https://provider.example/result.mp4",
@@ -250,6 +251,8 @@ def resolve(
     missing = [name for name in required if name not in result]
     if missing:
         raise ValueError("Plugin result missing: " + ", ".join(missing))
+    if call["phase"] == "FETCH" and not (result.get("outputUrl") or result.get("localPath")):
+        raise ValueError("FETCH result requires outputUrl or localPath")
     body = {
         "schema": RESULT_SCHEMA,
         "callSha256": call_sha256,
@@ -281,23 +284,28 @@ def _download_https(url: str, output: Path) -> None:
     if not str(url).startswith("https://"):
         raise ValueError("Plugin bridge FETCH accepts HTTPS result URLs only")
     request = urllib.request.Request(str(url), headers={"User-Agent": "haunted-blender-plugin-bridge/1"})
-    with urllib.request.urlopen(request, timeout=120) as response:
-        length = response.headers.get("Content-Length")
-        if length and int(length) > MAX_DOWNLOAD_BYTES:
-            raise ValueError("Plugin result exceeds bridge download limit")
-        output.parent.mkdir(parents=True, exist_ok=True)
-        total = 0
-        with output.open("xb") as handle:
-            while True:
-                chunk = response.read(1024 * 1024)
-                if not chunk:
-                    break
-                total += len(chunk)
-                if total > MAX_DOWNLOAD_BYTES:
-                    handle.close()
-                    output.unlink(missing_ok=True)
-                    raise ValueError("Plugin result exceeds bridge download limit")
-                handle.write(chunk)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temp = output.with_name(output.name + ".part")
+    temp.unlink(missing_ok=True)
+    try:
+        with urllib.request.urlopen(request, timeout=120) as response:
+            length = response.headers.get("Content-Length")
+            if length and int(length) > MAX_DOWNLOAD_BYTES:
+                raise ValueError("Plugin result exceeds bridge download limit")
+            total = 0
+            with temp.open("xb") as handle:
+                while True:
+                    chunk = response.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    total += len(chunk)
+                    if total > MAX_DOWNLOAD_BYTES:
+                        raise ValueError("Plugin result exceeds bridge download limit")
+                    handle.write(chunk)
+        temp.replace(output)
+    except Exception:
+        temp.unlink(missing_ok=True)
+        raise
 
 
 def consume_or_require(
