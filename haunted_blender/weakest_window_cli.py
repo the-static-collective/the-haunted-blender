@@ -158,7 +158,7 @@ def main(argv=None):
             "nextRecommendation": (
                 "Keep the deterministic Level-1 trial and rescan its new weakest windows."
                 if comparison["improved"]
-                else "Do not spend credits. Escalate weak windows to Level 2 owned-clip compost."
+                else "Do not spend credits. Escalate weak windows to Level 2 cutaway / owned-clip compost."
             ),
             "laws": [
                 "TRIAL OUTPUT != CURRENT CUT UNTIL VERDICT",
