@@ -375,6 +375,10 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
             for index, mode in enumerate(("grid", "irregular", "grid")):
                 path = source_dir / f"page-{index:02d}.png"
                 self.make_page(path, mode=mode)
+                if index == 2:
+                    image = self.Image.open(path).convert("RGB")
+                    image.putpixel((10, 10), (123, 45, 67))
+                    image.save(path)
                 digest = hashlib.sha256(path.read_bytes()).hexdigest()
                 with self.Image.open(path) as image:
                     width, height = image.size
