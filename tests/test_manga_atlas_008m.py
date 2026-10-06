@@ -556,6 +556,58 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
                     external_id="new.png",
                 )
 
+    def test_undersegmented_owned_page_gets_nonsemantic_quarry_tiles_and_drawer_crops(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "single-field.png"
+            image = self.Image.new("RGB", (420, 620), (222, 218, 210))
+            draw = self.ImageDraw.Draw(image)
+            # One continuous illustration field with no panel gutters/borders.
+            draw.ellipse((80, 90, 330, 360), fill=(80, 70, 95))
+            draw.rectangle((40, 420, 380, 560), fill=(180, 155, 120))
+            image.save(source)
+
+            manifest = manga_atlas.source_manifest(
+                source,
+                source_class="owned",
+                pixel_reuse=True,
+                derivative_reuse=True,
+                publication_reuse=True,
+                grammar_families=["panel-rhythm"],
+                rights_note="Synthetic owned fixture.",
+            )
+            report = manga_atlas.analyze_page(manifest)
+            self.assertLessEqual(report["panelCount"], 2)
+            self.assertEqual(report["panelMapStatus"], "undersegmented")
+            self.assertTrue(report["quarryRecommended"])
+
+            harvest = manga_atlas.harvest_page(
+                manifest,
+                root / "harvest",
+            )
+            self.assertEqual(harvest["panelMapStatus"], "undersegmented")
+            self.assertEqual(harvest["quarryCandidateCount"], 18)
+            quarry = [
+                row for row in harvest["assets"]
+                if row["kind"] == "quarry-candidate"
+            ]
+            self.assertEqual(len(quarry), 18)
+            self.assertTrue(all(
+                row["recipe"]["semantic"] is False
+                for row in quarry
+            ))
+
+            drawer = manga_atlas.page_harvest_to_parts_drawer(
+                harvest,
+                root / "parts-drawer.json",
+            )
+            quarry_crops = [
+                row for row in drawer["artifacts"]
+                if row["pageAssetKind"] == "quarry-candidate"
+            ]
+            self.assertEqual(len(quarry_crops), 18)
+            self.assertTrue(all(row["kind"] == "crop" for row in quarry_crops))
+
     def test_reference_manifest_cannot_self_grant_reuse_rights(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
