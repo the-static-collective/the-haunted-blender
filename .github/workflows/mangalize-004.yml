@@ -1,0 +1,62 @@
+name: mangalize-004
+on:
+  push:
+    branches: [integration/mangalize-004-pixel-execution]
+  pull_request:
+    branches: [integration/mangalize-003-performed-use]
+permissions:
+  contents: read
+jobs:
+  pixel-execution:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: Install exact raster dependency and inherited test tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install Pillow==12.1.1
+      - name: Require the approved implementation and native binary witnesses
+        run: |
+          python - <<'PY'
+          from haunted_blender import mangalize as m, manga_pixel_execution as px
+          plan = m.read('specimens/mangalize-004/prepared/plan.json')
+          assert px.witness() == plan['implementation'], (px.witness(), plan['implementation'])
+          PY
+      - name: Syntax and full inherited plus new suite
+        run: |
+          python -m compileall -q haunted_blender
+          node --check haunted_blender/web/cockpit.js
+          python -m unittest discover -s tests -v
+      - uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/the-haunted-blender
+          ref: 736dc0eba07b591a7aa25abf3fb92e5ddbaa7a23
+          path: .mangalize-004-ci/parent
+      - name: Verify all 94 historical witnesses against exact parent
+        run: python specimens/mangalize-004/check_parent.py .mangalize-004-ci/parent
+      - uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/lemonPRESS
+          ref: 88978ff88f9b07a72040976b426b04afc2abd835
+          path: .mangalize-004-ci/lemonpress
+      - name: Verify the exact foreign source pin
+        run: python specimens/mangalize-001/check_pin.py .mangalize-004-ci/lemonpress
+      - name: Independently replay preparation and approved pixel execution
+        run: |
+          python specimens/mangalize-004/prepare.py /tmp/mangalize-004-prepared
+          diff -r specimens/mangalize-004/prepared /tmp/mangalize-004-prepared
+          python specimens/mangalize-004/verify_founding.py /tmp/mangalize-004-executed
+      - name: Upload exact page, three layers, receipts and custody trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: mangalize-004-approved-pixels
+          path: |
+            /tmp/mangalize-004-prepared
+            /tmp/mangalize-004-executed
+            specimens/mangalize-004/authority
+            specimens/mangalize-004/FINAL_TRACE.md

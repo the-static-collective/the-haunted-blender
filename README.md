@@ -40,6 +40,13 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 ## Current scaffold capability
 
+[MANGALIZE-004](docs/MANGALIZE_004.md) binds static raster rules, separate pixel
+admission, per-use PNG witnesses, exact RGBA matrix identity and encoded-file
+identity. Separate exact user approval executes the real #66 layout as one
+transparent 640×360 RGBA page and three layer rasters. Independent replay verifies
+the complete event tree; ancestry and all 94 earlier witnesses remain intact.
+Motion, sound, publication, generation and casting remain unadmitted.
+
 [MANGALIZE-003](docs/MANGALIZE_003.md) separates structural role proposals,
 authored fixed-point placements, external performed-use admission and static
 composition records. Full material custody survives the repaired stage boundary;
