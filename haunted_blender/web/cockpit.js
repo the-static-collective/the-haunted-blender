@@ -1,81 +1,30 @@
-const state = {view:null,resume:null,selectedId:null,media:null};
-const $ = (id) => document.getElementById(id);
+const S={view:null,resume:null,id:null,media:null};
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const tc=v=>"temp-"+String(v||"sleeping").toLowerCase();
+const tm=v=>{v=Math.max(0,Number(v||0));return `${Math.floor(v/60)}:${Math.floor(v%60).toString().padStart(2,"0")}`;};
+async function api(url,opt={}){const r=await fetch(url,{cache:"no-store",...opt,headers:{...(opt.body&&!(opt.body instanceof Blob)?{"Content-Type":"application/json"}:{}),...(opt.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||`HTTP ${r.status}`);return d;}
+function toast(msg,bad=false){const e=$("toast");e.textContent=msg;e.className=`toast show${bad?" error":""}`;clearTimeout(toast.t);toast.t=setTimeout(()=>e.className="toast",2400);}
+function section(){return S.view?.sections?.find(x=>x.id===S.id)||null;}
+function url(p){return "/media/"+p.split("/").map(encodeURIComponent).join("/");}
+function mainMedia(){return S.media?.scene||S.media?.sixup||S.media?.candidates?.[0]||null;}
 
-async function api(url, options={}) {
-  const response = await fetch(url, {
-    cache:"no-store",
-    ...options,
-    headers:{
-      ...(options.body && !(options.body instanceof Blob) ? {"Content-Type":"application/json"} : {}),
-      ...(options.headers || {}),
-    },
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || `Request failed: ${response.status}`);
-  return data;
-}
-
-function toast(message,error=false){
-  const el=$("toast");
-  el.textContent=message;
-  el.className=`toast show${error ? " error" : ""}`;
-  clearTimeout(toast.timer);
-  toast.timer=setTimeout(()=>{el.className="toast";},2600);
-}
-
-function fmtTime(seconds){
-  const value=Math.max(0,Number(seconds||0));
-  const m=Math.floor(value/60);
-  const s=Math.floor(value%60).toString().padStart(2,"0");
-  return `${m}:${s}`;
-}
-function tempClass(value){return `temp-${String(value||"sleeping").toLowerCase()}`;}
-function sectionById(id){return state.view?.sections?.find((section)=>section.id===id)||null;}
-
-async function refresh({keepSelection=true}={}){
-  const [view,resume]=await Promise.all([api("/api/view"),api("/api/resume")]);
-  state.view=view; state.resume=resume;
-  $("project-title").textContent=view.title;
-  $("local-only").checked=!!view.localOnly;
-  $("resume-hobs").textContent=view.resume.unresolvedProviderJobs;
-  $("resume-dreams").textContent=view.resume.unbornSixups;
-  $("resume-scenes").textContent=view.resume.keptScenesAwaitingRender;
-  $("project-status").textContent=view.localOnly ? "LOCAL ONLY - remote motion locked" : "REMOTE MOTION ARMED";
-  if(!keepSelection || !sectionById(state.selectedId)) state.selectedId=view.sections[0]?.id||null;
-  renderSections();
-  await refreshSelected();
-}
-
-function renderSections(){
-  const host=$("sections"); host.innerHTML="";
-  for(const section of state.view.sections){
-    const button=document.createElement("button");
-    button.className=`section-card ${tempClass(section.temperature)}${section.id===state.selectedId ?" selected":""}`;
-    button.dataset.sectionId=section.id;
-    button.innerHTML=`
-      <div class="name">${escapeHtml(section.label)}</div>
-      <div class="time">${fmtTime(section.start)} -> ${fmtTime(section.end)}</div>
-      <div class="temperature-chip ${tempClass(section.temperature)}">${escapeHtml(section.temperature.toUpperCase())}</div>
-      <div class="marks">
-        ${section.hasDreams ? "<span>* dreams</span>" : ""}
-        ${section.hasScene ? "<span>scene</span>" : ""}
-        ${section.awakeningCount ? `<span>awaken ${section.awakeningCount}</span>` : ""}
-        ${section.hauntCount ? `<span>ghost ${section.hauntCount}</span>` : ""}
-        ${section.witnessed ? "<span>witnessed</span>" : ""}
-      </div>`;
-    button.addEventListener("click",async()=>{state.selectedId=section.id;renderSections();await refreshSelected();});
-    host.appendChild(button);
-  }
-}
-
-async function refreshSelected(){
-  const section=sectionById(state.selectedId);
-  if(!section){state.media=null;$("selected-title").textContent="Choose a section";$("selected-temp").textContent="SLEEPING";renderViewer(null);renderControls(null);return;}
-  state.media=await api(`/api/media-view/${encodeURIComponent(section.id)}`);
-  $("selected-title").textContent=section.label;
-  $("selected-temp").textContent=section.temperature.toUpperCase();
-  $("selected-temp").className=`temperature-chip ${tempClass(section.temperature)}`;
-  $("viewer-title").textContent=section.label;
-  $("viewer-eyebrow").textContent=`${section.kind.toUpperCase()} - ${fmtTime(section.start)}-${fmtTime(section.end)}`;
-  renderViewer(section);renderControls(section);renderEvidence(section);
-}
+async function refresh(first=false){[S.view,S.resume]=await Promise.all([api("/api/view"),api("/api/resume")]);if(first||!S.view.sections.some(x=>x.id===S.id))S.id=S.view.sections[0]?.id||null;$("project-title").textContent=S.view.title;$("local-only").checked=!!S.view.localOnly;$("resume-jobs").textContent=S.view.resume.unresolvedProviderJobs;$("resume-dreams").textContent=S.view.resume.unbornSixups;$("resume-scenes").textContent=S.view.resume.keptScenesAwaitingRender;$("project-status").textContent=S.view.localOnly?"LOCAL ONLY - remote motion locked":"REMOTE MOTION ARMED";drawStrip();await drawSelected();}
+function drawStrip(){const h=$("sections");h.innerHTML="";for(const x of S.view.sections){const b=document.createElement("button");b.className=`section-card ${tc(x.temperature)}${x.id===S.id?" selected":""}`;b.innerHTML=`<div class="name">${esc(x.label)}</div><div class="time">${tm(x.start)} -> ${tm(x.end)}</div><div class="temperature-chip ${tc(x.temperature)}">${esc(x.temperature.toUpperCase())}</div><div class="marks">${x.hasDreams?"<span>* dreams</span>":""}${x.hasScene?"<span>scene</span>":""}${x.awakeningCount?`<span>awaken ${x.awakeningCount}</span>`:""}${x.witnessed?"<span>witnessed</span>":""}</div>`;b.onclick=async()=>{S.id=x.id;drawStrip();await drawSelected();};h.appendChild(b);}}
+async function drawSelected(){const x=section();if(!x){S.media=null;drawViewer();drawControls();return;}S.media=await api(`/api/media-view/${encodeURIComponent(x.id)}`);$("selected-title").textContent=x.label;$("selected-temp").textContent=x.temperature.toUpperCase();$("selected-temp").className=`temperature-chip ${tc(x.temperature)}`;$("viewer-title").textContent=x.label;$("viewer-eyebrow").textContent=`${x.kind.toUpperCase()} - ${tm(x.start)}-${tm(x.end)}`;drawViewer();drawControls();$("evidence").textContent=JSON.stringify({section:x,media:S.media,resume:S.resume?.resume,blackBox:S.resume?.blackBox?{lanes:S.resume.blackBox.lanes,laws:S.resume.blackBox.laws}:null},null,2);}
+function drawViewer(){const x=section(),s=$("primary-stage"),b=$("candidate-board");b.innerHTML="";const m=mainMedia();if(m){s.className="primary-stage";s.innerHTML=`<video id="primary-video" controls playsinline preload="metadata" src="${url(m.path)}"></video>`;}else{s.className="primary-stage empty-stage";s.innerHTML=`<div class="stage-empty"><strong>${x?esc(x.temperature.toUpperCase()):"Pick a section."}</strong><span>${x?"Attach a six-up or scene video.":"Six-up, scene, or accepted motion appears here."}</span></div>`;}for(const c of S.media?.candidates||[]){const a=document.createElement("article"),cost=c.costClass||"deterministic";a.className="candidate";a.innerHTML=`<video class="candidate-video" controls playsinline preload="metadata" src="${url(c.path)}"></video><div class="candidate-meta"><span>${esc(c.label||c.providerId||"Candidate")}</span><span class="cost-pill cost-${esc(cost)}">${esc(cost)}</span></div>`;h.appendChild(a);}}
+const field=(n,l,p="")=>`<label>${l}<input id="field-${n}" placeholder="${p}" /></label>`;
+const val=n=>$(`field-${n}`)?.value?.trim()||"";
+async function post(action,body={}){await api(`/api/section/${encodeURIComponent(S.id)}/${action}e,{method:"POST",body:JSON.stringify(body)});await refresh();}
+function drawControls(){const x=section(),f=$("action-form"),c=$("door-copy"),t=$("door-title"),b={grow:$("grow-button"),keep:$("keep-button"),awaken:$("awaken-button"),play:$("play-button")};Object.values(b).forEach(z=>z.disabled=true);f.innerHTML="";if(!x){t.textContent="Select a section";d.textContent="The Cockpit exposes only state-valid actions.";return;}t.textContent=x.temperature.toUpperCase();if(["sleeping","haunted"].includes(x.temperature)){c.textContent="Link a DREAMBREEDER ecology, then GROW six possibilities.";f.innerHTML=field("ecology","Dream ecology ID","dream-ecology:...");b.grow.disabled=false;}else if(x.temperature==="dreaming"){c.textContent="Watching does nothing. KEEP must name the proposal allowed to continue.";f.innerHTML=field("proposal","Proposal ID to KEEP","dream-proposal:...");b.keep.disabled=false;b.play.disabled=!mainMedia();}else if(x.temperature==="kept"){c.textContent="Bind the rendered deterministic scene when the compiler finishes.";f.innerHTML=field("scene","Rendered scene ID","kept-scene:...")+'<button id="bridge" class="secondary-button">Scene rendered -> MOVING.</button>';setTimeout(()=>$("bridge").onclick=async()=>{try{const sceneId=val("scene");if(!sceneId)throw Error("Scene ID required.");await post("moving",{sceneId});}catch(e){toast(e.message,true);}},0);}else if(x.temperature==="moving"||x.temperature==="alive"){c.textContent=S.view.localOnly?"PLAY is available. LOCAL ONLY locks remote motion.":"PLAY it or open one bounded AWAKEN window.";f.innerHTML=field("window","Awakening window ID","awaken-chorus");b.awaken.disabled=S.view.localOnly;b.play.disabled=!mainMedia();}else if(x.temperature==="awakening"){c.textContent="Register the accepted SHA only after the existing acceptance boundary passes.";f.innerHTML=field("video","Accepted video address","sha256:...")+'<button id="bridge" class="secondary-button">Accepted take -> WITNESSED.</button>';setTimeout(()=>$("bridge").onclick=async()=>{try{const videoAddress=val("video");if(!videoAddress)throw Error("Video address required.");await post("witness",{videoAddress});}catch(e){toast(e.message,true);}},0);b.play.disabled=!mainMedia();}else if(x.temperature==="witnessed"){c.textContent="The take is witnessed. PLAY is safe; ALIVE admits the section into the working cut.";f.innerHTML='<button id="bridge" class="secondary-button">Admit to current cut -> ALIVE</button>';setTimeout(()=>$("bridge").onclick=()=>post("alive",{}).catch(e=>toast(e.message,true)),0);b.play.disabled=!mainMedia();}}
+async function act(a){try{if(a==="grow"){const ecologyId=val("ecology");if(!ecologyId)throw Error("Dream ecology ID required.");await post("grow",{ecologyId});}else if(a==="keep"){const proposalId=val("proposal");if(!proposalId)throw Error("Proposal ID required.");await post("keep",{proposalId});}else if(a==="awaken"){const windowId=val("window");if(!windowId)throw Error("Window ID required.");await post("awaken",{windowId});}else{const v=$("primary-video");if(!v)throw Error("Attach playable media first.");v.paused?await v.play():v.pause();}}catch(e){toast(e.message,true);}}
+async function upload(kind,input){const file=input.files?.[0];if(!file||!S.id)return;try{const headers={"X-Section-Id":S.id,"X-Media-Kind":kind,"X-File-Name":file.name,"X-Cost-Class":kind==="candidate"?(prompt("Cost class: free / included / paid","free")||"free"):"deterministic"};if(kind==="candidate"){headers["X-Provider-Id"]=prompt("Provider label (optional)","")||"";headers["X-Label"]=headers["X-Provider-Id"]||file.name;}const r=await fetch("/api/upload",{method:"POST",headers,body:file}),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Upload failed.");input.value="";await drawSelected();toast(`${kind} attached.`);}catch(e){toast(e.message,true);}}
+function sync(){const vs=[...document.querySelectorAll(".candidate-video")];if(!vs.length)return toast("No candidate videos.",true);if(vs.some(v=>!v.paused)){vs.forEach(v=>v.pause());return;}const t=Math.min(...vs.map(v=>Number.isFinite(v.currentTime)?v.currentTime:0));vs.forEach(v=>v.currentTime=t);Promise.allSettled(vs.map(v=>v.play()));}
+$("refresh").onclick=()=>refresh().catch(e=>toast(e.message,true));
+$("local-only").onchange=async e=>{try{await api("/api/local-only",{method:"POST",body:JSON.stringify({enabled:e.target.checked})});await refresh();}catch(x){toast(x.message,true);}};
+["grow","keep","awaken","play"].forEach(a=>$(`${a}-button`).onclick=()=>act(a));
+$("sync-play").onclick=sync;
+$("upload-sixup").onchange=e=>upload("sixup",e.target);
+$("upload-scene").onchange=e=>upload("scene",e.target);
+$("upload-candidate").onchange=e=>upload("candidate",e.target);
+refresh(true).catch(e=>toast(e.message,true));
