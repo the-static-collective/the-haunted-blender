@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from . import plugin_orchard, provider_driver
+from . import plugin_orchard, provider_driver, resource_compass
 
 
 def emit(value):
@@ -78,6 +78,9 @@ def main(argv=None):
     usage = sub.add_parser("usage")
     usage.add_argument("root")
 
+    compass = sub.add_parser("compass")
+    compass.add_argument("root")
+
     install = sub.add_parser("install-bridges")
     install.add_argument("root")
 
@@ -112,6 +115,13 @@ def main(argv=None):
         result = plugin_orchard.latest(root)
     elif args.command == "usage":
         result = plugin_orchard.usage_summary(args.root)
+    elif args.command == "compass":
+        root = Path(args.root).expanduser().resolve()
+        observation = _latest_observation(root)
+        result = resource_compass.rank_observation(
+            observation,
+            plugin_orchard.usage_summary(root),
+        )
     else:
         root = Path(args.root).expanduser().resolve()
         observation = _latest_observation(root)
