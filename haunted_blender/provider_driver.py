@@ -16,6 +16,7 @@ import json
 import os
 import re
 import subprocess
+import time
 from pathlib import Path
 
 from . import (
@@ -24,6 +25,8 @@ from . import (
     cockpit_media,
     motion_executor,
     motion_organ,
+    plugin_bridge,
+    plugin_orchard,
     project,
     scene_growth,
 )
@@ -75,36 +78,51 @@ def configure_adapters(root, adapters: list[dict]) -> dict:
         if not provider_id or provider_id in seen:
             raise ValueError("Provider adapter ids must be unique and nonempty")
         seen.add(provider_id)
-        transport = raw.get("transport", "command")
-        if transport != "command":
-            raise ValueError("008c supports only command transport")
-        argv = raw.get("argv")
-        if not isinstance(argv, list) or not argv or not all(isinstance(v, str) and v for v in argv):
-            raise ValueError("Command adapter argv must be a nonempty string list")
-        cwd_value = str(raw.get("cwd") or ".")
-        cwd = _safe_relative(root, cwd_value)
-        if not cwd.is_dir():
-            raise ValueError("Adapter cwd must be a directory")
-        timeout = int(raw.get("timeoutSeconds", 180))
-        if not (1 <= timeout <= 1800):
-            raise ValueError("Adapter timeoutSeconds must be between 1 and 1800")
-        normalized.append(
-            {
-                "providerId": provider_id,
-                "transport": "command",
-                "argv": list(argv),
-                "cwd": str(cwd.relative_to(root)),
-                "timeoutSeconds": timeout,
-                "notes": list(raw.get("notes") or []),
-            }
-        )
+        transport = str(raw.get("transport") or "command")
+        if transport == "command":
+            argv = raw.get("argv")
+            if not isinstance(argv, list) or not argv or not all(isinstance(v, str) and v for v in argv):
+                raise ValueError("Command adapter argv must be a nonempty string list")
+            cwd_value = str(raw.get("cwd") or ".")
+            cwd = _safe_relative(root, cwd_value)
+            if not cwd.is_dir():
+                raise ValueError("Adapter cwd must be a directory")
+            timeout = int(raw.get("timeoutSeconds", 180))
+            if not (1 <= timeout <= 1800):
+                raise ValueError("Adapter timeoutSeconds must be between 1 and 1800")
+            normalized.append(
+                {
+                    "providerId": provider_id,
+                    "transport": "command",
+                    "argv": list(argv),
+                    "cwd": str(cwd.relative_to(root)),
+                    "timeoutSeconds": timeout,
+                    "notes": list(raw.get("notes") or []),
+                }
+            )
+        elif transport == "plugin_bridge":
+            profile_id = str(raw.get("profileId") or provider_id).strip()
+            known = {str(p["id"]) for p in plugin_orchard.load_profiles().get("profiles") or []}
+            if profile_id not in known:
+                raise ValueError(f"Unknown plugin bridge profile: {profile_id}")
+            normalized.append(
+                {
+                    "providerId": provider_id,
+                    "transport": "plugin_bridge",
+                    "profileId": profile_id,
+                    "notes": list(raw.get("notes") or []),
+                }
+            )
+        else:
+            raise ValueError("Adapter transport must be command or plugin_bridge")
 
     body = {
         "schema": ADAPTER_CONFIG_SCHEMA,
         "adapters": sorted(normalized, key=lambda a: a["providerId"]),
         "laws": [
             "ADAPTER != AUTHORITY",
-            "NO SHELL",
+            "PLUGIN BRIDGE != LOCAL CREDENTIAL",
+            "NO SHELL FOR COMMAND ADAPTERS",
             "QUOTE != SPEND APPROVAL",
             "SUBMIT RECEIPT != EDITORIAL KEEP",
         ],
@@ -134,6 +152,15 @@ def _adapter_spec(root: Path, provider_id: str) -> dict:
 
 def _invoke(root: Path, provider_id: str, phase: str, payload: dict) -> dict:
     spec = _adapter_spec(root, provider_id)
+    if spec.get("transport") == "plugin_bridge":
+        return plugin_bridge.consume_or_require(
+            root,
+            provider_id=provider_id,
+            profile_id=spec["profileId"],
+            phase=phase,
+            payload=payload,
+        )
+
     packet = {
         "schema": ADAPTER_CALL_SCHEMA,
         "phase": phase,
@@ -175,7 +202,6 @@ def _invoke(root: Path, provider_id: str, phase: str, payload: dict) -> dict:
     if not isinstance(result, dict):
         raise ValueError("Provider adapter result must be an object")
     return result
-
 
 def _project_section(root: Path, section_id: str) -> tuple[dict, dict]:
     project_body = cockpit.load_project(root)
