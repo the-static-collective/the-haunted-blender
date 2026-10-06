@@ -810,6 +810,9 @@ def harvest_flow_manifest(
             "providerCredits": 0,
             "usdMicros": 0,
         },
+        "externalGenerations": 0,
+        "providerCredits": 0,
+        "usdMicros": 0,
         "laws": [
             "BATCH SIZE DOES NOT CHANGE SOURCE AUTHORITY",
             "ONE SOURCE MAY YIELD MANY DERIVATIVES",
