@@ -17,6 +17,8 @@ from statistics import mean
 SOURCE_SCHEMA = "haunted-blender/page-source/v1"
 REPORT_SCHEMA = "haunted-blender/page-grammar-report/v1"
 ATLAS_SCHEMA = "haunted-blender/manga-anime-grammar-atlas/v1"
+BATCH_SCHEMA = "haunted-blender/page-source-batch/v1"
+BATCH_RUN_SCHEMA = "haunted-blender/page-source-batch-run/v1"
 
 SOURCE_CLASSES = {"owned", "licensed", "reference"}
 GRAMMAR_FAMILIES = {
@@ -910,3 +912,279 @@ def sequence_director_prescription(sequence: dict) -> dict:
         ],
     }
     return {**body, "id": "sequence-director-prescription:" + _hash(body)[:24]}
+
+
+def owned_batch_manifest(
+    entries: list[dict],
+    *,
+    label: str,
+    rights_note: str,
+    continuity_group: str | None = None,
+    grammar_families: list[str] | tuple[str, ...] = (),
+    rights_basis: str = "user-asserted ownership; not independently verified",
+) -> dict:
+    """Freeze a user-owned page batch without embedding private storage URLs."""
+    if not entries:
+        raise ValueError("Owned batch requires at least one page")
+    if not rights_note.strip():
+        raise ValueError("Owned batch requires an explicit rights_note")
+
+    families = sorted({str(x).strip() for x in grammar_families if str(x).strip()})
+    unknown = [x for x in families if x not in GRAMMAR_FAMILIES]
+    if unknown:
+        raise ValueError(f"Unknown grammar families: {unknown}")
+
+    normalized = []
+    names = set()
+    hashes = set()
+    sequence_indexes = set()
+    for ordinal, raw in enumerate(entries):
+        filename = str(raw.get("filename") or "").strip()
+        digest = str(raw.get("sha256") or "").strip().lower()
+        width = int(raw.get("width") or 0)
+        height = int(raw.get("height") or 0)
+        if not filename or "/" in filename or "\\" in filename:
+            raise ValueError("Batch filenames must be local basenames")
+        if filename in names:
+            raise ValueError(f"Duplicate batch filename: {filename}")
+        if len(digest) != 64 or any(ch not in "0123456789abcdef" for ch in digest):
+            raise ValueError(f"Invalid SHA-256 for {filename}")
+        if digest in hashes:
+            raise ValueError(f"Duplicate page SHA-256 in batch: {filename}")
+        if width <= 0 or height <= 0:
+            raise ValueError(f"Invalid dimensions for {filename}")
+        sequence_index = int(raw.get("sequenceIndex", ordinal))
+        if sequence_index < 0 or sequence_index in sequence_indexes:
+            raise ValueError("Batch sequenceIndex values must be unique and non-negative")
+        role = raw.get("pageRole")
+        if role is not None:
+            role = str(role).strip().lower()
+            if role not in PAGE_ROLES:
+                raise ValueError(f"Unknown pageRole: {role}")
+        entry_families = sorted({
+            str(x).strip()
+            for x in (raw.get("grammarFamilies") or families)
+            if str(x).strip()
+        })
+        bad = [x for x in entry_families if x not in GRAMMAR_FAMILIES]
+        if bad:
+            raise ValueError(f"Unknown entry grammar families: {bad}")
+        normalized.append({
+            "filename": filename,
+            "sha256": digest,
+            "width": width,
+            "height": height,
+            "byteLength": int(raw.get("byteLength") or 0) or None,
+            "sequenceIndex": sequence_index,
+            "pageRole": role,
+            "motifs": sorted({
+                str(x).strip()
+                for x in (raw.get("motifs") or [])
+                if str(x).strip()
+            }),
+            "grammarFamilies": entry_families,
+            "label": str(raw.get("label") or Path(filename).stem),
+        })
+        names.add(filename)
+        hashes.add(digest)
+        sequence_indexes.add(sequence_index)
+
+    normalized.sort(key=lambda row: (row["sequenceIndex"], row["filename"]))
+    body = {
+        "schema": BATCH_SCHEMA,
+        "label": str(label).strip() or "Owned page batch",
+        "sourceClass": "owned",
+        "rights": {
+            "pixelReuse": True,
+            "derivativeReuse": True,
+            "publicationReuse": True,
+            "note": rights_note.strip(),
+            "basis": str(rights_basis).strip(),
+        },
+        "continuityGroup": str(continuity_group).strip() if continuity_group else None,
+        "grammarFamilies": families,
+        "pageCount": len(normalized),
+        "entries": normalized,
+        "laws": [
+            "BATCH RIGHTS APPLY TO EXACT LISTED SOURCE HASHES",
+            "BATCH OWNERSHIP DECLARATION != INDEPENDENT LEGAL VERIFICATION",
+            "OWNERSHIP AUTHORITY != SEMANTIC PAGE ANNOTATION",
+            "PRIVATE STORAGE LOCATION NEED NOT ENTER PUBLIC BATCH MANIFEST",
+        ],
+    }
+    return {**body, "id": "page-source-batch:" + _hash(body)[:24]}
+
+
+def _merge_batch_drawers(batch_id: str, drawers: list[dict], output_path: Path) -> dict:
+    from . import parts_harvester
+
+    artifacts = []
+    by_kind: dict[str, int] = {}
+    harvest_ids = []
+    for drawer in drawers:
+        if drawer.get("schema") != parts_harvester.DRAWER_SCHEMA:
+            raise ValueError("Unsupported parts drawer in batch")
+        harvest_ids.extend(drawer.get("harvestIds") or [])
+        for row in drawer.get("artifacts") or []:
+            artifacts.append({**row, "ownedBatchId": batch_id})
+            kind = str(row["kind"])
+            by_kind[kind] = by_kind.get(kind, 0) + 1
+
+    body = {
+        "schema": parts_harvester.DRAWER_SCHEMA,
+        "sourceCount": len(drawers),
+        "ownedBatchId": batch_id,
+        "harvestIds": harvest_ids,
+        "artifactCount": len(artifacts),
+        "byKind": by_kind,
+        "artifacts": artifacts,
+        "laws": [
+            "OWNED BATCH MAY FEED EXISTING PARTS DRAWER",
+            "BATCH ID SURVIVES ON EVERY DRAWER ARTIFACT",
+            "SOURCE PAGE SHA SURVIVES BATCH MERGE",
+        ],
+    }
+    result = {**body, "id": "parts-drawer:" + _hash(body)[:24]}
+    if output_path.exists():
+        raise FileExistsError("Combined batch drawer never overwrites")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return result
+
+
+def run_owned_batch(
+    batch: dict,
+    source_dir: str | Path,
+    output_dir: str | Path,
+) -> dict:
+    """Verify exact owned bytes, then analyze, harvest and bridge the whole batch."""
+    from PIL import Image
+
+    if batch.get("schema") != BATCH_SCHEMA:
+        raise ValueError("Expected owned page batch manifest")
+    rights = batch.get("rights") or {}
+    if batch.get("sourceClass") != "owned":
+        raise ValueError("run_owned_batch accepts owned batches only")
+    if not (
+        rights.get("pixelReuse")
+        and rights.get("derivativeReuse")
+        and rights.get("publicationReuse")
+    ):
+        raise PermissionError("Owned batch does not grant the full reuse contract")
+
+    source_root = Path(source_dir).expanduser().resolve(strict=True)
+    root = Path(output_dir).expanduser().resolve()
+    if root.exists() and any(root.iterdir()):
+        raise FileExistsError("Owned batch output directory must be empty")
+    root.mkdir(parents=True, exist_ok=True)
+
+    manifests = []
+    reports = []
+    harvests = []
+    drawers = []
+
+    for entry in sorted(
+        batch.get("entries") or [],
+        key=lambda row: (int(row["sequenceIndex"]), row["filename"]),
+    ):
+        source = (source_root / entry["filename"]).resolve(strict=True)
+        if source.parent != source_root:
+            raise ValueError("Batch source escaped source_dir")
+        digest = _file_sha(source)
+        if digest != entry["sha256"]:
+            raise ValueError(f"SHA mismatch for {entry['filename']}")
+        with Image.open(source) as image:
+            width, height = image.size
+        if int(width) != int(entry["width"]) or int(height) != int(entry["height"]):
+            raise ValueError(f"Dimension mismatch for {entry['filename']}")
+
+        page_dir = root / f"page-{int(entry['sequenceIndex']):03d}"
+        page_dir.mkdir(parents=True, exist_ok=True)
+        manifest = source_manifest(
+            source,
+            source_class="owned",
+            pixel_reuse=True,
+            derivative_reuse=True,
+            publication_reuse=True,
+            grammar_families=entry.get("grammarFamilies") or batch.get("grammarFamilies") or [],
+            rights_note=rights["note"],
+            label=entry.get("label") or entry["filename"],
+            page_role=entry.get("pageRole"),
+            continuity_group=batch.get("continuityGroup"),
+            motifs=entry.get("motifs") or [],
+            sequence_index=int(entry["sequenceIndex"]),
+        )
+        if manifest["sourceSha256"] != entry["sha256"]:
+            raise ValueError("Manifest/source hash divergence")
+        (page_dir / "page-source.json").write_text(
+            json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        report = analyze_page(manifest)
+        (page_dir / "page-report.json").write_text(
+            json.dumps(report, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        harvest = harvest_page(manifest, page_dir / "harvest")
+        drawer = page_harvest_to_parts_drawer(
+            harvest,
+            page_dir / "parts-drawer.json",
+        )
+        manifests.append(manifest)
+        reports.append(report)
+        harvests.append(harvest)
+        drawers.append(drawer)
+
+    atlas = build_atlas(reports)
+    sequence = build_sequence_grammar(reports) if len(reports) >= 2 else None
+    combined_drawer = _merge_batch_drawers(
+        batch["id"],
+        drawers,
+        root / "parts-drawer.combined.json",
+    )
+
+    (root / "manga-anime-atlas.json").write_text(
+        json.dumps(atlas, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    if sequence is not None:
+        (root / "page-sequence-grammar.json").write_text(
+            json.dumps(sequence, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
+    body = {
+        "schema": BATCH_RUN_SCHEMA,
+        "batchId": batch["id"],
+        "pageCount": len(manifests),
+        "sourceSha256s": [row["sourceSha256"] for row in manifests],
+        "reportIds": [row["id"] for row in reports],
+        "harvestIds": [row["id"] for row in harvests],
+        "atlasId": atlas["id"],
+        "sequenceId": sequence["id"] if sequence else None,
+        "combinedPartsDrawerId": combined_drawer["id"],
+        "artifactCount": combined_drawer["artifactCount"],
+        "cost": {
+            "externalGenerations": 0,
+            "providerCredits": 0,
+            "usdMicros": 0,
+        },
+        "externalGenerations": 0,
+        "providerCredits": 0,
+        "usdMicros": 0,
+        "laws": [
+            "BATCH RUN REQUIRES EXACT SOURCE HASH MATCH",
+            "EVERY PAGE ENTERS AS OWNED WITH FULL REUSE AUTHORITY",
+            "SEMANTIC ANNOTATIONS REMAIN OPTIONAL AND SEPARATE",
+            "FREE DETERMINISTIC HARVEST PRECEDES OPTIONAL PAID CUTOUT REFINEMENT",
+        ],
+    }
+    result = {**body, "id": "page-source-batch-run:" + _hash(body)[:24]}
+    (root / "batch-run.json").write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return result
