@@ -15,6 +15,31 @@ from . import moving_insert_stage, parts_harvester
 SCHEMA = "haunted-blender/parts-stage-dressing/v1"
 
 
+def _explicit_use_required(row):
+    """Generic admission envelope, with a guard for older verb-origin rows."""
+    envelope = row.get("provenance") or {}
+    return bool(envelope.get("admittedUseId") or row.get("admittedUseId") or any(
+        event.get("verb") == "MANGALIZE"
+        for event in envelope.get("eventLineage", row.get("eventLineage", []))))
+
+
+def _custody(row):
+    envelope = parts_harvester.material_provenance(row)
+    return {"assetId": row.get("id"), "provenance": envelope} if envelope is not None else {}
+
+
+def admitted_plan(drawer, *, artifact_root, bundles):
+    """Consume exact separate admissions into static state; never render.
+
+    Custody travels as the generic material-provenance envelope. The caller
+    supplies an independently verified drawer (CLI replays ancestor events).
+    Every proposal/admission and exact artifact is rechecked at this boundary.
+    This layout is deliberately not legacy executable stage-dressing schema.
+    """
+    from . import manga_performed_use
+    return manga_performed_use.performance_layout(drawer, artifact_root, bundles)
+
+
 def _stable(value: object) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
@@ -53,6 +78,8 @@ def plan(
         raise ValueError("Invalid stage geometry")
 
     rows = list(drawer.get("artifacts") or [])
+    if any(_explicit_use_required(row) for row in rows):
+        raise ValueError("Explicit performed-use admission required; material authority cannot automatically place assets")
     poster = _pick(rows, ("still", "crop"))
     texture = _pick(rows, ("texture", "mask"))
     behavior_row = _pick(rows, ("motion-behavior",))
@@ -88,6 +115,7 @@ def plan(
         iw, ih = _image_size(texture["path"])
         scale = max(width / iw, height / ih)
         layers.append({
+            **_custody(texture),
             "id": "harvest-texture",
             "source": texture["path"],
             "z": 3,
@@ -97,6 +125,7 @@ def plan(
             "opacity": 0.22,
         })
         witnesses.append({
+            **_custody(texture),
             "role": "texture",
             "artifactSha256": texture["sha256"],
             "sourceSha256": texture["sourceSha256"],
@@ -108,6 +137,7 @@ def plan(
         target_w = width * 0.24
         scale = target_w / max(1, iw)
         layers.append({
+            **_custody(poster),
             "id": "harvest-poster",
             "source": poster["path"],
             "z": 6,
@@ -118,6 +148,7 @@ def plan(
             "opacity": 0.92,
         })
         witnesses.append({
+            **_custody(poster),
             "role": "poster",
             "artifactSha256": poster["sha256"],
             "sourceSha256": poster["sourceSha256"],
@@ -137,6 +168,7 @@ def plan(
             base_rotation=0,
         )
         layers.append({
+            **_custody(prop),
             "id": "harvest-behavior-prop",
             "source": prop["path"],
             "z": 65,
@@ -148,6 +180,9 @@ def plan(
             "keyframes": keyframes,
         })
         witnesses.append({
+            **_custody(prop),
+            **({"behaviorProvenance": parts_harvester.material_provenance(behavior_row)}
+               if parts_harvester.material_provenance(behavior_row) is not None else {}),
             "role": "behavior-prop",
             "appearanceArtifactSha256": prop["sha256"],
             "appearanceSourceSha256": prop["sourceSha256"],
@@ -158,6 +193,7 @@ def plan(
 
     moving = [
         {
+            **_custody(row),
             "kind": row["kind"],
             "path": row["path"],
             "sha256": row["sha256"],
@@ -192,6 +228,8 @@ def apply_to_performance(performance: dict, dressing: dict) -> dict:
         raise ValueError("Expected puppet performance")
     if dressing.get("schema") != SCHEMA:
         raise ValueError("Expected stage dressing")
+    if any(_explicit_use_required(row) for row in dressing.get("layers", [])):
+        raise ValueError("Admitted static use has no legacy pixel-execution authority")
     if abs(float(performance["duration"]) - float(dressing["canvas"]["duration"])) > 1e-6:
         raise ValueError("Stage dressing duration does not match performance")
 
