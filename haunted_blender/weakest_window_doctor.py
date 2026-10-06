@@ -402,8 +402,8 @@ def prescribe(
         "mutationLadder": [
             {"level": 0, "name": "keep", "costClass": "zero"},
             {"level": 1, "name": "deterministic-remix", "costClass": "local-repeatable-zero"},
-            {"level": 2, "name": "owned-clip-compost", "costClass": "local-repeatable-zero"},
-            {"level": 3, "name": "topology-text-cutout-treatment", "costClass": "local-repeatable-zero"},
+            {"level": 2, "name": "cutaway-or-owned-clip-compost", "costClass": "local-repeatable-zero"},
+            {"level": 3, "name": "topology-text-puppet-treatment", "costClass": "local-repeatable-zero"},
             {"level": 4, "name": "repeatably-free-provider", "costClass": "free-repeatable"},
             {"level": 5, "name": "regenerating-included", "costClass": "included-regenerating"},
             {"level": 6, "name": "finite-credit", "costClass": "finite"},
