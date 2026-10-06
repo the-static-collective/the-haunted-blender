@@ -51,7 +51,6 @@ def main(argv=None):
     source_from_collection.add_argument("--motif", action="append", default=[])
     source_from_collection.add_argument("--sequence-index", type=int)
     source_from_collection.add_argument("--observed-membership", action="store_true")
-    source_from_collection.add_argument("--observed-membership", action="store_true")
 
     batch_run = sub.add_parser("batch-run")
     batch_run.add_argument("batch_manifest_json")
