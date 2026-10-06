@@ -91,7 +91,11 @@ def _probe(path: Path) -> dict:
 
 
 def _find_gate(timing: dict, at: float) -> dict | None:
-    gates = sorted(timing.get("gates") or [], key=lambda row: float(row["at"]))
+    # normalize_timing stores section/gate records under "sections".
+    gates = sorted(
+        timing.get("sections") or timing.get("gates") or [],
+        key=lambda row: float(row["at"]),
+    )
     current = None
     for gate in gates:
         if float(gate["at"]) <= at + 1e-9:
@@ -263,17 +267,18 @@ def plan(
 
     if cues:
         first_start = max(0.0, float(cues[0]["start"]))
-        establish_end = min(duration, max(0.7, min(first_start, 1.4)))
+        establish_end = min(duration, first_start) if first_start >= min_shot_seconds else 0.0
     else:
         establish_end = min(duration, 1.2)
-    _append(
-        shots,
-        start=0.0,
-        end=establish_end,
-        shot_type="ESTABLISH",
-        reason="orient before first performance beat",
-        gate=_find_gate(timing, 0.0),
-    )
+    if establish_end > 0:
+        _append(
+            shots,
+            start=0.0,
+            end=establish_end,
+            shot_type="ESTABLISH",
+            reason="orient before first performance beat",
+            gate=_find_gate(timing, 0.0),
+        )
     cursor = establish_end
 
     for index, cue in enumerate(cues):
