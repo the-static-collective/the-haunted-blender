@@ -36,6 +36,10 @@ def main(argv=None):
     source.add_argument("--derivative-reuse", action="store_true")
     source.add_argument("--publication-reuse", action="store_true")
     source.add_argument("--family", action="append", default=[])
+    source.add_argument("--page-role", choices=sorted(manga_atlas.PAGE_ROLES))
+    source.add_argument("--continuity-group")
+    source.add_argument("--motif", action="append", default=[])
+    source.add_argument("--sequence-index", type=int)
 
     analyze = sub.add_parser("analyze")
     analyze.add_argument("source_manifest_json")
@@ -57,6 +61,14 @@ def main(argv=None):
     prescribe.add_argument("report_json")
     prescribe.add_argument("output_json")
 
+    sequence = sub.add_parser("sequence")
+    sequence.add_argument("output_json")
+    sequence.add_argument("report_json", nargs="+")
+
+    sequence_director = sub.add_parser("sequence-director")
+    sequence_director.add_argument("sequence_json")
+    sequence_director.add_argument("output_json")
+
     args = parser.parse_args(argv)
 
     if args.command == "source":
@@ -69,6 +81,10 @@ def main(argv=None):
             grammar_families=args.family,
             rights_note=args.rights_note,
             label=args.label,
+            page_role=args.page_role,
+            continuity_group=args.continuity_group,
+            motifs=args.motif,
+            sequence_index=args.sequence_index,
         )
         _write(Path(args.output_json).expanduser().resolve(), result)
     elif args.command == "analyze":
@@ -87,8 +103,18 @@ def main(argv=None):
     elif args.command == "atlas":
         result = manga_atlas.build_atlas([_read(path) for path in args.report_json])
         _write(Path(args.output_json).expanduser().resolve(), result)
-    else:
+    elif args.command == "director":
         result = manga_atlas.director_prescription(_read(args.report_json))
+        _write(Path(args.output_json).expanduser().resolve(), result)
+    elif args.command == "sequence":
+        result = manga_atlas.build_sequence_grammar(
+            [_read(path) for path in args.report_json]
+        )
+        _write(Path(args.output_json).expanduser().resolve(), result)
+    else:
+        result = manga_atlas.sequence_director_prescription(
+            _read(args.sequence_json)
+        )
         _write(Path(args.output_json).expanduser().resolve(), result)
 
     emit(result)
