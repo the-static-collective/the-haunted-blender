@@ -166,6 +166,7 @@ def _append(
     cue_index: int | None = None,
     insert: dict | None = None,
     weakness: dict | None = None,
+    preserve_type: bool = False,
 ) -> None:
     if end - start < 1e-6:
         return
@@ -185,6 +186,7 @@ def _append(
         "insertRole": (insert or {}).get("role"),
         "weakWindowId": (weakness or {}).get("id"),
         "weaknessScore": (weakness or {}).get("weaknessScore"),
+        "preserveType": bool(preserve_type),
     })
 
 
@@ -220,28 +222,41 @@ def _split_long_shots(
 
 
 def _repair_repetition(shots: list[dict], performance: dict | None) -> list[dict]:
-    """No adjacent shot may repeat if a bounded alternative exists."""
+    """No adjacent shot repeats when a bounded alternative exists.
+
+    Punctuation-directed reaction/close-up shots have priority. If a prior
+    non-locked shot would collide with one, the prior shot is reframed instead
+    of erasing the punctuation cue.
+    """
     fixed = []
-    fallback = ("WIDE", "SPEAKER", "REACTION", "LYRIC_WORLD", "RETURN")
+    fallback = ("WIDE", "SPEAKER", "REACTION", "LYRIC_WORLD", "RETURN", "CHAOS")
     for index, shot in enumerate(shots):
         row = dict(shot)
         if fixed and row["type"] == fixed[-1]["type"]:
-            at = (float(row["start"]) + float(row["end"])) / 2
-            insert = _insert_at(performance, at)
-            if insert and fixed[-1]["type"] != "INSERT":
-                row["type"] = "INSERT"
-                row["insertId"] = insert.get("id")
-                row["insertRole"] = insert.get("role")
-                row["reason"] = "anti-repeat insert"
-            else:
+            previous = fixed[-1]
+
+            if row.get("preserveType") and not previous.get("preserveType"):
                 for candidate in fallback:
-                    if candidate != fixed[-1]["type"]:
-                        row["type"] = candidate
-                        row["reason"] = "anti-repeat reframing"
+                    if candidate != row["type"]:
+                        previous["type"] = candidate
+                        previous["reason"] = "anti-repeat reframing before locked cue"
                         break
+            else:
+                at = (float(row["start"]) + float(row["end"])) / 2
+                insert = _insert_at(performance, at)
+                if insert and fixed[-1]["type"] != "INSERT" and not row.get("preserveType"):
+                    row["type"] = "INSERT"
+                    row["insertId"] = insert.get("id")
+                    row["insertRole"] = insert.get("role")
+                    row["reason"] = "anti-repeat insert"
+                else:
+                    for candidate in fallback:
+                        if candidate != fixed[-1]["type"]:
+                            row["type"] = candidate
+                            row["reason"] = "anti-repeat reframing"
+                            break
         fixed.append(row)
     return fixed
-
 
 def plan(
     timing: dict,
@@ -317,16 +332,22 @@ def plan(
         shot_type = _cue_shot(
             cue, index, gate=gate, insert=insert, weakness=weakness
         )
+        punctuation_lock = "?" in str(cue.get("text") or "") or "!" in str(cue.get("text") or "")
         _append(
             shots,
             start=start,
             end=cue_end,
             shot_type=shot_type,
-            reason="lyric cue grammar",
+            reason=(
+                "punctuation-directed lyric cue"
+                if punctuation_lock
+                else "lyric cue grammar"
+            ),
             gate=gate,
             cue_index=cue.get("index"),
             insert=insert,
             weakness=weakness,
+            preserve_type=punctuation_lock,
         )
         cursor = max(cursor, cue_end)
 
@@ -497,6 +518,7 @@ def _shot_filter(crop: dict, *, width: int, height: int) -> str:
         f"crop={int(crop['w'])}:{int(crop['h'])}:{int(crop['x'])}:{int(crop['y'])}",
         f"scale={width}:{height}:flags=lanczos",
         "setsar=1",
+        "tpad=stop_mode=clone:stop_duration=0.250",
     ]
     if crop.get("hflip"):
         filters.append("hflip")
