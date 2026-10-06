@@ -26,6 +26,26 @@ GRAMMAR_FAMILIES = {
     "panel-rhythm",
     "room-ecology",
     "fx",
+    "threshold-transition",
+    "environmental-establishing",
+    "intimate-dialogue",
+    "object-detail",
+    "silhouette-negative-space",
+    "vertical-motion",
+    "recurring-location-continuity",
+    "sequence-rhythm",
+}
+
+PAGE_ROLES = {
+    "establish",
+    "dialogue",
+    "threshold",
+    "detail",
+    "impact",
+    "vertical-transition",
+    "return",
+    "environment",
+    "mixed",
 }
 
 
@@ -55,6 +75,10 @@ def source_manifest(
     grammar_families: list[str] | tuple[str, ...] = (),
     rights_note: str = "",
     label: str = "",
+    page_role: str | None = None,
+    continuity_group: str | None = None,
+    motifs: list[str] | tuple[str, ...] = (),
+    sequence_index: int | None = None,
 ) -> dict:
     from PIL import Image
 
@@ -66,6 +90,13 @@ def source_manifest(
     unknown = [x for x in families if x not in GRAMMAR_FAMILIES]
     if unknown:
         raise ValueError(f"Unknown grammar families: {unknown}")
+
+    normalized_role = str(page_role).strip().lower() if page_role else None
+    if normalized_role is not None and normalized_role not in PAGE_ROLES:
+        raise ValueError(f"Unknown page_role: {normalized_role}")
+    if sequence_index is not None and int(sequence_index) < 0:
+        raise ValueError("sequence_index must be non-negative")
+    motif_list = sorted({str(x).strip() for x in motifs if str(x).strip()})
 
     if source_class == "reference" and (pixel_reuse or derivative_reuse or publication_reuse):
         raise ValueError("Reference-only source cannot grant pixel/derivative/publication reuse")
@@ -90,6 +121,10 @@ def source_manifest(
             "note": rights_note.strip(),
         },
         "grammarFamilies": families,
+        "pageRole": normalized_role,
+        "continuityGroup": str(continuity_group).strip() if continuity_group else None,
+        "motifs": motif_list,
+        "sequenceIndex": int(sequence_index) if sequence_index is not None else None,
         "laws": [
             "SOURCE OWNERSHIP DETERMINES HARVEST AUTHORITY",
             "GRAMMAR ANALYSIS != PIXEL REUSE AUTHORITY",
@@ -459,6 +494,10 @@ def analyze_page(manifest: dict) -> dict:
         "sourceClass": manifest["sourceClass"],
         "rights": manifest["rights"],
         "grammarFamilies": manifest.get("grammarFamilies") or [],
+        "pageRole": manifest.get("pageRole"),
+        "continuityGroup": manifest.get("continuityGroup"),
+        "motifs": manifest.get("motifs") or [],
+        "sequenceIndex": manifest.get("sequenceIndex"),
         "panelCount": len(analyzed),
         "panels": analyzed,
         "geometrySequence": geometry_sequence,
@@ -752,3 +791,122 @@ def page_harvest_to_parts_drawer(
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result
+
+
+def build_sequence_grammar(reports: list[dict]) -> dict:
+    """Aggregate annotated multi-page continuity without pretending pixels imply story roles."""
+    if len(reports) < 2:
+        raise ValueError("Sequence grammar requires at least two page reports")
+    for report in reports:
+        if report.get("schema") != REPORT_SCHEMA:
+            raise ValueError("Unsupported page report")
+
+    ordered = sorted(
+        reports,
+        key=lambda row: (
+            row.get("sequenceIndex") is None,
+            int(row.get("sequenceIndex") or 0),
+            row["sourceId"],
+        ),
+    )
+
+    pages = []
+    transitions = []
+    recurring_motifs: dict[str, list[str]] = {}
+
+    for index, report in enumerate(ordered):
+        pages.append({
+            "reportId": report["id"],
+            "sourceId": report["sourceId"],
+            "sequenceIndex": report.get("sequenceIndex"),
+            "pageRole": report.get("pageRole"),
+            "continuityGroup": report.get("continuityGroup"),
+            "motifs": report.get("motifs") or [],
+            "grammarFamilies": report.get("grammarFamilies") or [],
+            "geometrySequence": report.get("geometrySequence") or [],
+        })
+        for motif in report.get("motifs") or []:
+            recurring_motifs.setdefault(motif, []).append(report["id"])
+
+        if index:
+            previous = ordered[index - 1]
+            transitions.append({
+                "fromReportId": previous["id"],
+                "toReportId": report["id"],
+                "fromRole": previous.get("pageRole"),
+                "toRole": report.get("pageRole"),
+                "sharedMotifs": sorted(
+                    set(previous.get("motifs") or [])
+                    & set(report.get("motifs") or [])
+                ),
+                "sameContinuityGroup": bool(
+                    previous.get("continuityGroup")
+                    and previous.get("continuityGroup")
+                    == report.get("continuityGroup")
+                ),
+                "authority": "annotation-derived-sequence-grammar",
+            })
+
+    recurring = {
+        motif: ids
+        for motif, ids in recurring_motifs.items()
+        if len(ids) >= 2
+    }
+
+    body = {
+        "schema": "haunted-blender/page-sequence-grammar/v1",
+        "reportIds": [row["id"] for row in ordered],
+        "pages": pages,
+        "transitions": transitions,
+        "recurringMotifs": recurring,
+        "laws": [
+            "PAGE ROLE IS ANNOTATION NOT PIXEL INFERENCE",
+            "CONTINUITY GROUP != IDENTITY CLAIM",
+            "SHARED MOTIF MAY GUIDE CALLBACK WITHOUT REQUIRING PIXEL REUSE",
+            "SEQUENCE GRAMMAR MAY GUIDE DIRECTING WITHOUT BECOMING STORY AUTHORITY",
+        ],
+    }
+    return {**body, "id": "page-sequence-grammar:" + _hash(body)[:24]}
+
+
+def sequence_director_prescription(sequence: dict) -> dict:
+    if sequence.get("schema") != "haunted-blender/page-sequence-grammar/v1":
+        raise ValueError("Expected page sequence grammar")
+
+    role_to_pattern = {
+        "establish": ["ESTABLISH", "WIDE"],
+        "dialogue": ["TWO_SHOT", "SPEAKER", "LISTENER", "REACTION"],
+        "threshold": ["WIDE", "CLOSE_UP", "INSERT", "RETURN"],
+        "detail": ["INSERT", "CLOSE_UP", "RETURN"],
+        "impact": ["CLOSE_UP", "CHAOS", "REACTION"],
+        "vertical-transition": ["WIDE", "LYRIC_WORLD", "CLOSE_UP", "RETURN"],
+        "return": ["RETURN", "WIDE"],
+        "environment": ["WIDE", "INSERT", "RETURN"],
+        "mixed": ["WIDE", "SPEAKER", "INSERT", "REACTION", "RETURN"],
+        None: ["WIDE", "REACTION", "RETURN"],
+    }
+
+    beats = []
+    for page in sequence.get("pages") or []:
+        pattern = role_to_pattern.get(page.get("pageRole"), role_to_pattern[None])
+        beats.append({
+            "reportId": page["reportId"],
+            "sourceId": page["sourceId"],
+            "pageRole": page.get("pageRole"),
+            "suggestedShotPattern": pattern,
+            "motifs": page.get("motifs") or [],
+            "authority": "sequence-grammar-proposal-only",
+        })
+
+    body = {
+        "schema": "haunted-blender/sequence-to-director-prescription/v1",
+        "sequenceId": sequence["id"],
+        "beats": beats,
+        "callbackMotifs": sorted((sequence.get("recurringMotifs") or {}).keys()),
+        "laws": [
+            "PAGE ROLE MAY PROPOSE SHOT PATTERN",
+            "RECURRING MOTIF MAY PROPOSE CALLBACK",
+            "SEQUENCE PRESCRIPTION != EDITORIAL KEEP",
+        ],
+    }
+    return {**body, "id": "sequence-director-prescription:" + _hash(body)[:24]}
