@@ -825,3 +825,104 @@ def harvest_flow_manifest(
         encoding="utf-8",
     )
     return summary
+
+
+def prescribe_for_weak_windows(
+    doctor_report: dict,
+    drawer: dict,
+    *,
+    max_windows: int = 6,
+) -> dict:
+    """Propose drawer bits for weak windows before any provider escalation."""
+    if doctor_report.get("schema") != "haunted-blender/weakest-window-report/v1":
+        raise ValueError("Expected Weakest Window Doctor report")
+    if drawer.get("schema") != DRAWER_SCHEMA:
+        raise ValueError("Expected Parts Drawer")
+    if max_windows < 1 or max_windows > 24:
+        raise ValueError("max_windows must be 1–24")
+
+    by_id = {row["id"]: row for row in doctor_report.get("windows") or []}
+    artifacts = list(drawer.get("artifacts") or [])
+    kind_preferences = {
+        "stasis": ("motion-behavior", "loop", "fragment", "crop"),
+        "sourceOveruse": ("fragment", "still", "crop", "texture"),
+        "recentRepetition": ("fragment", "loop", "crop", "still"),
+        "noveltyDeficit": ("texture", "mask", "crop", "fragment"),
+        "transitionJolt": ("fragment", "loop", "still"),
+    }
+
+    entries = []
+    for window_id in (doctor_report.get("ranking") or [])[:max_windows]:
+        window = by_id[window_id]
+        current_sources = {
+            row.get("sourceSha256")
+            for row in (window.get("sources") or [])
+            if row.get("sourceSha256")
+        }
+        selected = []
+        used = set()
+        for kind in kind_preferences.get(window.get("dominantWeakness"), ("fragment", "crop")):
+            for artifact in artifacts:
+                if artifact.get("kind") != kind:
+                    continue
+                key = (artifact.get("kind"), artifact.get("sha256"))
+                if key in used:
+                    continue
+                # Prefer genuinely sideways material from a source not already
+                # dominating this window. Fall back only if the drawer lacks it.
+                if current_sources and artifact.get("sourceSha256") in current_sources:
+                    continue
+                selected.append({
+                    "kind": artifact["kind"],
+                    "path": artifact["path"],
+                    "sha256": artifact["sha256"],
+                    "sourceSha256": artifact.get("sourceSha256"),
+                    "harvestId": artifact.get("harvestId"),
+                })
+                used.add(key)
+                break
+            if len(selected) >= 2:
+                break
+
+        if not selected:
+            for artifact in artifacts:
+                if artifact.get("kind") in kind_preferences.get(
+                    window.get("dominantWeakness"), ("fragment", "crop")
+                ):
+                    selected.append({
+                        "kind": artifact["kind"],
+                        "path": artifact["path"],
+                        "sha256": artifact["sha256"],
+                        "sourceSha256": artifact.get("sourceSha256"),
+                        "harvestId": artifact.get("harvestId"),
+                    })
+                    break
+
+        entries.append({
+            "windowId": window_id,
+            "start": window["start"],
+            "end": window["end"],
+            "weaknessScore": window["weaknessScore"],
+            "dominantWeakness": window["dominantWeakness"],
+            "currentSourceSha256": sorted(current_sources),
+            "proposedBits": selected,
+            "level": 2,
+            "costClass": "local-repeatable-zero",
+            "providerCredits": 0,
+            "usdMicros": 0,
+        })
+
+    body = {
+        "schema": "haunted-blender/parts-compost-prescription/v1",
+        "doctorReportId": doctor_report["id"],
+        "drawerId": drawer["id"],
+        "entries": entries,
+        "authority": "proposal-only",
+        "laws": [
+            "WEAK WINDOW MAY REACH SIDEWAYS BEFORE GENERATING FORWARD",
+            "PREFER DIFFERENT SOURCE PROVENANCE FOR REPETITION RELIEF",
+            "COMPOST PROPOSAL != EDITORIAL KEEP",
+            "LEVEL 2 REMAINS ZERO-DOLLAR",
+        ],
+    }
+    return {**body, "id": "parts-compost-prescription:" + _sha(body)[:24]}
