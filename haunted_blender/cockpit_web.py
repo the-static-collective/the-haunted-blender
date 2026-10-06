@@ -168,6 +168,14 @@ def make_handler(project_root: str | Path):
                             expected_usd_micros=body.get("expectedUsdMicros"),
                             approved_at=str(body.get("approvedAt") or ""),
                         )
+                    elif action == "reconcile":
+                        result = provider_driver.reconcile_submission(
+                            root,
+                            section_id,
+                            vendor_request_id=str(body.get("vendorRequestId") or ""),
+                            submitted_parameter_sha256=str(body.get("submittedParameterSha256") or ""),
+                            observed_at=str(body.get("observedAt") or ""),
+                        )
                     elif action == "decline":
                         result = provider_driver.decline_current_candidate(
                             root, section_id, reason=str(body.get("reason") or "")
