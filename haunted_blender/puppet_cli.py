@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from . import cutaway_machine, puppet_factory
+from . import cutaway_machine, puppet_factory, stage_compost
 
 
 def _read(path: str | Path) -> dict:
@@ -35,6 +35,7 @@ def main(argv=None):
     compile_cmd.add_argument("timing_json")
     compile_cmd.add_argument("output_dir")
     compile_cmd.add_argument("--doctor-report")
+    compile_cmd.add_argument("--parts-drawer")
 
     render = sub.add_parser("render")
     render.add_argument("performance_json")
@@ -47,6 +48,7 @@ def main(argv=None):
     smash.add_argument("--doctor-report")
     smash.add_argument("--max-cutaways", type=int, default=6)
     smash.add_argument("--cutaway-seconds", type=float, default=1.25)
+    smash.add_argument("--parts-drawer")
 
     args = parser.parse_args(argv)
 
@@ -73,6 +75,18 @@ def main(argv=None):
             args.output_dir,
             cutaway_plan=cutaways,
         )
+        if args.parts_drawer:
+            dressing = stage_compost.plan(
+                _read(args.parts_drawer),
+                width=int(rig["canvas"]["width"]),
+                height=int(rig["canvas"]["height"]),
+                duration_seconds=float(performance["duration"]),
+            )
+            performance = stage_compost.apply_to_performance(performance, dressing)
+            _write(
+                Path(args.output_dir).expanduser().resolve() / "stage-dressing.json",
+                dressing,
+            )
         path = Path(args.output_dir).expanduser().resolve() / "puppet-performance.json"
         _write(path, performance)
         if cutaways is not None:
@@ -119,6 +133,15 @@ def main(argv=None):
             performance_dir,
             cutaway_plan=cutaways,
         )
+        if args.parts_drawer:
+            dressing = stage_compost.plan(
+                _read(args.parts_drawer),
+                width=int(rig["canvas"]["width"]),
+                height=int(rig["canvas"]["height"]),
+                duration_seconds=float(performance["duration"]),
+            )
+            performance = stage_compost.apply_to_performance(performance, dressing)
+            _write(output / "stage-dressing.json", dressing)
         performance_path = output / "puppet-performance.json"
         _write(performance_path, performance)
 
