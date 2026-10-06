@@ -18,7 +18,7 @@ from pathlib import Path
 from .cutout_stage import render_cutout
 from .dream_cutout_compiler import compile_proposal
 from .dreambreeder import DESCENDANT_SCHEMA, ECOLOGY_SCHEMA
-from . import catalog, video_resolver
+from . import accepted_video as video_resolver, catalog
 
 TIMING_SCHEMA = "haunted-blender/track-timing/v1"
 SCENE_SCHEMA = "haunted-blender/kept-scene/v1"
