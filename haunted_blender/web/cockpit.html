@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Haunted Blender Cockpit</title>
+  <link rel="stylesheet" href="/cockpit.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">HAUNTED BLENDER / VISUAL COCKPIT</div>
+        <h1 id="project-title">Loading…</h1>
+      </div>
+      <div class="topbar-actions">
+        <div class="cost-legend" aria-label="Cost light">
+          <span><i class="light green"></i> local/free</span>
+          <span><i class="light yellow"></i> included</span>
+          <span><i class="light red"></i> paid</span>
+        </div>
+        <label class="local-toggle">
+          <input id="local-only" type="checkbox" />
+          <span class="toggle-track"></span>
+          <span>LOCAL ONLY</span>
+        </label>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="resume-panel panel">
+        <div class="panel-title-row">
+          <h2>Resume</h2>
+          <button id="refresh" class="icon-button" title="Refresh">↻</button>
+        </div>
+        <div class="resume-grid">
+          <button class="resume-card" data-resume="unresolvedProviderJobs">
+            <strong id="resume-jobs">0</strong>
+            <span>provider jobs</span>
+          </button>
+          <button class="resume-card" data-resume="unbornSixups">
+            <strong id="resume-dreams">0</strong>
+            <span>unborn six-ups</span>
+          </button>
+          <button class="resume-card" data-resume="keptScenesAwaitingRender">
+            <strong id="resume-scenes">0</strong>
+            <span>kept scenes</span>
+          </button>
+        </div>
+
+        <div class="verbs">
+          <span>GROW</span><b>→</b><span>KEEP</span><b>→</b><span>AWAKEN</span><b>→</b><span>PLAY</span>
+        </div>
+
+        <div class="selected-summary">
+          <div class="label">Selected</div>
+          <div id="selected-title" class="selected-title">Choose a section</div>
+          <div id="selected-temp" class="temperature-chip temp-sleeping">SLEEPING</div>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <section class="film-strip panel">
+          <div class="panel-title-row">
+            <div>
+              <div class="eyebrow">LIVING FILM STRIP</div>
+              <h2>Current movie</h2>
+            </div>
+            <div id="project-status" class="project-status"></div>
+          </div>
+          <div id="sections" class="sections"></div>
+        </section>
+
+        <section class="viewer-grid">
+          <article class="viewer panel">
+            <div class="panel-title-row">
+              <div>
+                <div class="eyebrow" id="viewer-eyebrow">SECTION VIEW</div>
+                <h2 id="viewer-title">No section selected</h2>
+              </div>
+              <button id="sync-play" class="secondary-button">Sync candidates</button>
+            </div>
+
+            <div id="primary-stage" class="primary-stage empty-stage">
+              <div class="stage-empty">
+                <strong>Pick a section.</strong>
+                <span>Six-up, scene, or accepted motion appears here.</span>
+              </div>
+            </div>
+
+            <div id="candidate-board" class="candidate-board"></div>
+          </article>
+
+          <aside class="controls panel">
+            <div class="eyebrow">CURRENT DOOR</div>
+            <h2 id="door-title">Select a section</h2>
+            <p id="door-copy" class="door-copy">The Cockpit only exposes actions that match the section’s current state.</p>
+
+            <div id="action-form" class="action-form"></div>
+
+            <div class="action-buttons">
+              <button id="grow-button" class="verb-button" data-action="grow">GROW</button>
+              <button id="keep-button" class="verb-button" data-action="keep">KEEP</button>
+              <button id="awaken-button" class="verb-button" data-action="awaken">AWAKEN</button>
+              <button id="play-button" class="verb-button" data-action="play">PLAY</button>
+            </div>
+
+            <div class="media-tools">
+              <div class="eyebrow">ATTACH LOCAL MEDIA</div>
+              <label class="upload-row">
+                <span>Six-up</span>
+                <input id="upload-sixup" type="file" accept="video/*" />
+              </label>
+              <label class="upload-row">
+                <span>Scene</span>
+                <input id="upload-scene" type="file" accept="video/*" />
+              </label>
+              <label class="upload-row">
+                <span>Candidate</span>
+                <input id="upload-candidate" type="file" accept="video/*" />
+              </label>
+            </div>
+
+            <details class="receipt-drawer">
+              <summary>Evidence drawer</summary>
+              <pre id="evidence">No section selected.</pre>
+            </details>
+          </aside>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/cockpit.js"></script>
+</body>
+</html>
