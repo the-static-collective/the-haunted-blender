@@ -1,0 +1,815 @@
+{
+  "schema": "haunted-blender/owned-media-collection/v1",
+  "id": "owned-media-collection:static-collective-source-field-2026-10-06-001",
+  "label": "Static Collective owned source field — Drive folder 1n7N…",
+  "collectionId": "1n7NfchXgOO9fJMeqTymnV-GW2niBb43v",
+  "collectionUrl": "https://drive.google.com/folderview?id=1n7NfchXgOO9fJMeqTymnV-GW2niBb43v",
+  "sourceClass": "owned",
+  "userDeclaration": {
+    "observedAt": "2026-10-06",
+    "statement": "User explicitly declared this folder's current media to be 'our pixels' and available for use.",
+    "independentlyVerified": false
+  },
+  "rights": {
+    "pixelReuse": true,
+    "derivativeReuse": true,
+    "recomposition": true,
+    "publicationReuse": true,
+    "note": "User-asserted ownership/reuse authority; not independently verified."
+  },
+  "futureMembersInherit": false,
+  "snapshotRule": "current-direct-children-only",
+  "memberCount": 97,
+  "mimeTypeCounts": {
+    "video/mp4": 2,
+    "image/png": 45,
+    "application/zip": 1,
+    "image/webp": 36,
+    "image/jpeg": 13
+  },
+  "members": [
+    {
+      "externalId": "1wPr_2HSoXiGC0xxJXWYUeWJDdEdBEk5r",
+      "title": "cmuw2lvxcmht6yw1bi51fqttz-0-d45a1b711f6f7e55.mp4",
+      "mimeType": "video/mp4",
+      "sizeBytes": 1843035,
+      "createdTime": "2026-10-06T02:46:45.168Z",
+      "modifiedTime": "2026-10-06T02:46:21.831Z"
+    },
+    {
+      "externalId": "1vPyCJV-FRFLcmKaPYR8dITrKPaa5Oe-n",
+      "title": "file_00000000eaf081f593698985a9447b89.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2896197,
+      "createdTime": "2026-10-03T23:15:55.246Z",
+      "modifiedTime": "2026-10-03T23:12:12.503Z"
+    },
+    {
+      "externalId": "1vMhZdmA0qH1cjQ2LzKdUpo6SYBszLFW9",
+      "title": "file_0000000065f881f58f5eb99694194f21.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3478730,
+      "createdTime": "2026-10-03T23:15:25.912Z",
+      "modifiedTime": "2026-10-03T23:12:12.426Z"
+    },
+    {
+      "externalId": "1vIm7EriojSuvDugyIS7L9nPrnEPuwAd2",
+      "title": "file_00000000833c81f5b4540a5a28f478e5.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2702005,
+      "createdTime": "2026-10-03T23:14:51.350Z",
+      "modifiedTime": "2026-10-03T23:12:12.377Z"
+    },
+    {
+      "externalId": "1vI_UcxwTF9ysrx0l3mH5vfwrQDKYXSVp",
+      "title": "file_00000000437481f5aa32c9dcac6d4ac9.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3076695,
+      "createdTime": "2026-10-03T23:14:23.418Z",
+      "modifiedTime": "2026-10-03T23:12:12.327Z"
+    },
+    {
+      "externalId": "1vC7fjZSraPuUuU8ZtOwaBI00fdMWlasZ",
+      "title": "file_00000000bad081f5aa4a29bb42b4284b.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3094441,
+      "createdTime": "2026-10-03T23:13:47.834Z",
+      "modifiedTime": "2026-10-03T23:12:12.278Z"
+    },
+    {
+      "externalId": "1v9lfSKO1s5VnReJvcMDJ1hGqZJVuLDaD",
+      "title": "file_000000005a3481f5bc5d2b97e01441ec.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3155908,
+      "createdTime": "2026-10-03T23:13:14.730Z",
+      "modifiedTime": "2026-10-03T23:12:12.226Z"
+    },
+    {
+      "externalId": "1v87GL5GUYJRAGQAE2twjDk8d_s9N4as1",
+      "title": "file_00000000c44c81f5a1cfd8e11bbb624b.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2819604,
+      "createdTime": "2026-10-03T23:12:42.577Z",
+      "modifiedTime": "2026-10-03T23:12:12.155Z"
+    },
+    {
+      "externalId": "1juZml9r4FCNr1vtXfmqn8sEvze_rY9sW",
+      "title": "Static Collective — Cosmic Flipbook Descript Proxy.mp4",
+      "mimeType": "video/mp4",
+      "sizeBytes": 23454916,
+      "createdTime": "2026-10-02T14:57:21.749Z",
+      "modifiedTime": "2026-10-02T14:57:21.749Z"
+    },
+    {
+      "externalId": "1zNBvuR-y3Wkx7y8s3MMaKtgfIwC1y4yR",
+      "title": "Static Collective — Cosmic Flipbook Remotion.zip",
+      "mimeType": "application/zip",
+      "sizeBytes": 10056473,
+      "createdTime": "2026-10-02T14:55:12.033Z",
+      "modifiedTime": "2026-10-02T14:55:12.033Z"
+    },
+    {
+      "externalId": "1uWL28Qy3Ws8wPaVLG-N-MkzWLHxKaiqg",
+      "title": "file_00000000eaf081f593698985a9447b89.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2896197,
+      "createdTime": "2026-10-02T14:27:01.229Z",
+      "modifiedTime": "2026-10-02T14:26:25.993Z"
+    },
+    {
+      "externalId": "1sVSJwc2nT8CPecRpcJCbzF1zaTannFAw",
+      "title": "758456196_2033607850695436_6929460104076658343_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 725640,
+      "createdTime": "2026-10-02T03:16:30.365Z",
+      "modifiedTime": "2026-10-02T03:16:30.365Z"
+    },
+    {
+      "externalId": "1rqIVyrLqeRNra-6MgQ8S-xRhFL-_5paG",
+      "title": "758854644_27374820592217029_4912920351235469195_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 415100,
+      "createdTime": "2026-10-02T03:12:32.116Z",
+      "modifiedTime": "2026-10-02T03:12:32.116Z"
+    },
+    {
+      "externalId": "1r4W5Q-leNG1E4bgPamuiRpr90X9Me2oW",
+      "title": "762660860_1726784425319576_4250798473171352723_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 381332,
+      "createdTime": "2026-10-02T03:10:01.576Z",
+      "modifiedTime": "2026-10-02T03:10:01.576Z"
+    },
+    {
+      "externalId": "1qLPmP4ttBOlxQxP51GVUPQr9hi8xsswb",
+      "title": "760620948_1965250874181103_1227098834292573329_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 961888,
+      "createdTime": "2026-10-02T03:08:02.010Z",
+      "modifiedTime": "2026-10-02T03:08:02.010Z"
+    },
+    {
+      "externalId": "1tzeArQTXpJXOYntmd0Ncy_RF__rYAZkB",
+      "title": "image.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 239877,
+      "createdTime": "2026-10-02T03:20:35.982Z",
+      "modifiedTime": "2026-10-02T03:03:14.742Z"
+    },
+    {
+      "externalId": "1twPnV5ac58YUaAJ2PFfqcj6QTO7xtauE",
+      "title": "grok_image_1783530307609.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 254116,
+      "createdTime": "2026-10-02T03:20:27.713Z",
+      "modifiedTime": "2026-10-02T03:03:14.655Z"
+    },
+    {
+      "externalId": "1ttFKSp5fhmTVJA1Q0AO7rRw6jXelf7ys",
+      "title": "1207b828.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 569047,
+      "createdTime": "2026-10-02T03:20:21.492Z",
+      "modifiedTime": "2026-10-02T03:03:14.586Z"
+    },
+    {
+      "externalId": "1tpQaTYF7AlxwNLsE-fEftxQ_qWBddVa0",
+      "title": "the_static_collective_upscaled.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2982139,
+      "createdTime": "2026-10-02T03:20:06.562Z",
+      "modifiedTime": "2026-10-02T03:03:14.511Z"
+    },
+    {
+      "externalId": "1tcCCbz0FYFYd0M9kM5TeF0QCvIb9HLY9",
+      "title": "grok_image_1783576019236.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 323516,
+      "createdTime": "2026-10-02T03:19:18.879Z",
+      "modifiedTime": "2026-10-02T03:03:14.433Z"
+    },
+    {
+      "externalId": "1tVfgkPxqWuVw4htc8DOeAWlZqw4AkiFt",
+      "title": "Screenshot_20260711-144703.png",
+      "mimeType": "image/png",
+      "sizeBytes": 1815589,
+      "createdTime": "2026-10-02T03:19:08.304Z",
+      "modifiedTime": "2026-10-02T03:03:14.354Z"
+    },
+    {
+      "externalId": "1tV3cdFjOr-pqnOsjIFrsOnJvBvm531NX",
+      "title": "a0314152519_16.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 79381,
+      "createdTime": "2026-10-02T03:18:39.960Z",
+      "modifiedTime": "2026-10-02T03:03:14.287Z"
+    },
+    {
+      "externalId": "1tTTcw59GthG3_IeFv3rBbEDKQ0VBVyYy",
+      "title": "758778586_2466171020559991_1821512062128023744_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 267288,
+      "createdTime": "2026-10-02T03:18:30.625Z",
+      "modifiedTime": "2026-10-02T03:03:14.214Z"
+    },
+    {
+      "externalId": "1tSrYixa9kQdU5gIuXrQXtKKkaomL_9Sl",
+      "title": "758929651_1973362956717238_306154062515744409_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 292872,
+      "createdTime": "2026-10-02T03:18:24.334Z",
+      "modifiedTime": "2026-10-02T03:03:14.143Z"
+    },
+    {
+      "externalId": "1tRxI0y69CehIXdystkSJn_XjhOkzLeG9",
+      "title": "755946698_1710673260262292_4029510722134220080_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 392736,
+      "createdTime": "2026-10-02T03:18:17.437Z",
+      "modifiedTime": "2026-10-02T03:03:14.066Z"
+    },
+    {
+      "externalId": "1tMLglFNyt6XPoumueTNlLzqyY4_0OX5v",
+      "title": "753905104_1711865929861708_2797502019872360131_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 195040,
+      "createdTime": "2026-10-02T03:18:07.635Z",
+      "modifiedTime": "2026-10-02T03:03:13.999Z"
+    },
+    {
+      "externalId": "1tKUSOBDYZeNQQG0dPGtiyWEPPxw1RHcS",
+      "title": "755694553_1345201917786524_5685550446830516880_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 324396,
+      "createdTime": "2026-10-02T03:18:00.989Z",
+      "modifiedTime": "2026-10-02T03:03:13.933Z"
+    },
+    {
+      "externalId": "1t6X1-6eB4UhytSlCZBUAMnfbxa7C9cqV",
+      "title": "756228477_1040662728708554_7163221897168552329_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 615844,
+      "createdTime": "2026-10-02T03:17:48.624Z",
+      "modifiedTime": "2026-10-02T03:03:13.875Z"
+    },
+    {
+      "externalId": "1spwZSVIocLqVV8IWzUPFZlNINHdNYOC3",
+      "title": "758368319_1018845627687011_6692946504568010971_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 271404,
+      "createdTime": "2026-10-02T03:17:31.732Z",
+      "modifiedTime": "2026-10-02T03:03:13.816Z"
+    },
+    {
+      "externalId": "1sl7BCDGqVYrfHeApi2zA8Q0FVb501OH0",
+      "title": "756779533_1976462319730984_1856899052340543415_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 562686,
+      "createdTime": "2026-10-02T03:17:22.110Z",
+      "modifiedTime": "2026-10-02T03:03:13.743Z"
+    },
+    {
+      "externalId": "1sjbYvlPzYpyqkffq7kq5Nh5sSxA5qqjn",
+      "title": "755694574_1964321714285519_1740637272174854260_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 218342,
+      "createdTime": "2026-10-02T03:17:06.188Z",
+      "modifiedTime": "2026-10-02T03:03:13.666Z"
+    },
+    {
+      "externalId": "1sX5qy9oc_jaeeVE9yoHRi74iaX2NIOgF",
+      "title": "754700025_1996077007690116_1186440792948358973_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 266582,
+      "createdTime": "2026-10-02T03:16:45.808Z",
+      "modifiedTime": "2026-10-02T03:03:13.582Z"
+    },
+    {
+      "externalId": "1sUlEQ5IDr9LU3FUeB3kAw6VMhNXgZv76",
+      "title": "754949636_1553993426171700_8742956573305264671_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 251510,
+      "createdTime": "2026-10-02T03:16:13.874Z",
+      "modifiedTime": "2026-10-02T03:03:13.443Z"
+    },
+    {
+      "externalId": "1sPBpTtXEk8lAcY10J5uZwC3eWbdy68vL",
+      "title": "758481405_2265475550938832_8917515875885548657_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 427552,
+      "createdTime": "2026-10-02T03:16:04.979Z",
+      "modifiedTime": "2026-10-02T03:03:13.378Z"
+    },
+    {
+      "externalId": "1sOlvIbRk2fy7IAE_bweSrGj6ss9s_kaI",
+      "title": "grok_1785115030520.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 230074,
+      "createdTime": "2026-10-02T03:15:56.580Z",
+      "modifiedTime": "2026-10-02T03:03:13.321Z"
+    },
+    {
+      "externalId": "1sKZMLPI2bKaPqRNIuN6K0un_ZgM953O9",
+      "title": "image-17.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2100012,
+      "createdTime": "2026-10-02T03:15:47.843Z",
+      "modifiedTime": "2026-10-02T03:03:13.247Z"
+    },
+    {
+      "externalId": "1sIE6gDVAugxWgUTAcXRNzlZs1vSspM6o",
+      "title": "copilot_image_1785115485574.jpeg",
+      "mimeType": "image/png",
+      "sizeBytes": 1781075,
+      "createdTime": "2026-10-02T03:15:08.379Z",
+      "modifiedTime": "2026-10-02T03:03:13.186Z"
+    },
+    {
+      "externalId": "1sDOhVbUoYWNMXdZBNsJ6ckk37Zsaemin",
+      "title": "1785115671175.png",
+      "mimeType": "image/png",
+      "sizeBytes": 1448306,
+      "createdTime": "2026-10-02T03:14:25.831Z",
+      "modifiedTime": "2026-10-02T03:03:13.116Z"
+    },
+    {
+      "externalId": "1sB5s8TCkeaaszzoARFhv4JHHiONGJSln",
+      "title": "757040161_1738666300907632_8929149225039747316_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 414170,
+      "createdTime": "2026-10-02T03:13:52.655Z",
+      "modifiedTime": "2026-10-02T03:03:13.051Z"
+    },
+    {
+      "externalId": "1ryKUFu9XhwH2APUy1kttQ55j9mDJz89W",
+      "title": "758904893_1634137675001844_1187976741048987833_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 161136,
+      "createdTime": "2026-10-02T03:13:40.606Z",
+      "modifiedTime": "2026-10-02T03:03:12.987Z"
+    },
+    {
+      "externalId": "1rubVhUPkBPULrzizmqHUldo_yXkTc4_K",
+      "title": "757000121_1744157823394586_4600215565777559723_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 413858,
+      "createdTime": "2026-10-02T03:13:35.038Z",
+      "modifiedTime": "2026-10-02T03:03:12.915Z"
+    },
+    {
+      "externalId": "1rtnIyPHxp8U5QC00q3MjlTmBNf2-BlCx",
+      "title": "758863707_1970348260250309_4980281664402971549_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 801160,
+      "createdTime": "2026-10-02T03:13:22.834Z",
+      "modifiedTime": "2026-10-02T03:03:12.842Z"
+    },
+    {
+      "externalId": "1rsegBPeBqrj_iNB1NvxTCr8pswrQTS04",
+      "title": "A_track_image_for_these_lyrics_BananaGram_The_Garden_Keeps_the_Receipt_Mid_tempo_folk_electronic_Por_2492981201.png",
+      "mimeType": "image/png",
+      "sizeBytes": 1719964,
+      "createdTime": "2026-10-02T03:13:04.888Z",
+      "modifiedTime": "2026-10-02T03:03:12.763Z"
+    },
+    {
+      "externalId": "1ro5Po2auHlrjYBerKdSbVs4aXFy1cqj3",
+      "title": "758543541_1588380179511158_4317232531636513400_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 248628,
+      "createdTime": "2026-10-02T03:12:18.473Z",
+      "modifiedTime": "2026-10-02T03:03:12.677Z"
+    },
+    {
+      "externalId": "1riz3L3dhiu8rCiMm6a_Q5uVHNqypuVE4",
+      "title": "758750954_4054750504819362_3697235392334260598_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 443436,
+      "createdTime": "2026-10-02T03:12:07.329Z",
+      "modifiedTime": "2026-10-02T03:03:12.641Z"
+    },
+    {
+      "externalId": "1rbwGDBaS8XKCVpIOlOx1vU4Y20K4jU39",
+      "title": "757164733_1068843882380988_8456642417478786275_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 403566,
+      "createdTime": "2026-10-02T03:11:53.868Z",
+      "modifiedTime": "2026-10-02T03:03:12.599Z"
+    },
+    {
+      "externalId": "1r_sdROZW9JpFFEHlpIC6y6TZ03v3amrP",
+      "title": "759017533_3305018743034134_2678203126666106816_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 536126,
+      "createdTime": "2026-10-02T03:11:44.377Z",
+      "modifiedTime": "2026-10-02T03:03:12.564Z"
+    },
+    {
+      "externalId": "1rXX4sKG30Xvj4d4Rvmu-V4Ph7FbFXeP3",
+      "title": "758488845_1060447253585071_1414766776685773130_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 508138,
+      "createdTime": "2026-10-02T03:11:34.336Z",
+      "modifiedTime": "2026-10-02T03:03:12.516Z"
+    },
+    {
+      "externalId": "1rVHVPMsGz7VHUFJcs-P79At0dTlP3_HO",
+      "title": "756632543_1343821437386437_6050858231673863417_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 613648,
+      "createdTime": "2026-10-02T03:11:18.664Z",
+      "modifiedTime": "2026-10-02T03:03:12.479Z"
+    },
+    {
+      "externalId": "1rPfJskAAqze2GiJ2V6e8rBtry_mgZHUt",
+      "title": "1785239900083.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 681478,
+      "createdTime": "2026-10-02T03:11:05.891Z",
+      "modifiedTime": "2026-10-02T03:03:12.434Z"
+    },
+    {
+      "externalId": "1rI5DHx9Ev16Z4lSTKZ38VfcgYBFhJABM",
+      "title": "Screenshot_20260729-212609.png",
+      "mimeType": "image/png",
+      "sizeBytes": 1722706,
+      "createdTime": "2026-10-02T03:10:52.677Z",
+      "modifiedTime": "2026-10-02T03:03:12.393Z"
+    },
+    {
+      "externalId": "1rAdr0n3C7QWKwl88aEOgaYooQOZnz6Ih",
+      "title": "758831156_1751968649326637_7045080514199274178_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 387716,
+      "createdTime": "2026-10-02T03:10:08.489Z",
+      "modifiedTime": "2026-10-02T03:03:12.353Z"
+    },
+    {
+      "externalId": "1qlMzHLPxej7sZ1RIfxleWfk-UHCLrSAZ",
+      "title": "759698390_1225106483112471_4884533428380129084_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 414810,
+      "createdTime": "2026-10-02T03:09:50.917Z",
+      "modifiedTime": "2026-10-02T03:03:12.212Z"
+    },
+    {
+      "externalId": "1qf5dbuulUNQ2vT_gYak7ka6lruPc-fWt",
+      "title": "image_1785481222510.jpeg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 1106291,
+      "createdTime": "2026-10-02T03:09:41.303Z",
+      "modifiedTime": "2026-10-02T03:03:12.154Z"
+    },
+    {
+      "externalId": "1qV7DSe3gF1UApcopz3aaRyWCrBAgUa4o",
+      "title": "image_1785481230474.jpeg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 1106291,
+      "createdTime": "2026-10-02T03:09:18.852Z",
+      "modifiedTime": "2026-10-02T03:03:12.089Z"
+    },
+    {
+      "externalId": "1qUWeQgouqMpol7FXbyCT4IPvB_jk57Ef",
+      "title": "762655558_1586427019745940_3118537697621658150_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 293368,
+      "createdTime": "2026-10-02T03:08:56.531Z",
+      "modifiedTime": "2026-10-02T03:03:12.015Z"
+    },
+    {
+      "externalId": "1qSf-gIem598kXdLu5YWVGjIKgRIDatg7",
+      "title": "761748122_2072798934113121_169401799272436925_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 395376,
+      "createdTime": "2026-10-02T03:08:48.215Z",
+      "modifiedTime": "2026-10-02T03:03:11.946Z"
+    },
+    {
+      "externalId": "1qRAzxijdaxqrWT7fNYyXJ8xBG6Tn1km_",
+      "title": "759975267_2242948383208259_6718033686578650303_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 917550,
+      "createdTime": "2026-10-02T03:08:32.931Z",
+      "modifiedTime": "2026-10-02T03:03:11.882Z"
+    },
+    {
+      "externalId": "1qPdhvZaBH7bZ0bDmd-7DJRfeqnDZKnem",
+      "title": "760671434_2529479590821346_923739781664452216_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 164816,
+      "createdTime": "2026-10-02T03:08:07.425Z",
+      "modifiedTime": "2026-10-02T03:03:11.824Z"
+    },
+    {
+      "externalId": "1qIO-q1b5rtP-koVzgJqqUvEybOdx_WB4",
+      "title": "760271364_1591549309189449_3813140296835102283_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 375396,
+      "createdTime": "2026-10-02T03:07:40.372Z",
+      "modifiedTime": "2026-10-02T03:03:11.685Z"
+    },
+    {
+      "externalId": "1qEQxoJYnoBB_YIjEpt7Vjfig3LnBcmbF",
+      "title": "761653381_944233342026687_5863572394288857_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 439624,
+      "createdTime": "2026-10-02T03:07:32.232Z",
+      "modifiedTime": "2026-10-02T03:03:11.609Z"
+    },
+    {
+      "externalId": "1q7jZoak7Y7xNSUHOevF6_VGHgM-GbfzE",
+      "title": "760671469_1376772534598747_2851683064116799678_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 118738,
+      "createdTime": "2026-10-02T03:07:16.482Z",
+      "modifiedTime": "2026-10-02T03:03:11.530Z"
+    },
+    {
+      "externalId": "1q6jwfHCXRoBlH_zoYPibCjk9lKsEaZCU",
+      "title": "763356002_3995671237406554_8741522507497623099_n.webp",
+      "mimeType": "image/webp",
+      "sizeBytes": 322612,
+      "createdTime": "2026-10-02T03:07:06.645Z",
+      "modifiedTime": "2026-10-02T03:03:11.456Z"
+    },
+    {
+      "externalId": "1q5cPLxWEiQUMnfiCm4nHwVx4Eb1ucTlU",
+      "title": "IMG_20260912_071256364.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 2998398,
+      "createdTime": "2026-10-02T03:06:57.101Z",
+      "modifiedTime": "2026-10-02T03:03:11.364Z"
+    },
+    {
+      "externalId": "1pzGJOMbhaM1ltm5J0CIOgu853hRHSPpU",
+      "title": "IMG_20260912_071605735.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 2018705,
+      "createdTime": "2026-10-02T03:06:02.399Z",
+      "modifiedTime": "2026-10-02T03:03:11.281Z"
+    },
+    {
+      "externalId": "1pz1OVVcKUMRfaO8fis0mJ0mLRvv7pmQg",
+      "title": "IMG_20260912_071724266.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 2147412,
+      "createdTime": "2026-10-02T03:05:28.544Z",
+      "modifiedTime": "2026-10-02T03:03:11.211Z"
+    },
+    {
+      "externalId": "1pm5Mq9LklujP2WQ2s_79gK4kc6UXQXdK",
+      "title": "file_00000000b52861fa86085c0fb423981c.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2204642,
+      "createdTime": "2026-10-02T03:20:24.856Z",
+      "modifiedTime": "2026-10-02T02:56:08.166Z"
+    },
+    {
+      "externalId": "1piGf_93ayevdz4QgjshO2NkByFzc35dF",
+      "title": "file_0000000063a0622faeb884896d1159cb.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2289223,
+      "createdTime": "2026-10-02T03:19:44.902Z",
+      "modifiedTime": "2026-10-02T02:56:08.110Z"
+    },
+    {
+      "externalId": "1phFlbCYgVpNg6Q8Nydnd2oJ_EIfY0WUt",
+      "title": "file_00000000432461faa1b29fdc4cfffd3e.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2377025,
+      "createdTime": "2026-10-02T03:19:06.196Z",
+      "modifiedTime": "2026-10-02T02:56:08.059Z"
+    },
+    {
+      "externalId": "1pfXBewFzlNgML4knb_NNUx8qqBCgILLk",
+      "title": "file_000000007dec61f5b1c7194ac21a3cfa.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2532562,
+      "createdTime": "2026-10-02T03:18:21.503Z",
+      "modifiedTime": "2026-10-02T02:56:07.998Z"
+    },
+    {
+      "externalId": "1pa69n16OXqXGarmXzjHIjhB-kUVpleGn",
+      "title": "file_00000000263c61fa9c00f5cb07bdbe0f.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2488012,
+      "createdTime": "2026-10-02T03:17:47.486Z",
+      "modifiedTime": "2026-10-02T02:56:07.929Z"
+    },
+    {
+      "externalId": "1pZuND8hxxsFTEMRZ73DINof1hI3WfJmt",
+      "title": "file_000000000e90722f9f8b415152761c92.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3347253,
+      "createdTime": "2026-10-02T03:17:12.010Z",
+      "modifiedTime": "2026-10-02T02:56:07.855Z"
+    },
+    {
+      "externalId": "1pT3Qgk0868era4VD6mWYjTBX-wiZ5pKt",
+      "title": "file_00000000178c71f587dffc68d10a8f28.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2367714,
+      "createdTime": "2026-10-02T03:16:33.912Z",
+      "modifiedTime": "2026-10-02T02:56:07.805Z"
+    },
+    {
+      "externalId": "1pNE5qiDqxumMWOIRk9eGerk9j-c_eY2S",
+      "title": "file_00000000dd0471f5a146d0b79f02c03e.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2834786,
+      "createdTime": "2026-10-02T03:15:56.470Z",
+      "modifiedTime": "2026-10-02T02:56:07.759Z"
+    },
+    {
+      "externalId": "1pMB8QgXQq_SpK-CiOUo8tZKngiiaDogx",
+      "title": "file_00000000dd0471f5a146d0b79f02c03e (1).png",
+      "mimeType": "image/png",
+      "sizeBytes": 2834786,
+      "createdTime": "2026-10-02T03:15:07.891Z",
+      "modifiedTime": "2026-10-02T02:56:07.707Z"
+    },
+    {
+      "externalId": "1pGV6ZT82Vj4ugPPIqlxT9LMmfE807X6y",
+      "title": "file_000000002150722fb814c7e0b881cad4.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3038937,
+      "createdTime": "2026-10-02T03:14:21.988Z",
+      "modifiedTime": "2026-10-02T02:56:07.644Z"
+    },
+    {
+      "externalId": "1pCWxzxOOWIOPjMUlmZ9d1v9G24lYEc52",
+      "title": "file_000000005a4c71fd99c81b8f77b57a71.png",
+      "mimeType": "image/png",
+      "sizeBytes": 4110279,
+      "createdTime": "2026-10-02T03:13:37.816Z",
+      "modifiedTime": "2026-10-02T02:56:07.590Z"
+    },
+    {
+      "externalId": "1pBHF8bakUH-wxLCQB9YA-KB5cAXcwcuc",
+      "title": "file_00000000d9ac71fd83ca11175fcc00ff.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3756879,
+      "createdTime": "2026-10-02T03:12:32.922Z",
+      "modifiedTime": "2026-10-02T02:56:07.533Z"
+    },
+    {
+      "externalId": "1p9yfbdHXvfHW1v_jvHrFjelGUb6gnPCl",
+      "title": "file_0000000054b071f5a840c6611086f209.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2996176,
+      "createdTime": "2026-10-02T03:11:40.592Z",
+      "modifiedTime": "2026-10-02T02:56:07.452Z"
+    },
+    {
+      "externalId": "1p90Nqo1KBqQuM9Yr_YCmYFhKRxsRuy9T",
+      "title": "file_00000000555c822f88bdea1b54985426.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3092730,
+      "createdTime": "2026-10-02T03:10:52.961Z",
+      "modifiedTime": "2026-10-02T02:56:07.361Z"
+    },
+    {
+      "externalId": "1osdFqTnZvY8Hx8X1hXPzx8hT2yVCAyO9",
+      "title": "1785115671175.png",
+      "mimeType": "image/png",
+      "sizeBytes": 1448306,
+      "createdTime": "2026-10-02T03:10:04.206Z",
+      "modifiedTime": "2026-10-02T02:56:07.292Z"
+    },
+    {
+      "externalId": "1ojRj9XwSguSZ_Tz9x0e_qXDVIbF7MndE",
+      "title": "file_00000000ee6481f79c893f12c50bec91.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2739214,
+      "createdTime": "2026-10-02T03:09:40.889Z",
+      "modifiedTime": "2026-10-02T02:56:07.243Z"
+    },
+    {
+      "externalId": "1ojMfFBATN7RuobKPGrEemzs_Md9zNOMf",
+      "title": "file_00000000fda881f5b955ea8d4fc4a486.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3721612,
+      "createdTime": "2026-10-02T03:08:54.455Z",
+      "modifiedTime": "2026-10-02T02:56:07.183Z"
+    },
+    {
+      "externalId": "1ojB969S5YhNuKq59J4gmCFRDkPLqrKlX",
+      "title": "eb1ddc2dbfebd0df7fe7e08604cfb743c9e23ab70e169cfc842055d94de929cd.png",
+      "mimeType": "image/png",
+      "sizeBytes": 1766043,
+      "createdTime": "2026-10-02T03:08:05.590Z",
+      "modifiedTime": "2026-10-02T02:56:07.126Z"
+    },
+    {
+      "externalId": "1ohgokG914gKUl4tuuuvhIBoBVROFBK-a",
+      "title": "74c89bdc87c944d0cfd6c6d1ac0efbba051cd53dabd904a4ab01f7491373a48f.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2000864,
+      "createdTime": "2026-10-02T03:07:37.313Z",
+      "modifiedTime": "2026-10-02T02:56:07.074Z"
+    },
+    {
+      "externalId": "1obk05EPaAx_Pxd9JTlY6i9WF0tTVpFVX",
+      "title": "file_0000000028a081f590a58e2bda9a8c3f.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2374526,
+      "createdTime": "2026-10-02T03:07:07.937Z",
+      "modifiedTime": "2026-10-02T02:56:07.004Z"
+    },
+    {
+      "externalId": "1oXTdwXBxRcrxboeFNWGqR_f-kIrDOB6i",
+      "title": "file_0000000069e481f59c120dac3d03a3a0.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2532049,
+      "createdTime": "2026-10-02T03:06:22.856Z",
+      "modifiedTime": "2026-10-02T02:56:06.915Z"
+    },
+    {
+      "externalId": "1oTDf8gYJu8Wno1tiiNjuKC6mo8Ik6Mpx",
+      "title": "file_000000008be881f594797057f78e23e7.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 41773,
+      "createdTime": "2026-10-02T03:05:33.651Z",
+      "modifiedTime": "2026-10-02T02:56:06.779Z"
+    },
+    {
+      "externalId": "1oP3rCJLQDyYJ0Oe6zBb2ZLeZuSaGLI3Y",
+      "title": "file_000000005a5c81f595a396d11fffc71b.png",
+      "mimeType": "image/png",
+      "sizeBytes": 292432,
+      "createdTime": "2026-10-02T03:05:29.315Z",
+      "modifiedTime": "2026-10-02T02:56:06.691Z"
+    },
+    {
+      "externalId": "1oHpoSXYM3HV2pbKYp_N5I5YefG75oI4E",
+      "title": "file_00000000d07881f58034911d96710269.png",
+      "mimeType": "image/png",
+      "sizeBytes": 782335,
+      "createdTime": "2026-10-02T03:05:19.399Z",
+      "modifiedTime": "2026-10-02T02:56:06.609Z"
+    },
+    {
+      "externalId": "1ncfltwccZA54aUSodiWOtUIP1SY2zRZp",
+      "title": "file_000000007fb081f5aff9a22751eb1fd7.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2856177,
+      "createdTime": "2026-10-02T02:59:28.656Z",
+      "modifiedTime": "2026-10-02T02:56:05.608Z"
+    },
+    {
+      "externalId": "1naXDH88PFCc6dKg_k6JfjuAtp9h-S6qD",
+      "title": "file_00000000a92081f593417212e7951d54.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2487798,
+      "createdTime": "2026-10-02T02:58:59.277Z",
+      "modifiedTime": "2026-10-02T02:56:05.555Z"
+    },
+    {
+      "externalId": "1nY_Js1ogmNPGNmGcUvdPeR4klYTdBNLc",
+      "title": "file_00000000d21881f5a481a0a46ad7fe86.png",
+      "mimeType": "image/png",
+      "sizeBytes": 3003195,
+      "createdTime": "2026-10-02T02:58:29.896Z",
+      "modifiedTime": "2026-10-02T02:56:05.456Z"
+    },
+    {
+      "externalId": "1nXUaraeVdTo9tkDuVwiJyj7iWJVo35my",
+      "title": "file_00000000839481f59c1b604275ace524.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2795855,
+      "createdTime": "2026-10-02T02:57:58.457Z",
+      "modifiedTime": "2026-10-02T02:56:05.350Z"
+    },
+    {
+      "externalId": "1nTkrgfM7vlowasCH37uB4uwcmP7ItFwn",
+      "title": "file_00000000bf3c81f5bcdf3b5f87691c25.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2390348,
+      "createdTime": "2026-10-02T02:57:27.056Z",
+      "modifiedTime": "2026-10-02T02:56:05.209Z"
+    },
+    {
+      "externalId": "1nP94N7FjVJocfXYhwueYlr5Dtyxu9Mno",
+      "title": "file_00000000f6a881f5ad4b76ca54aee9c4.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2478670,
+      "createdTime": "2026-10-02T02:57:01.832Z",
+      "modifiedTime": "2026-10-02T02:56:04.976Z"
+    },
+    {
+      "externalId": "1nDx522b0pLtoa3WSsDsjIEZmcphC25p6",
+      "title": "file_0000000061e481f5bf450f27f6e91b8e.png",
+      "mimeType": "image/png",
+      "sizeBytes": 2624565,
+      "createdTime": "2026-10-02T02:56:35.870Z",
+      "modifiedTime": "2026-10-02T02:56:04.728Z"
+    }
+  ],
+  "laws": [
+    "COLLECTION OWNERSHIP DECLARATION != BYTE IDENTITY",
+    "CURRENT MEMBERSHIP != FUTURE MEMBERSHIP",
+    "OWNED COLLECTION != AUTOMATIC FILM ADMISSION",
+    "ADMITTED ASSET REQUIRES EXACT BYTE SHA",
+    "SELECTED DONOR != EXHAUSTIVE COLLECTION USE"
+  ]
+}
