@@ -17,6 +17,7 @@ from statistics import mean
 SOURCE_SCHEMA = "haunted-blender/page-source/v1"
 REPORT_SCHEMA = "haunted-blender/page-grammar-report/v1"
 ATLAS_SCHEMA = "haunted-blender/manga-anime-grammar-atlas/v1"
+COLLECTION_SCHEMA = "haunted-blender/page-source-collection/v1"
 BATCH_SCHEMA = "haunted-blender/page-source-batch/v1"
 BATCH_SCHEMA = "haunted-blender/page-source-batch/v1"
 BATCH_RUN_SCHEMA = "haunted-blender/page-source-batch-run/v1"
@@ -181,6 +182,131 @@ def source_manifest_from_batch(
         motifs=motifs,
         sequence_index=sequence_index,
     )
+
+
+def collection_manifest(
+    *,
+    label: str,
+    collection_id: str,
+    collection_url: str,
+    source_class: str,
+    pixel_reuse: bool,
+    derivative_reuse: bool,
+    publication_reuse: bool,
+    rights_note: str,
+    member_snapshot: list[dict] | None = None,
+    future_members_inherit: bool = False,
+) -> dict:
+    """Record rights for a user-declared page collection.
+
+    Collection authority applies to membership, not bytes. Each actual page
+    still receives its own SHA when materialized and ingested.
+    """
+    source_class = str(source_class).strip().lower()
+    if source_class not in SOURCE_CLASSES:
+        raise ValueError(f"source_class must be one of {sorted(SOURCE_CLASSES)}")
+    if source_class == "reference" and (
+        pixel_reuse or derivative_reuse or publication_reuse
+    ):
+        raise ValueError("Reference collection cannot grant reuse rights")
+    if source_class in {"owned", "licensed"} and not str(rights_note).strip():
+        raise ValueError("Owned/licensed collection requires rights_note")
+    if not str(collection_id).strip():
+        raise ValueError("collection_id is required")
+
+    members = []
+    seen = set()
+    for raw in member_snapshot or []:
+        external_id = str(raw.get("externalId") or raw.get("id") or "").strip()
+        title = str(raw.get("title") or "").strip()
+        if not external_id or external_id in seen:
+            continue
+        seen.add(external_id)
+        members.append({
+            "externalId": external_id,
+            "title": title,
+            "mimeType": raw.get("mimeType") or raw.get("mime_type"),
+            "createdTime": raw.get("createdTime") or raw.get("created_time"),
+            "modifiedTime": raw.get("modifiedTime") or raw.get("modified_time"),
+        })
+    members.sort(key=lambda row: (str(row.get("createdTime") or ""), row["externalId"]))
+
+    body = {
+        "schema": COLLECTION_SCHEMA,
+        "label": str(label).strip() or str(collection_id),
+        "collectionId": str(collection_id).strip(),
+        "collectionUrl": str(collection_url).strip(),
+        "sourceClass": source_class,
+        "rights": {
+            "pixelReuse": bool(pixel_reuse),
+            "derivativeReuse": bool(derivative_reuse),
+            "publicationReuse": bool(publication_reuse),
+            "note": str(rights_note).strip(),
+        },
+        "futureMembersInherit": bool(future_members_inherit),
+        "memberSnapshot": members,
+        "memberCount": len(members),
+        "membershipAuthority": "user-declared-collection + external-metadata-snapshot",
+        "laws": [
+            "COLLECTION RIGHTS APPLY TO DECLARED MEMBERSHIP NOT UNKNOWN BYTES",
+            "EACH INGESTED PAGE STILL REQUIRES ITS OWN SOURCE SHA",
+            "FUTURE MEMBER INHERITANCE REQUIRES USER-DECLARED COLLECTION POLICY",
+            "COLLECTION OWNERSHIP != PAGE SEMANTICS",
+        ],
+    }
+    return {**body, "id": "page-source-collection:" + _hash(body)[:24]}
+
+
+def source_from_collection(
+    source_path: str | Path,
+    collection: dict,
+    *,
+    external_id: str,
+    label: str = "",
+    grammar_families: list[str] | tuple[str, ...] = (),
+    page_role: str | None = None,
+    continuity_group: str | None = None,
+    motifs: list[str] | tuple[str, ...] = (),
+    sequence_index: int | None = None,
+) -> dict:
+    if collection.get("schema") != COLLECTION_SCHEMA:
+        raise ValueError("Expected page source collection")
+
+    external_id = str(external_id).strip()
+    snapshot_ids = {
+        str(row.get("externalId") or "")
+        for row in collection.get("memberSnapshot") or []
+    }
+    if external_id not in snapshot_ids and not collection.get("futureMembersInherit"):
+        raise PermissionError("File is not in collection membership snapshot")
+
+    rights = collection.get("rights") or {}
+    manifest = source_manifest(
+        source_path,
+        source_class=collection["sourceClass"],
+        pixel_reuse=bool(rights.get("pixelReuse")),
+        derivative_reuse=bool(rights.get("derivativeReuse")),
+        publication_reuse=bool(rights.get("publicationReuse")),
+        grammar_families=grammar_families,
+        rights_note=str(rights.get("note") or ""),
+        label=label,
+        page_role=page_role,
+        continuity_group=continuity_group,
+        motifs=motifs,
+        sequence_index=sequence_index,
+    )
+    body = {
+        **manifest,
+        "collectionId": collection["id"],
+        "collectionExternalId": collection["collectionId"],
+        "externalMemberId": external_id,
+        "rightsInheritedFromCollection": True,
+    }
+    # Re-address after collection provenance is added.
+    return {
+        **body,
+        "id": "page-source:" + _hash({k: v for k, v in body.items() if k != "id"})[:24],
+    }
 
 
 def source_manifest(
