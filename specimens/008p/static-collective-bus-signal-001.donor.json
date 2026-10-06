@@ -21,15 +21,15 @@
     "encoding": "base64-file",
     "path": "specimens/008p/static-collective-bus-signal-001.jpg.b64",
     "decodedMimeType": "image/jpeg",
-    "width": 384,
-    "height": 216,
-    "byteLength": 24653,
-    "sha256": "1fcd93c9ce116a9741f9bbaef05e783680a1944086fef81e9515dc5650989dba",
+    "width": 160,
+    "height": 90,
+    "byteLength": 4997,
+    "sha256": "7842a139f34bb5f35ca800d88ee5a7a263758f6f709b063f23f17701e47572cd",
     "transform": {
       "operation": "resize+JPEG",
-      "resize": "1672x941 -> 384x216",
+      "resize": "1672x941 -> 160x90",
       "resampling": "Pillow LANCZOS",
-      "jpegQuality": 70,
+      "jpegQuality": 68,
       "optimize": true,
       "progressive": false
     }
