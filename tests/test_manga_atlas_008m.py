@@ -181,6 +181,67 @@ class MangaAnimeGrammarAtlas008mTests(unittest.TestCase):
                 for row in prescription["shots"]
             ))
 
+    def test_dark_border_layout_falls_back_when_white_gutters_are_absent(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "bordered.png"
+            image = self.Image.new("RGB", (420, 620), (222, 218, 210))
+            draw = self.ImageDraw.Draw(image)
+            # Four touching panel fields: no white gutter, only continuous dark borders.
+            draw.rectangle((0, 0, 209, 309), fill=(232, 220, 205), outline=(15, 15, 15), width=6)
+            draw.rectangle((210, 0, 419, 309), fill=(210, 225, 235), outline=(15, 15, 15), width=6)
+            draw.rectangle((0, 310, 209, 619), fill=(235, 210, 220), outline=(15, 15, 15), width=6)
+            draw.rectangle((210, 310, 419, 619), fill=(218, 235, 216), outline=(15, 15, 15), width=6)
+            image.save(source)
+
+            manifest = manga_atlas.source_manifest(
+                source,
+                source_class="reference",
+                pixel_reuse=False,
+                derivative_reuse=False,
+                publication_reuse=False,
+                grammar_families=["panel-rhythm"],
+            )
+            report = manga_atlas.analyze_page(manifest)
+            self.assertGreaterEqual(report["panelCount"], 4)
+            self.assertIn(
+                "WHITE GUTTER AND DARK BORDER DETECTION ARE BOTH HEURISTICS",
+                report["laws"],
+            )
+
+    def test_owned_page_harvest_can_drop_into_existing_008h_parts_drawer(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "owned.png"
+            self.make_page(source, mode="irregular")
+            manifest = manga_atlas.source_manifest(
+                source,
+                source_class="owned",
+                pixel_reuse=True,
+                derivative_reuse=True,
+                publication_reuse=True,
+                grammar_families=["cozy-ensemble", "room-ecology"],
+                rights_note="Synthetic owned fixture.",
+            )
+            harvest = manga_atlas.harvest_page(manifest, root / "harvest")
+            drawer = manga_atlas.page_harvest_to_parts_drawer(
+                harvest, root / "parts-drawer.json"
+            )
+            self.assertEqual(drawer["schema"], "haunted-blender/parts-drawer/v1")
+            self.assertEqual(drawer["sourceCount"], 1)
+            self.assertGreater(drawer["artifactCount"], 0)
+            self.assertIn("still", drawer["byKind"])
+            self.assertIn("crop", drawer["byKind"])
+            self.assertIn("mask", drawer["byKind"])
+            self.assertTrue(all(
+                row["sourceSha256"] == manifest["sourceSha256"]
+                for row in drawer["artifacts"]
+            ))
+            self.assertTrue(all(
+                row["harvestId"] == harvest["id"]
+                for row in drawer["artifacts"]
+            ))
+
     def test_reference_manifest_cannot_self_grant_reuse_rights(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
