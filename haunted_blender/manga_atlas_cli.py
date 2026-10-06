@@ -64,6 +64,7 @@ def main(argv=None):
     source.add_argument("--label", default="")
     source.add_argument("--rights-note", default="")
     source.add_argument("--pixel-reuse", action="store_true")
+    source.add_argument("--pixel-harvest", action=argparse.BooleanOptionalAction, default=None)
     source.add_argument("--derivative-reuse", action="store_true")
     source.add_argument("--publication-reuse", action="store_true")
     source.add_argument("--family", action="append", default=[])
@@ -75,10 +76,12 @@ def main(argv=None):
     analyze = sub.add_parser("analyze")
     analyze.add_argument("source_manifest_json")
     analyze.add_argument("output_json")
+    analyze.add_argument("--source-root")
 
     harvest = sub.add_parser("harvest")
     harvest.add_argument("source_manifest_json")
     harvest.add_argument("output_dir")
+    harvest.add_argument("--source-root")
 
     drawer = sub.add_parser("drawer")
     drawer.add_argument("page_harvest_json")
@@ -148,6 +151,7 @@ def main(argv=None):
             args.source_image,
             source_class=args.source_class,
             pixel_reuse=args.pixel_reuse,
+            pixel_harvest=args.pixel_harvest,
             derivative_reuse=args.derivative_reuse,
             publication_reuse=args.publication_reuse,
             grammar_families=args.family,
@@ -160,12 +164,13 @@ def main(argv=None):
         )
         _write(Path(args.output_json).expanduser().resolve(), result)
     elif args.command == "analyze":
-        result = manga_atlas.analyze_page(_read(args.source_manifest_json))
+        result = manga_atlas.analyze_page(_read(args.source_manifest_json), source_root=args.source_root)
         _write(Path(args.output_json).expanduser().resolve(), result)
     elif args.command == "harvest":
         result = manga_atlas.harvest_page(
             _read(args.source_manifest_json),
             args.output_dir,
+            source_root=args.source_root,
         )
     elif args.command == "drawer":
         result = manga_atlas.page_harvest_to_parts_drawer(

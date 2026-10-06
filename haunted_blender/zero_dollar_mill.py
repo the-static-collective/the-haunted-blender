@@ -306,6 +306,9 @@ def render_plan(
         vf = _recipe_filter(
             row["recipe"], width=width, height=height, fps=fps, duration=duration
         )
+        # Timing recipes may leave a fractional final frame on newer FFmpeg.
+        # Re-establish the declared cadence and bound a held tail with -t below.
+        vf += f",fps={fps},tpad=stop_mode=clone:stop_duration=1"
         cmd = [
             "ffmpeg", "-nostdin", "-v", "error", "-y",
             "-stream_loop", "-1",

@@ -1,0 +1,11 @@
+{
+  "repository": "the-static-collective/lemonPRESS",
+  "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+  "pullRequest": 23,
+  "copiedFiles": [
+    "works/manga-press-specimen/manga/001/blender-compatibility-handoff.json",
+    "works/manga-press-specimen/manga/001/pages/page-05.json",
+    "works/manga-press-specimen/manga/001/pixels/page-05.png"
+  ],
+  "scope": "Exact synthetic fixture only. Original pixelHarvest=false remains unchanged."
+}

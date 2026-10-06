@@ -40,6 +40,19 @@ An experimental [Creative Claw take bridge](docs/CREATIVE_CLAW_TAKE_001.md) free
 
 ## Current scaffold capability
 
+[MANGALIZE-001](docs/MANGALIZE_001.md) gives the creative grammar an immutable
+request/admission/execution/return verb event. Its first vertical carries an
+exact LemonPRESS page locator through the existing geometry quarry, with
+independent harvest/reuse/derivative permissions. The original closed handoff
+remains an executable refusal. A later, explicit harvest-only grant produces
+25 quarantined candidates with no Parts Drawer creative admission, animation,
+or publication authority. The optional drawer crossing is tested separately
+under fictional full-rights evidence.
+
+```sh
+python -m haunted_blender.mangalize_cli --help
+```
+
 A minimal Python local command door indexes supported media paths and hashes in SQLite, links a RAW to an explicitly provided renderable derivative, creates film/scene/shot manifests, freezes content-addressed snapshots and renders a silent still-image storyboard with FFmpeg. CR2/CR3 are preserved/indexed as source files, **not decoded or treated as directly renderable video frames**. No GUI, Adobe-faithful XMP processing, automatic film direction, character generation, voice performance, remote video models or AgentBroko adapter is implemented.
 
 Python 3.10+; FFmpeg required only for rendering. To run from repository root:
