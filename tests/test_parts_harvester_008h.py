@@ -217,5 +217,48 @@ class PartsHarvester008hTests(unittest.TestCase):
             self.assertEqual(dressed_receipt["usdMicros"], 0)
 
 
+
+    def test_doctor_prescription_reaches_sideways_to_different_source_before_generation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "flow"
+            source.mkdir()
+            self.make_video(source / "a.mp4", mode="testsrc2")
+            self.make_video(source / "b.mp4", mode="bars")
+            manifest = flow_pantry.index_flow_folder(source, probe=True)
+            parts_harvester.harvest_flow_manifest(
+                manifest, source, root / "batch", still_count=3
+            )
+            drawer = json.loads((root / "batch" / "parts-drawer.json").read_text(encoding="utf-8"))
+            source_shas = sorted({row["sourceSha256"] for row in drawer["artifacts"]})
+            self.assertEqual(len(source_shas), 2)
+            current = source_shas[0]
+            report = {
+                "schema": "haunted-blender/weakest-window-report/v1",
+                "id": "weak-report:parts-test",
+                "ranking": ["window-0001"],
+                "windows": [{
+                    "id": "window-0001",
+                    "start": 0.0,
+                    "end": 2.0,
+                    "weaknessScore": 0.9,
+                    "dominantWeakness": "recentRepetition",
+                    "sources": [{
+                        "sourceSha256": current,
+                        "seconds": 2.0,
+                    }],
+                }],
+            }
+            prescription = parts_harvester.prescribe_for_weak_windows(
+                report, drawer, max_windows=1
+            )
+            entry = prescription["entries"][0]
+            self.assertEqual(entry["level"], 2)
+            self.assertEqual(entry["providerCredits"], 0)
+            self.assertGreater(len(entry["proposedBits"]), 0)
+            self.assertTrue(
+                any(bit["sourceSha256"] != current for bit in entry["proposedBits"])
+            )
+
 if __name__ == "__main__":
     unittest.main()
