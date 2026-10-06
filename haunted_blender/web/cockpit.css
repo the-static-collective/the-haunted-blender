@@ -149,3 +149,54 @@ h2 { font-size: 20px; }
   .action-buttons { grid-template-columns: 1fr; }
   .cost-legend { display: none; }
 }
+
+
+.action-form select {
+  width: 100%;
+  background: #0d1115;
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 9px;
+  outline: none;
+}
+.action-form select:focus { border-color: #718096; }
+
+.quote-card {
+  display: grid;
+  gap: 6px;
+  background: #0b0f13;
+  border: 1px solid var(--yellow);
+  border-radius: 10px;
+  padding: 12px;
+}
+.quote-card strong { font-size: 13px; }
+.quote-card span { color: var(--yellow); font-size: 12px; }
+
+.spend-button {
+  border: 1px solid var(--yellow);
+  background: rgba(246, 196, 83, .12);
+  color: var(--yellow);
+  border-radius: 10px;
+  padding: 11px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .07em;
+  cursor: pointer;
+}
+.spend-button:hover { background: rgba(246, 196, 83, .2); }
+
+.candidate-keep {
+  width: calc(100% - 16px);
+  margin: 0 8px 8px;
+  border: 1px solid var(--green);
+  background: rgba(104, 211, 145, .1);
+  color: var(--green);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+.candidate-keep:hover { background: rgba(104, 211, 145, .18); }
