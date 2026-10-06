@@ -33,3 +33,7 @@ library.sqlite3
 projects/
 snapshots/
 renders/
+.mangalize-ci/
+# Exact, openly synthetic foreign witness and bounded quarry proof only.
+!specimens/mangalize-001/lemonpress/works/manga-press-specimen/manga/001/pixels/page-05.png
+!specimens/mangalize-001/executed/harvest/**/*.png

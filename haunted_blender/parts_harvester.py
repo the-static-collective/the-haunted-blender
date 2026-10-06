@@ -530,6 +530,25 @@ def _artifact_key(row: dict) -> tuple:
     )
 
 
+def resolve_drawer_artifact(drawer: dict, row: dict, *, artifact_root=None) -> Path:
+    """Resolve canonical event-relative custody without treating a name as ancestry."""
+    if drawer.get("pathBase") == "event-root":
+        if artifact_root is None:
+            raise ValueError("Event-relative Parts Drawer requires explicit artifact_root")
+        root = Path(artifact_root).resolve(strict=True)
+        relative = Path(row["path"])
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError("Drawer artifact escapes event root")
+        path = (root / relative).resolve(strict=True)
+        if not path.is_relative_to(root):
+            raise ValueError("Drawer artifact escapes event root")
+    else:
+        path = Path(row["path"]).expanduser().resolve(strict=True)
+    if _file_sha(path) != row["sha256"]:
+        raise ValueError("Drawer artifact bytes changed")
+    return path
+
+
 def build_drawer(harvests: list[dict], output_path: str | Path) -> dict:
     if not harvests:
         raise ValueError("Parts drawer needs at least one harvest")

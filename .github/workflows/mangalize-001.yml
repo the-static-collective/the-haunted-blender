@@ -1,0 +1,80 @@
+name: mangalize-001
+on:
+  push:
+    branches: [integration/mangalize-001-first-class-verb]
+  pull_request:
+    branches: [integration/franken-blender-008p-owned-pixel-manga-film]
+permissions:
+  contents: read
+jobs:
+  event-custody:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install inherited render dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install Pillow==12.1.1
+      - name: Compile Python and check inherited browser JavaScript
+        run: |
+          python -m compileall -q haunted_blender
+          node --check haunted_blender/web/cockpit.js
+      - name: Complete inherited suite and MANGALIZE tests
+        run: python -m unittest discover -s tests -v
+      - uses: actions/checkout@v4
+        with:
+          repository: the-static-collective/lemonPRESS
+          ref: 88978ff88f9b07a72040976b426b04afc2abd835
+          path: .mangalize-ci/lemonpress
+      - name: Verify the exact read-only foreign witness
+        run: python specimens/mangalize-001/check_pin.py .mangalize-ci/lemonpress
+      - name: Replay the complete founding MANGALIZE event
+        run: |
+          python -m haunted_blender.mangalize_cli execute \
+            specimens/mangalize-001/executed/mangalize.request.json \
+            specimens/mangalize-001/executed/mangalize.admission.json \
+            specimens/mangalize-001/lemonpress /tmp/mangalize-001-replayed
+          python -m haunted_blender.mangalize_cli verify \
+            specimens/mangalize-001/executed/mangalize.request.json \
+            specimens/mangalize-001/executed/mangalize.admission.json \
+            specimens/mangalize-001/lemonpress /tmp/mangalize-001-replayed
+          python -m haunted_blender.mangalize_cli verify \
+            specimens/mangalize-001/executed/mangalize.request.json \
+            specimens/mangalize-001/executed/mangalize.admission.json \
+            specimens/mangalize-001/lemonpress specimens/mangalize-001/executed
+      - name: Prove the founding harvest-only ceiling and quarantine
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from haunted_blender import mangalize as m
+          out = Path('/tmp/mangalize-001-replayed')
+          admission = m.read(out / 'mangalize.admission.json')
+          returned = m.read(out / 'mangalize.return.json')
+          harvest = m.read(out / 'harvest/page-harvest.json')
+          assert admission['admittedOperations'] == ['harvest']
+          assert admission['effectiveGrants'] == {k: k == 'pixelHarvest' for k in m.GRANTS}
+          assert len(harvest['assets']) == 25
+          assert all(a['materialAuthority'] == 'quarantined-inspection-only' for a in harvest['assets'])
+          assert not any(returned['grantsCarried'].values())
+          assert not (out / 'parts-drawer.combined.json').exists()
+          assert returned['publicationStateChange'] is None
+          PY
+      - name: Re-prove the founding permission refusal
+        run: |
+          python -m haunted_blender.mangalize_cli admit \
+            specimens/mangalize-001/refusal/mangalize.request.json \
+            /tmp/mangalize-001-refusal.json \
+            --evidence-root specimens/mangalize-001/lemonpress \
+            --allow harvest --allow reuse --allow derive \
+            --authority-ref local-validator:mangalize-001:refusal-decision && exit 1 || test -f /tmp/mangalize-001-refusal.json
+          cmp specimens/mangalize-001/refusal/mangalize.admission.json /tmp/mangalize-001-refusal.json
+      - name: Upload exact event receipts and candidates
+        uses: actions/upload-artifact@v4
+        with:
+          name: mangalize-001-event
+          path: /tmp/mangalize-001-replayed

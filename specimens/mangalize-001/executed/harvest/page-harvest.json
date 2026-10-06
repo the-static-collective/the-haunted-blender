@@ -1,0 +1,1595 @@
+{
+  "assetCount": 25,
+  "assets": [
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:4730b32b3e6a6a201762cb0c",
+      "kind": "panel",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": "panel-001",
+      "path": "harvest/panels/panel-001/panel.png",
+      "recipe": {
+        "box": [
+          0,
+          0,
+          64,
+          96
+        ],
+        "op": "panel-crop"
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "674a270d4a1d2aa451d713b19e4889fc2886d4a6d1961f83563f9b16007f92e7",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:3303923667b99a06c7417376",
+      "kind": "region-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": "panel-001",
+      "path": "harvest/panels/panel-001/region-center.png",
+      "recipe": {
+        "anchor": "center",
+        "box": [
+          12,
+          18,
+          52,
+          78
+        ],
+        "op": "panel-region-crop"
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "0754b290a875411d4ea81e48ee433c841bd00f5627c2a1516cc24a5f24c400a8",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:3b30e1181e90a20365583c24",
+      "kind": "region-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": "panel-001",
+      "path": "harvest/panels/panel-001/region-nw.png",
+      "recipe": {
+        "anchor": "nw",
+        "box": [
+          0,
+          0,
+          40,
+          60
+        ],
+        "op": "panel-region-crop"
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "d6be400993250acbee0d5b9e559e38010490520941cf4ec12373dbe049822d4c",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:0c67589eda8a68419ea40475",
+      "kind": "region-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": "panel-001",
+      "path": "harvest/panels/panel-001/region-ne.png",
+      "recipe": {
+        "anchor": "ne",
+        "box": [
+          24,
+          0,
+          64,
+          60
+        ],
+        "op": "panel-region-crop"
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "4fb329dba7a622ccbe92c91ce20eaa09984f8c71f4da6f89e7404937c09d5a30",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:b52ae9277931e2093ae0085e",
+      "kind": "region-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": "panel-001",
+      "path": "harvest/panels/panel-001/region-sw.png",
+      "recipe": {
+        "anchor": "sw",
+        "box": [
+          0,
+          36,
+          40,
+          96
+        ],
+        "op": "panel-region-crop"
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "00da6ce9c670e202cb5a20a4356b38296fa015658db3339f895fcebe70138d39",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:1665a155502f1ce999eace52",
+      "kind": "region-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": "panel-001",
+      "path": "harvest/panels/panel-001/region-se.png",
+      "recipe": {
+        "anchor": "se",
+        "box": [
+          24,
+          36,
+          64,
+          96
+        ],
+        "op": "panel-region-crop"
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "fb4024785f0f3e9db731e8ca50714805c82a300857730255b38c80f6c4baf99c",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:a622c44b71a723710826149f",
+      "kind": "edge-mask",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": "panel-001",
+      "path": "harvest/panels/panel-001/edge-mask.png",
+      "recipe": {
+        "op": "edge-mask",
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "f617cc565a42f9028ac77dfc444e398ad5642d956c2a9718d8cc3c2adaad2580",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:b63d4b09ccab9bcbbfd5fc1c",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-2x3-01-01.png",
+      "recipe": {
+        "box": [
+          0,
+          0,
+          35,
+          35
+        ],
+        "col": 0,
+        "grid": [
+          2,
+          3
+        ],
+        "op": "page-quarry-tile",
+        "row": 0,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "4a47c3ba9922d59cb156b4fcc2189af71ade29a83ba3c9b74eae6937a2f633e8",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:021bbef359e96605ca14f005",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-2x3-01-02.png",
+      "recipe": {
+        "box": [
+          29,
+          0,
+          64,
+          35
+        ],
+        "col": 1,
+        "grid": [
+          2,
+          3
+        ],
+        "op": "page-quarry-tile",
+        "row": 0,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "d3d2c64e80a4b88e2b9fc446ad5afbdd01387ae9518f63b07702cfc3441b3b3d",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:2c2f5f3e537fd6acfd7ccde0",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-2x3-02-01.png",
+      "recipe": {
+        "box": [
+          0,
+          30,
+          35,
+          65
+        ],
+        "col": 0,
+        "grid": [
+          2,
+          3
+        ],
+        "op": "page-quarry-tile",
+        "row": 1,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "46d2da74c3430eca00f053312522a4805d56327fa8cdb6e2c64cf3c1f8406c92",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:7646d5f2f7b4b90255a58cb7",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-2x3-02-02.png",
+      "recipe": {
+        "box": [
+          29,
+          30,
+          64,
+          65
+        ],
+        "col": 1,
+        "grid": [
+          2,
+          3
+        ],
+        "op": "page-quarry-tile",
+        "row": 1,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "dc8c6c74e2ba82a070e99303216ab286cf61e62dbedf962c04e8dafd53a4ca3a",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:96b5d1375f5fccad445b3ad8",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-2x3-03-01.png",
+      "recipe": {
+        "box": [
+          0,
+          61,
+          35,
+          96
+        ],
+        "col": 0,
+        "grid": [
+          2,
+          3
+        ],
+        "op": "page-quarry-tile",
+        "row": 2,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "de56493f9d477414bfe9442b34b8d5d0f11c95f3c5ab5f888acfecdbc21e9c45",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:bc70b03450ad1d7093dbae23",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-2x3-03-02.png",
+      "recipe": {
+        "box": [
+          29,
+          61,
+          64,
+          96
+        ],
+        "col": 1,
+        "grid": [
+          2,
+          3
+        ],
+        "op": "page-quarry-tile",
+        "row": 2,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "565ea6a6d8df36910aaf28635c03b0f99f2bd414044082f512e642eadccd050f",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:38c430160a7409e9f38d8e37",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-01-01.png",
+      "recipe": {
+        "box": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "col": 0,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 0,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "c575f06d6b27389432bada5dd52158c9b451d61a6601f23dd4f8365ffef226c1",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:9e37be57161a403845d3a51a",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-01-02.png",
+      "recipe": {
+        "box": [
+          16,
+          0,
+          48,
+          32
+        ],
+        "col": 1,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 0,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "36f1caa0c08431d37c8aba2a2424ec5a66ef6a54b081898a26d4edce3dbd29b4",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:b934ba7f1648fae7a5d71617",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-01-03.png",
+      "recipe": {
+        "box": [
+          32,
+          0,
+          64,
+          32
+        ],
+        "col": 2,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 0,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "1d855b410bae3ae11d897e4605a666780d99a37fc2562f0a75f5ff68be9253f8",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:972eff1424570d68a16c853d",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-02-01.png",
+      "recipe": {
+        "box": [
+          0,
+          20,
+          32,
+          52
+        ],
+        "col": 0,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 1,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "dd97a96e9561da7df0ec5c3b07be679766cd376876590fa07851a36444d00021",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:3259601ad0af23b030dc269c",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-02-02.png",
+      "recipe": {
+        "box": [
+          16,
+          20,
+          48,
+          52
+        ],
+        "col": 1,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 1,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "faf074b7db50e3ae58092e58397b05f6106cc8a0cd24852e7ffb58df1965d687",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:d52bcecccea2663e86595420",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-02-03.png",
+      "recipe": {
+        "box": [
+          32,
+          20,
+          64,
+          52
+        ],
+        "col": 2,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 1,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "497827eaa25a5aa87e92f4ad3410eede0e4dd5646da1069f06b65f6bef083652",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:35a0b8f3adce7ac2e44b9fd7",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-03-01.png",
+      "recipe": {
+        "box": [
+          0,
+          44,
+          32,
+          76
+        ],
+        "col": 0,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 2,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "3f669d838e7257367d5b1b486de039982403eb1571f50032d411eb2c72ca4687",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:9da50a0f143620e08a52349d",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-03-02.png",
+      "recipe": {
+        "box": [
+          16,
+          44,
+          48,
+          76
+        ],
+        "col": 1,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 2,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "72a1ad68a51b9035460fc78a4fefb8fcc53cc3e86624023dde623e424e890dd1",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:058c3408cfd9d5af4d984ada",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-03-03.png",
+      "recipe": {
+        "box": [
+          32,
+          44,
+          64,
+          76
+        ],
+        "col": 2,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 2,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "ee824cb2f614dc66977453c57d66df52af22d4548bfe36e08d547cd8679894a5",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:6c0afd9d99b4bbbc46b0b132",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-04-01.png",
+      "recipe": {
+        "box": [
+          0,
+          64,
+          32,
+          96
+        ],
+        "col": 0,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 3,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "17c02104d6ad4c4b2368c2f863a60dcd7adb8a8ffabb1e8e1d18f6f6dd07be24",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:4f483337e806ff684f8ecc33",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-04-02.png",
+      "recipe": {
+        "box": [
+          16,
+          64,
+          48,
+          96
+        ],
+        "col": 1,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 3,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "6b97ec1359af40586eaa046ff0b0251dfc0dec186f87035bac6cc64f123fb59f",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    },
+    {
+      "eventLineage": [
+        {
+          "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+          "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+          "verb": "MANGALIZE"
+        }
+      ],
+      "foreignAncestry": [
+        {
+          "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+          "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+          "kinds": [
+            "lemonpress/manga-page/v0",
+            "lemonpress/manga-performance-handoff/v0"
+          ],
+          "locator": {
+            "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+            "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+            "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+            "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+            "pageId": "page-05",
+            "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+            "workId": "lemonpress:manga-press-synthetic-001"
+          },
+          "repository": "the-static-collective/lemonPRESS",
+          "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+          "system": "lemonpress"
+        }
+      ],
+      "grantScope": "descendant reuse only; new harvest requires independent source-specific admission",
+      "id": "page-asset:05fdabd593a86eb3c30a2747",
+      "kind": "quarry-candidate",
+      "materialAuthority": "quarantined-inspection-only",
+      "panelId": null,
+      "path": "harvest/quarry/quarry-3x4-04-03.png",
+      "recipe": {
+        "box": [
+          32,
+          64,
+          64,
+          96
+        ],
+        "col": 2,
+        "grid": [
+          3,
+          4
+        ],
+        "op": "page-quarry-tile",
+        "row": 3,
+        "semantic": false
+      },
+      "rights": {
+        "derivativeReuse": false,
+        "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+        "pixelHarvest": false,
+        "pixelReuse": false,
+        "publicationReuse": false
+      },
+      "sha256": "04e689dc3576f0afdcce09084dad290413a84b7ed192738d6674246b47beae2f",
+      "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+      "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168"
+    }
+  ],
+  "cost": {
+    "externalGenerations": 0,
+    "providerCredits": 0,
+    "usdMicros": 0
+  },
+  "eventLineage": [
+    {
+      "admissionHash": "d904afccec60fefb88cb68f6bffb06e6ff62e01a9f34f63cd3b4182138ae2a0a",
+      "requestHash": "dbf0d6385734943c81a33e57a2f8dc2c5889c1ba657ad958d44333007bf4ff9c",
+      "verb": "MANGALIZE"
+    }
+  ],
+  "externalGenerations": 0,
+  "foreignAncestry": [
+    {
+      "commit": "88978ff88f9b07a72040976b426b04afc2abd835",
+      "handoffHash": "dd9b21083a4781e619e95a9a2f7cfdde728d570e23ea57ec22e868ab5778c42a",
+      "kinds": [
+        "lemonpress/manga-page/v0",
+        "lemonpress/manga-performance-handoff/v0"
+      ],
+      "locator": {
+        "editionHash": "e5e4a93558c64eb8ed89f1485e501eccdb9b201abfd5f3d9160414cd22cb6663",
+        "editionId": "lemonpress:manga-press-synthetic-001:manga-001",
+        "issueId": "lemonpress:manga-press-synthetic-001:issue-001",
+        "pageHash": "a437492d2ac70155ae145448c442523492dc03b5f66dc401a35cb9ea52bb7dbe",
+        "pageId": "page-05",
+        "sourceImageSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+        "workId": "lemonpress:manga-press-synthetic-001"
+      },
+      "repository": "the-static-collective/lemonPRESS",
+      "sourceHash": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+      "system": "lemonpress"
+    }
+  ],
+  "id": "page-harvest:07f186819b5c288ff398bad9",
+  "laws": [
+    "OWNED OR LICENSED PAGE MAY BE DISASSEMBLED",
+    "HARVESTED ASSET != CHARACTER IDENTITY",
+    "EDGE MASK != SEMANTIC SEGMENTATION",
+    "QUARRY TILE != PANEL",
+    "LOW-CONFIDENCE PANEL MAP MAY STILL YIELD USEFUL CROPS",
+    "PAGE MAY YIELD ACTORS FX PROPS AND BACKGROUNDS AFTER SELECTION"
+  ],
+  "materialAuthority": "quarantined-inspection-only",
+  "panelCount": 1,
+  "panelMapStatus": "undersegmented",
+  "pathBase": "event-root",
+  "providerCredits": 0,
+  "quarryCandidateCount": 18,
+  "reportId": "page-grammar-report:b395d10cdebdf0024c6ae3bc",
+  "rights": {
+    "derivativeReuse": false,
+    "note": "Foreign-source declarations and exact MANGALIZE admission; no local ownership or publication claim.",
+    "pixelHarvest": true,
+    "pixelReuse": false,
+    "publicationReuse": false
+  },
+  "rightsModel": "separate-harvest-reuse/v1",
+  "schema": "haunted-blender/page-harvest/v1",
+  "sourceClass": "licensed",
+  "sourceId": "page-source:f937a55a19c5be8c8690a3bd",
+  "sourceSha256": "36a9e87799977330d112f35dfd3567b39eda66a8c418532cf6cc8ef520dd5168",
+  "usdMicros": 0
+}

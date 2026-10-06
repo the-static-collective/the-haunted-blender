@@ -226,7 +226,7 @@ def render(root: Path, snapshot: Path, out: Path) -> dict:
                 + ":force_original_aspect_ratio=decrease:flags=lanczos,"
                 + "pad=" + str(WIDTH) + ":" + str(HEIGHT)
                 + ":(ow-iw)/2:(oh-ih)/2,setsar=1,fps=" + str(FPS)
-                + ",settb=AVTB,setpts=PTS-STARTPTS,format=yuv420p[v" + str(i) + "]"
+                + ",settb=AVTB,setpts=PTS-STARTPTS,format=yuv420p,fps=" + str(FPS) + "[v" + str(i) + "]"
             )
         previous = "v0"
         for i in range(1, len(spec["segments"])):

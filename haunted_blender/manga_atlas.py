@@ -9,6 +9,7 @@ extraction is refused unless the source manifest grants it.
 from __future__ import annotations
 
 import hashlib
+import copy
 import json
 import math
 from pathlib import Path
@@ -67,6 +68,26 @@ def _file_sha(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def _lineage(value: dict) -> dict:
+    """Optional composable foreign custody; never inferred from filenames."""
+    return {key: copy.deepcopy(value[key]) for key in ("foreignAncestry", "eventLineage") if key in value}
+
+
+def _source_path(manifest: dict, source_root=None) -> Path:
+    if manifest.get("pathBase") == "source-root":
+        if source_root is None:
+            raise ValueError("Foreign page source requires explicit source_root")
+        root = Path(source_root).resolve(strict=True)
+        relative = Path(manifest["sourcePath"])
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError("Page source escapes source root")
+        source = (root / relative).resolve(strict=True)
+        if not source.is_relative_to(root):
+            raise ValueError("Page source escapes source root")
+        return source
+    return Path(manifest["sourcePath"]).expanduser().resolve(strict=True)
 
 
 def source_batch_manifest(
@@ -335,6 +356,10 @@ def source_manifest(
     continuity_group: str | None = None,
     motifs: list[str] | tuple[str, ...] = (),
     sequence_index: int | None = None,
+    pixel_harvest: bool | None = None,
+    source_root: str | Path | None = None,
+    foreign_ancestry: list[dict] | None = None,
+    event_lineage: list[dict] | None = None,
 ) -> dict:
     from PIL import Image
 
@@ -387,6 +412,21 @@ def source_manifest(
             "REFERENCE SOURCE MAY INFORM GRAMMAR WITHOUT EXPORTING PIXELS",
         ],
     }
+    if pixel_harvest is not None:
+        if type(pixel_harvest) is not bool:
+            raise ValueError("pixel_harvest must be an explicit boolean")
+        if source_class == "reference" and pixel_harvest:
+            raise ValueError("Reference source cannot grant harvest")
+        body["rights"]["pixelHarvest"] = pixel_harvest
+        body["rightsModel"] = "separate-harvest-reuse/v1"
+    if foreign_ancestry is not None:
+        if pixel_harvest is None or not foreign_ancestry:
+            raise ValueError("Foreign source requires explicit independent harvest permission and ancestry")
+        body["foreignAncestry"] = copy.deepcopy(foreign_ancestry)
+        body["eventLineage"] = copy.deepcopy(event_lineage or [])
+    if source_root is not None:
+        body["sourcePath"] = source.relative_to(Path(source_root).resolve(strict=True)).as_posix()
+        body["pathBase"] = "source-root"
     return {**body, "id": "page-source:" + _hash(body)[:24]}
 
 
@@ -713,13 +753,13 @@ def _edge_density(image) -> float:
     return high / total
 
 
-def analyze_page(manifest: dict) -> dict:
+def analyze_page(manifest: dict, *, source_root=None) -> dict:
     from PIL import Image
 
     if manifest.get("schema") != SOURCE_SCHEMA:
         raise ValueError("Expected page source manifest")
 
-    source = Path(manifest["sourcePath"]).expanduser().resolve(strict=True)
+    source = _source_path(manifest, source_root)
     if _file_sha(source) != manifest["sourceSha256"]:
         raise ValueError("Page source bytes changed after manifest creation")
 
@@ -755,6 +795,7 @@ def analyze_page(manifest: dict) -> dict:
     quarry_recommended = panel_map_status != "nominal"
 
     body = {
+        **_lineage(manifest),
         "schema": REPORT_SCHEMA,
         "sourceId": manifest["id"],
         "sourceSha256": manifest["sourceSha256"],
@@ -917,14 +958,20 @@ def _quarry_asset_rows(
     return assets
 
 
-def harvest_page(manifest: dict, output_dir: str | Path) -> dict:
+def harvest_page(manifest: dict, output_dir: str | Path, *, source_root=None, artifact_root=None) -> dict:
     if manifest.get("schema") != SOURCE_SCHEMA:
         raise ValueError("Expected page source manifest")
     rights = manifest.get("rights") or {}
-    if not rights.get("pixelReuse") or not rights.get("derivativeReuse"):
+    separate = manifest.get("rightsModel") == "separate-harvest-reuse/v1" or "foreignAncestry" in manifest
+    if separate:
+        if rights.get("pixelHarvest") is not True:
+            raise PermissionError("Page source lacks independent pixelHarvest authority")
+    elif not rights.get("pixelReuse") or not rights.get("derivativeReuse"):
+        # Existing 008m declarations retain their original, explicit legacy
+        # disassembly semantics. Foreign adapters cannot use this fallback.
         raise PermissionError("Page source does not authorize pixel/derivative harvesting")
 
-    source = Path(manifest["sourcePath"]).expanduser().resolve(strict=True)
+    source = _source_path(manifest, source_root)
     if _file_sha(source) != manifest["sourceSha256"]:
         raise ValueError("Page source bytes changed after manifest creation")
 
@@ -933,7 +980,7 @@ def harvest_page(manifest: dict, output_dir: str | Path) -> dict:
         raise FileExistsError("Page harvest output directory must be empty")
     root.mkdir(parents=True, exist_ok=True)
 
-    report = analyze_page(manifest)
+    report = analyze_page(manifest, source_root=source_root)
     assets = _panel_asset_rows(report, source, root / "panels")
     assets.extend(
         _quarry_asset_rows(report, source, root / "quarry")
@@ -941,8 +988,21 @@ def harvest_page(manifest: dict, output_dir: str | Path) -> dict:
     for row in assets:
         row["sourceSha256"] = manifest["sourceSha256"]
         row["sourceId"] = manifest["id"]
+        row.update(_lineage(manifest))
+        if separate:
+            row["rights"] = copy.deepcopy(rights)
+            # This source-specific harvest permission was consumed by this
+            # event; it is not a recursive harvest license for every new crop.
+            row["rights"]["pixelHarvest"] = False
+            row["grantScope"] = "descendant reuse only; new harvest requires independent source-specific admission"
+            row["materialAuthority"] = "reusable-candidate" if rights.get("pixelReuse") is True and rights.get("derivativeReuse") is True else "quarantined-inspection-only"
+        if artifact_root is not None:
+            row["path"] = Path(row["path"]).relative_to(Path(artifact_root).resolve()).as_posix()
+        if separate:
+            row["id"] = "page-asset:" + _hash(row)[:24]
 
     body = {
+        **_lineage(manifest),
         "schema": "haunted-blender/page-harvest/v1",
         "sourceId": manifest["id"],
         "sourceSha256": manifest["sourceSha256"],
@@ -967,6 +1027,11 @@ def harvest_page(manifest: dict, output_dir: str | Path) -> dict:
             "PAGE MAY YIELD ACTORS FX PROPS AND BACKGROUNDS AFTER SELECTION",
         ],
     }
+    if separate:
+        body["rightsModel"] = "separate-harvest-reuse/v1"
+        body["materialAuthority"] = "reusable-candidate" if rights.get("pixelReuse") is True and rights.get("derivativeReuse") is True else "quarantined-inspection-only"
+    if artifact_root is not None:
+        body["pathBase"] = "event-root"
     result = {**body, "id": "page-harvest:" + _hash(body)[:24]}
     (root / "page-grammar-report.json").write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n",
@@ -1077,8 +1142,11 @@ def page_harvest_to_parts_drawer(
 
     if harvest.get("schema") != "haunted-blender/page-harvest/v1":
         raise ValueError("Expected page harvest")
-    if not (harvest.get("rights") or {}).get("pixelReuse"):
-        raise PermissionError("Page harvest lacks pixel reuse authority")
+    rights = harvest.get("rights") or {}
+    if rights.get("pixelReuse") is not True or rights.get("derivativeReuse") is not True:
+        raise PermissionError("Page harvest lacks pixel reuse or derivative authority")
+    if harvest.get("materialAuthority") == "quarantined-inspection-only":
+        raise PermissionError("Quarantined inspection pixels cannot enter Parts Drawer")
 
     kind_map = {
         "panel": "still",
@@ -1093,6 +1161,7 @@ def page_harvest_to_parts_drawer(
         if drawer_kind is None:
             continue
         mapped = {
+            **_lineage(row),
             "kind": drawer_kind,
             "path": row["path"],
             "sha256": row["sha256"],
@@ -1102,10 +1171,16 @@ def page_harvest_to_parts_drawer(
             "pageAssetKind": row.get("kind"),
             "recipe": row.get("recipe"),
         }
+        if "rights" in row:
+            mapped["id"] = row["id"]
+            mapped["rights"] = copy.deepcopy(row["rights"])
+            mapped["materialAuthority"] = row["materialAuthority"]
+            mapped["grantScope"] = row["grantScope"]
         artifacts.append(mapped)
         by_kind[drawer_kind] = by_kind.get(drawer_kind, 0) + 1
 
     body = {
+        **_lineage(harvest),
         "schema": parts_harvester.DRAWER_SCHEMA,
         "sourceCount": 1,
         "harvestIds": [harvest["id"]],
@@ -1120,6 +1195,8 @@ def page_harvest_to_parts_drawer(
             "PAGE PROVENANCE SURVIVES DRAWER BRIDGE",
         ],
     }
+    if "pathBase" in harvest:
+        body["pathBase"] = harvest["pathBase"]
     result = {**body, "id": "parts-drawer:" + _hash(body)[:24]}
     path = Path(output_path).expanduser().resolve()
     if path.exists():
