@@ -707,6 +707,16 @@ def render_performance(performance: dict, output_path: str | Path) -> dict:
         "ensembleId": (performance.get("ensemble") or {}).get("id"),
         "ensembleCastCount": int((performance.get("ensemble") or {}).get("castCount") or 0),
         "dialogueTurnCount": int((performance.get("ensemble") or {}).get("dialogueTurnCount") or 0),
+        "materialTypes": sorted({
+            str((layer.get("material") or {}).get("type"))
+            for layer in (performance.get("cutoutPlan") or {}).get("layers") or []
+            if (layer.get("material") or {}).get("type")
+        }),
+        "materializedLayerCount": sum(
+            1
+            for layer in (performance.get("cutoutPlan") or {}).get("layers") or []
+            if layer.get("materializedAssetId")
+        ),
         "externalGenerations": 0,
         "providerCredits": 0,
         "usdMicros": 0,
