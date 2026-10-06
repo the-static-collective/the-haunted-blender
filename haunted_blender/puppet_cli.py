@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from . import cutaway_machine, puppet_factory, stage_compost
+from . import cutaway_machine, paper_director, puppet_factory, stage_compost
 
 
 def _read(path: str | Path) -> dict:
@@ -49,6 +49,8 @@ def main(argv=None):
     smash.add_argument("--max-cutaways", type=int, default=6)
     smash.add_argument("--cutaway-seconds", type=float, default=1.25)
     smash.add_argument("--parts-drawer")
+    smash.add_argument("--direct", action="store_true")
+    smash.add_argument("--max-shot-seconds", type=float, default=3.2)
 
     args = parser.parse_args(argv)
 
@@ -116,10 +118,11 @@ def main(argv=None):
         rig_dir = output / "rig"
         rig = puppet_factory.build_rig(spec, rig_dir)
 
+        doctor_report = _read(args.doctor_report) if args.doctor_report else None
         cutaways = None
-        if args.doctor_report:
+        if doctor_report:
             cutaways = cutaway_machine.plan_from_doctor(
-                _read(args.doctor_report),
+                doctor_report,
                 timing,
                 max_cutaways=args.max_cutaways,
                 duration_seconds=args.cutaway_seconds,
@@ -148,18 +151,51 @@ def main(argv=None):
         receipt = puppet_factory.render_performance(
             performance, output / "puppet-movie.mp4"
         )
+        final_output = receipt["output"]
+        final_sha = receipt["outputSha256"]
+        director_result = None
+        if args.direct:
+            director_plan = paper_director.plan(
+                timing,
+                performance=performance,
+                doctor_report=doctor_report,
+                max_shot_seconds=args.max_shot_seconds,
+            )
+            director_plan_path = output / "paper-director.plan.json"
+            _write(director_plan_path, director_plan)
+            director_receipt = paper_director.render(
+                receipt["output"],
+                director_plan,
+                output / "puppet-directed.mp4",
+                performance=performance,
+            )
+            final_output = str(output / "puppet-directed.mp4")
+            final_sha = director_receipt["outputSha256"]
+            director_result = {
+                "plan": str(director_plan_path),
+                "planId": director_plan["id"],
+                "shotCount": director_plan["shotCount"],
+                "shotTypeCounts": director_plan["shotTypeCounts"],
+                "coverageRatio": director_receipt["coverageRatio"],
+                "output": final_output,
+                "outputSha256": final_sha,
+            }
+
         result = {
             "rig": str(rig_dir / "puppet-rig.json"),
             "rigId": rig["id"],
             "performance": str(performance_path),
             "performanceId": performance["id"],
-            "output": receipt["output"],
-            "outputSha256": receipt["outputSha256"],
+            "paperStageOutput": receipt["output"],
+            "paperStageOutputSha256": receipt["outputSha256"],
+            "output": final_output,
+            "outputSha256": final_sha,
             "durationSeconds": receipt["durationSeconds"],
             "poseEventCount": receipt["poseEventCount"],
             "mouthEventCount": receipt["mouthEventCount"],
             "lyricGeographyCount": receipt["lyricGeographyCount"],
             "cutawayCount": receipt["cutawayCount"],
+            "paperDirector": director_result,
             "externalGenerations": 0,
             "providerCredits": 0,
             "usdMicros": 0,
