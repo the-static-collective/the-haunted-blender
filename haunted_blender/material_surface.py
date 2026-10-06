@@ -31,7 +31,7 @@ PRESETS = {
     "wood": {
         "surface": {"posterize": 6, "grain": 0.12, "edge": 0.20, "woodGrain": 0.22, "gloss": 0.04},
         "motion": {"position": 0.58, "rotation": 0.78, "scale": 0.22, "lag": 0.015, "jitter": 0.0, "drift": 0.0},
-        "directing": {"closeupBias": 0.88, "wideBias": 1.25, "insertBias": 0.82},
+        "directing": {"closeupBias": 0.88, "wideBias": 1.35, "insertBias": 0.82},
     },
     "clay": {
         "surface": {"posterize": 7, "grain": 0.045, "edge": 0.04, "soften": 0.65, "gloss": 0.08},
