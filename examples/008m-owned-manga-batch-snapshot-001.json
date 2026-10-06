@@ -16,12 +16,12 @@
     {"id":"1wlezSRi3ZGM1kJU5zgkO_hzqjTcIVePs","title":"file_00000000f80081f5bead517552cfc8bf.png","url":"https://drive.google.com/file/d/1wlezSRi3ZGM1kJU5zgkO_hzqjTcIVePs/view?usp=drivesdk"},
     {"id":"1wkkZmxgWqz-_hH3yqhWE2GIZ_BGCDO3I","title":"file_0000000005ec81f5ab3d10b52a51940a.png","url":"https://drive.google.com/file/d/1wkkZmxgWqz-_hH3yqhWE2GIZ_BGCDO3I/view?usp=drivesdk"}
   ],
-  "folderUrl": "https://drive.google.com/folderview?id=1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5",
-  "grammarFamilies": ["anime-action","cozy-ensemble","environmental-establishing","fx","intimate-dialogue","object-detail","panel-rhythm","reaction","recurring-location-continuity","room-ecology","sequence-rhythm","silhouette-negative-space","threshold-transition","vertical-motion"],
-  "id": "page-source-batch:52722cdc02edbd2bfa0950d6",
-  "label": "Static Collective owned manga batch — snapshot 001",
-  "laws": ["BATCH RIGHTS MAY BE INHERITED BY LISTED FILES","BATCH MANIFEST != PER-FILE BYTE CUSTODY","PER-FILE SHA IS FROZEN AT INGESTION","ADDING A FILE TO A FOLDER DOES NOT RETROACTIVELY CHANGE AN OLD BATCH MANIFEST"],
-  "rights": {"derivativeReuse":true,"note":"User explicitly states the entire Drive folder and all pixels currently in it are theirs and may be reused, cut apart, derived, recomposed, and published.","pixelReuse":true,"publicationReuse":true},
-  "schema":"haunted-blender/page-source-batch/v1",
+  "folderUrl":"https://drive.google.com/folderview?id=1wt_hKrvkmWAOgmNBDi-KQPW0H2E9tkv5",
+  "grammarFamilies":["anime-action","cozy-ensemble","environmental-establishing","fx","intimate-dialogue","object-detail","panel-rhythm","reaction","recurring-location-continuity","room-ecology","sequence-rhythm","silhouette-negative-space","threshold-transition","vertical-motion"],
+  "id":"page-source-locator-batch:8bca7fc22a0cca9255fa03af",
+  "label":"Static Collective owned manga batch — snapshot 001",
+  "laws":["BATCH RIGHTS MAY BE INHERITED BY LISTED FILES","BATCH MANIFEST != PER-FILE BYTE CUSTODY","PER-FILE SHA IS FROZEN AT INGESTION","ADDING A FILE TO A FOLDER DOES NOT RETROACTIVELY CHANGE AN OLD BATCH MANIFEST"],
+  "rights":{"derivativeReuse":true,"note":"User explicitly states the entire Drive folder and all pixels currently in it are theirs and may be reused, cut apart, derived, recomposed, and published.","pixelReuse":true,"publicationReuse":true},
+  "schema":"haunted-blender/page-source-locator-batch/v1",
   "sourceClass":"owned"
 }
