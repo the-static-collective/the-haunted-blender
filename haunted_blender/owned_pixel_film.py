@@ -9,9 +9,7 @@ framing choices, not semantic segmentation or character identity claims.
 """
 from __future__ import annotations
 
-import base64
 import hashlib
-import io
 import json
 import math
 import shutil
@@ -57,15 +55,20 @@ def load_donor(manifest_path: str | Path) -> dict:
         raise ValueError("Expected owned-pixel donor manifest")
 
     derivative = manifest.get("derivative") or {}
-    if derivative.get("encoding") != "base64-file":
-        raise ValueError("008p donor must use base64-file encoding")
+    if derivative.get("encoding") != "raw-rgb-hex-file":
+        raise ValueError("008p donor must use raw-rgb-hex-file encoding")
+    if derivative.get("pixelMode") != "RGB":
+        raise ValueError("008p raw pixel witness must declare RGB mode")
 
     # manifests live at <repo>/specimens/008p/*.donor.json
     repo_root = path.parents[2]
-    encoded_path = repo_root / str(derivative.get("path") or "")
-    encoded_path = encoded_path.resolve(strict=True)
-    encoded = encoded_path.read_text(encoding="utf-8").strip()
-    raw = base64.b64decode(encoded, validate=True)
+    witness_path = repo_root / str(derivative.get("path") or "")
+    witness_path = witness_path.resolve(strict=True)
+    encoded = "".join(witness_path.read_text(encoding="utf-8").split())
+    try:
+        raw = bytes.fromhex(encoded)
+    except ValueError as exc:
+        raise ValueError("Owned pixel derivative hex witness is malformed") from exc
 
     observed_sha = hashlib.sha256(raw).hexdigest()
     if observed_sha != derivative.get("sha256"):
@@ -73,13 +76,14 @@ def load_donor(manifest_path: str | Path) -> dict:
     if len(raw) != int(derivative.get("byteLength") or -1):
         raise ValueError("Owned pixel derivative byte length mismatch")
 
-    image = Image.open(io.BytesIO(raw)).convert("RGB")
     expected_size = (
         int(derivative.get("width") or 0),
         int(derivative.get("height") or 0),
     )
-    if image.size != expected_size:
-        raise ValueError("Owned pixel derivative dimensions mismatch")
+    expected_bytes = expected_size[0] * expected_size[1] * 3
+    if len(raw) != expected_bytes:
+        raise ValueError("Owned pixel derivative dimensions do not match RGB byte count")
+    image = Image.frombytes("RGB", expected_size, raw)
 
     return {
         "manifestPath": str(path),
@@ -87,7 +91,7 @@ def load_donor(manifest_path: str | Path) -> dict:
         "image": image,
         "raw": raw,
         "derivativeSha256": observed_sha,
-        "encodedPath": str(encoded_path),
+        "witnessPath": str(witness_path),
     }
 
 
